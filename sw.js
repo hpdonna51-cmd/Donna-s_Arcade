@@ -1,6 +1,6 @@
 // 다나의 오락실 오프라인 지원
 // 게임을 새로 추가하거나 고치면 아래 버전 숫자를 하나 올려주세요 (v1 → v2)
-const CACHE = 'dana-arcade-v1';
+const CACHE = 'dana-arcade-v4';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './games/bangul-bakja.html',
