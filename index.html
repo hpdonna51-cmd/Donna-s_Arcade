@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>다나의 오락실</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#13261F">
+<link rel="icon" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="다나의 오락실">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6EFEA; --paper:#F7FBF8; --ink:#13261F; --soft:#4F6A5F; --line:#C9DAD1;
+  --cobalt:#2F5BFF; --sun:#F2B300; --mint:#12A58F; --plum:#7C5CFF; --coral:#F26A35;
+  --shelf:#13261F; --shadow:rgba(19,38,31,.18);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1E19; --paper:#17302A; --ink:#E9F5EF; --soft:#9BB8AC; --line:#2A463D;
+    --cobalt:#7C97FF; --sun:#FFD25C; --mint:#6EE7C8; --plum:#B8A1FF; --coral:#FFB38A;
+    --shelf:#E9F5EF; --shadow:rgba(0,0,0,.4);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1E19; --paper:#17302A; --ink:#E9F5EF; --soft:#9BB8AC; --line:#2A463D;
+  --cobalt:#7C97FF; --sun:#FFD25C; --mint:#6EE7C8; --plum:#B8A1FF; --coral:#FFB38A;
+  --shelf:#E9F5EF; --shadow:rgba(0,0,0,.4);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Gowun Dodum",system-ui,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6}
+.wrap{max-width:68rem;margin:0 auto;padding:clamp(2rem,6vw,4.5rem) clamp(1rem,4vw,2.5rem) 3rem}
+h1,h2,h3,.btn,.count{font-family:"Jua","Gowun Dodum",system-ui,sans-serif;font-weight:400}
+
+/* 머리말 */
+header{display:grid;gap:1rem;margin-bottom:clamp(2rem,5vw,3.5rem)}
+h1{font-size:clamp(3rem,11vw,6.5rem);line-height:.95;margin:0;letter-spacing:-.02em}
+h1 .row{display:block}
+h1 .row + .row{padding-left:clamp(1.5rem,8vw,6rem)}
+.intro{font-size:clamp(1.05rem,2.4vw,1.25rem);max-width:30em;margin:0;color:var(--soft)}
+.count{display:inline-flex;align-items:center;gap:.5rem;font-size:1.1rem;color:var(--ink)}
+.count i{width:.7rem;height:.7rem;border-radius:50%;background:var(--mint);display:block}
+
+/* 선반 */
+.shelf-title{font-size:1.4rem;margin:0 0 1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:clamp(1rem,3vw,1.75rem);align-items:start}
+
+/* 게임 카트리지 */
+.cart{background:var(--paper);border-radius:22px 22px 14px 14px;box-shadow:0 10px 0 -4px var(--shelf),0 18px 30px -18px var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.cover{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--cover-bg,#141633)}
+.notch{height:10px;background:var(--accent);opacity:.9}
+.body{padding:1.1rem 1.25rem 1.3rem;display:flex;flex-direction:column;gap:.7rem}
+.cart h3{font-size:1.65rem;margin:0;line-height:1.1}
+.cart p{margin:0;color:var(--soft)}
+.tags{display:flex;flex-wrap:wrap;gap:.4rem;list-style:none;margin:0;padding:0}
+.tags li{font-size:.85rem;padding:.15rem .65rem;border-radius:999px;border:1.5px solid var(--line);color:var(--soft)}
+.meta{font-size:.85rem;color:var(--soft)}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:.5rem;font-size:1.25rem;padding:.65rem 1.4rem;border-radius:999px;background:var(--ink);color:var(--bg);text-decoration:none;align-self:flex-start;margin-top:.2rem}
+.btn{border:none;cursor:pointer}
+.install-hint{margin:0;color:var(--soft);max-width:30em}
+.btn:hover{background:var(--accent);color:#13261F}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* 다음 게임 자리 */
+.slot{border:2.5px dashed var(--line);border-radius:22px;min-height:20rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.6rem;padding:2rem 1.5rem;color:var(--soft)}
+.slot h3{font-size:1.5rem;margin:0;color:var(--ink)}
+.slot p{margin:0;max-width:16em}
+.slot .plus{width:3.2rem;height:3.2rem;border-radius:50%;border:2.5px dashed var(--line);display:grid;place-items:center;font-family:"Jua",sans-serif;font-size:1.8rem;line-height:1}
+
+/* 방울 박자 표지: 떨어지는 방울 */
+.bubble-cover{--cover-bg:#141633}
+.bubble-cover .lane{position:absolute;top:0;bottom:0;width:18%;border-radius:999px;background:#1F2250}
+.bubble-cover .lane:nth-child(1){left:9%}.bubble-cover .lane:nth-child(2){left:30%}
+.bubble-cover .lane:nth-child(3){left:52%}.bubble-cover .lane:nth-child(4){left:73%}
+.bubble-cover .hit{position:absolute;left:0;right:0;top:76%;height:2px;background:rgba(243,238,255,.18)}
+.bubble-cover .ring{position:absolute;top:76%;width:12%;aspect-ratio:1;border-radius:50%;border:3px solid var(--c);transform:translate(-50%,-50%)}
+.bubble-cover .drop{position:absolute;top:-14%;width:11%;aspect-ratio:1;border-radius:50%;background:var(--c);transform:translateX(-50%);animation:fall var(--dur,2.4s) linear infinite;animation-delay:var(--delay,0s)}
+.bubble-cover .drop::after{content:"";position:absolute;left:20%;top:18%;width:28%;height:28%;border-radius:50%;background:#fff;opacity:.4}
+@keyframes fall{0%{top:-14%;opacity:1}76%{top:70%;opacity:1;transform:translateX(-50%) scale(1)}84%{top:70%;opacity:0;transform:translateX(-50%) scale(1.6)}100%{top:70%;opacity:0}}
+.bubble-cover .title{position:absolute;left:1rem;bottom:.8rem;font-family:"Jua",sans-serif;font-size:1.4rem;color:#F3EEFF}
+@media (prefers-reduced-motion:reduce){
+  .bubble-cover .drop{animation:none}
+  .bubble-cover .drop:nth-of-type(odd){top:30%}
+  .bubble-cover .drop:nth-of-type(even){top:52%}
+}
+
+footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);color:var(--soft);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="row">다나의</span><span class="row">오락실</span></h1>
+    <span class="count"><i aria-hidden="true"></i><span id="count"></span></span>
+    <button class="btn" id="installBtn" type="button" hidden style="--accent:var(--sun)">앱으로 설치하기</button>
+    <p class="install-hint" id="iosHint" hidden>아이폰이나 아이패드에서는 사파리 아래쪽의 공유 버튼을 누르고 ‘홈 화면에 추가’를 고르면 앱으로 설치돼요.</p>
+  </header>
+
+  <main>
+    <h2 class="shelf-title">게임 선반</h2>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요.
+  </footer>
+</div>
+
+<script>
+/* 게임 목록: 새 게임을 만들면 여기에 하나씩 추가돼요 */
+const GAMES = [
+  {
+    title: '방울 박자',
+    desc: '떨어지는 방울이 동그라미에 겹치는 순간 키를 누르는 리듬게임이에요. 박자가 다른 12곡과 4단계 난이도가 있어요.',
+    tags: ['리듬', '키보드', '터치', '랭킹'],
+    url: 'games/bangul-bakja.html',
+    accent: 'var(--plum)',
+    cover: 'bubble',
+    made: '2026년 10월 28일',
+  },
+];
+
+const covers = {
+  bubble: g => {
+    const cols = ['#B8A1FF', '#6EE7C8', '#FFB38A', '#FFE07A'];
+    const lanes = [18, 39, 61, 82];
+    const drops = [[0, 0, 2.4], [1, .6, 2.4], [2, 1.2, 2.4], [3, 1.8, 2.4], [2, .3, 2.4], [0, 1.5, 2.4]];
+    return `<div class="cover bubble-cover" aria-hidden="true">
+      <div class="lane"></div><div class="lane"></div><div class="lane"></div><div class="lane"></div>
+      <div class="hit"></div>
+      ${lanes.map((x, i) => `<div class="ring" style="left:${x}%;--c:${cols[i]}"></div>`).join('')}
+      ${drops.map(([l, d, dur]) => `<div class="drop" style="left:${lanes[l]}%;--c:${cols[l]};--delay:-${d}s;--dur:${dur}s"></div>`).join('')}
+      <span class="title">${g.title}</span>
+    </div>`;
+  },
+};
+
+const grid = document.getElementById('grid');
+grid.innerHTML = GAMES.map(g => `
+  <article class="cart" style="--accent:${g.accent}">
+    ${(covers[g.cover] || (() => `<div class="cover"></div>`))(g)}
+    <div class="notch"></div>
+    <div class="body">
+      <h3>${g.title}</h3>
+      <p>${g.desc}</p>
+      <ul class="tags">${g.tags.map(t => `<li>${t}</li>`).join('')}</ul>
+      <span class="meta">만든 날: ${g.made}</span>
+      <a class="btn" href="${g.url}">플레이하기</a>
+    </div>
+  </article>`).join('') + `
+  <div class="slot">
+    <span class="plus" aria-hidden="true">+</span>
+    <h3>다음 게임 자리</h3>
+    <p>새 게임을 만들면 이 선반에 하나씩 채워져요.</p>
+  </div>`;
+document.getElementById('count').textContent = `지금까지 만든 게임 ${GAMES.length}개`;
+
+/* 앱 설치 */
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+let deferred = null;
+const installBtn = document.getElementById('installBtn');
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; if (!standalone) installBtn.hidden = false; });
+installBtn.addEventListener('click', async () => {
+  if (!deferred) return;
+  deferred.prompt(); await deferred.userChoice; deferred = null; installBtn.hidden = true;
+});
+addEventListener('appinstalled', () => { installBtn.hidden = true; });
+if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !standalone) document.getElementById('iosHint').hidden = false;
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
