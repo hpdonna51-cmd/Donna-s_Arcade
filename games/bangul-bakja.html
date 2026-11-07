@@ -598,7 +598,7 @@ function buildScore(S){
       if (len !== s.bars * N16) console.warn(`${S.name} 구간 ${si + 1}: 길이가 맞지 않아요`, len, s.bars * N16);
       events.forEach(n => {
         const t = tc + n.pos * X, d = n.dur * X, ms = n.ms.map(m => m + tr + (tk.oct || 0));
-        ev.push({t, k:'note', inst: tk.inst, ms, d: d * (tk.legato != null ? tk.legato : .95), v: tk.v != null ? tk.v : 1, rev: tk.rev != null ? tk.rev : .3, pan: tk.pan || 0});
+        ev.push({t, k:'note', lead: !!tk.chart || /bass|cello/.test(tk.inst) && (tk.v == null || tk.v >= .8), inst: tk.inst, ms, d: d * (tk.legato != null ? tk.legato : .95), v: tk.v != null ? tk.v : 1, rev: tk.rev != null ? tk.rev : .3, pan: tk.pan || 0});
         if (tk.chart) notes.push({t, len: d >= .6 ? d * .9 : 0, pos: Math.max(...ms), step: (n.pos % N16) / 2, dbl: !!s.dbl});
       });
     });
@@ -842,7 +842,10 @@ function osc(T, end, type, f, det = 0){
   return o;
 }
 // 소리 크기 모양: d가 있으면 그동안 유지, 없으면 rel 동안 사라져요
+let voiceEnds = [];
+function voiceCount(){ const now = ctx.currentTime; voiceEnds = voiceEnds.filter(e => e > now); return voiceEnds.length; }
 function amp(T, a, peak, d, rel){
+  voiceEnds.push(d > 0 ? T + d + rel : T + a + rel);
   const g = ctx.createGain();
   g.gain.setValueAtTime(0.0001, T);
   g.gain.exponentialRampToValueAtTime(Math.max(.0002, peak), T + a);
@@ -1001,15 +1004,16 @@ Object.assign(INST, {
   // 피아노: 배음이 높을수록 빨리 사라지고, 건반 치는 소리가 살짝 섞여요
   piano(T, f, d, v, o){
     const dec = Math.max(.6, 3 - Math.log2(f / 130) * .7);
-    const [g, end] = amp(T, .002, .3 * v, 0, dec); route(g, o);
+    const [g, end0] = amp(T, .002, .3 * v, 0, dec); route(g, o);
+    const end = d && d < dec ? T + d + .45 : end0;
     if (d && d < dec) g.gain.setTargetAtTime(0.0001, T + d, .09);
-    const parts = LITE ? 3 : 6;
+    const parts = LITE ? 2 : 4;
     for (let k = 1; k <= parts; k++){
       const fk = f * k * Math.sqrt(1 + .0004 * k * k), pg = ctx.createGain();
       env(pg, T, .002, .55 / Math.pow(k, 1.3), dec / Math.sqrt(k));
       osc(T, end, 'sine', fk).connect(pg); pg.connect(g);
     }
-    if (!LITE){
+    if (!LITE && v >= .9){
       const n = ctx.createBufferSource(); n.buffer = noiseBuf;
       const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = Math.min(6000, f * 4); bp.Q.value = 1;
       const ng = ctx.createGain(); env(ng, T, .001, .12, .03);
@@ -1021,15 +1025,15 @@ Object.assign(INST, {
     const [g, end] = amp(T, .07, .2 * v, d || .3, .18); route(g, o);
     const fl = lp(g, 3400, 0, T, 0, 1.2);
     const s = osc(T, end, 'sawtooth', f); vibrato(T, end, s, f, 5.8, .007, .28); mix(s, fl, .6);
-    if (!LITE){ const s2 = osc(T, end, 'sawtooth', f, 7); vibrato(T, end, s2, f, 5.3, .006, .3); mix(s2, fl, .35); }
+    if (!LITE && v >= .9){ const s2 = osc(T, end, 'sawtooth', f, 7); vibrato(T, end, s2, f, 5.3, .006, .3); mix(s2, fl, .35); }
   },
   // 일렉기타 화음: 여러 음을 한 번에 찌그러뜨려야 진짜 파워코드 소리가 나요
   distchord(T, fs, d, v, o){
     const [g, end] = amp(T, .003, .14 * v, d > .25 ? d : 0, d > .25 ? .12 : .16); route(g, o);
     const fl = lp(g, 3200, 0, T, 0, 1);
     let into = fl;
-    if (!LITE){ const ws = ctx.createWaveShaper(); ws.curve = distCurve(); ws.oversample = '2x'; ws.connect(fl); into = ws; }
-    fs.forEach(f => { mix(osc(T, end, 'sawtooth', f), into, LITE ? .3 : .9); if (!LITE) mix(osc(T, end, 'sawtooth', f, 9), into, .6); });
+    if (!LITE){ const ws = ctx.createWaveShaper(); ws.curve = distCurve(); ws.connect(fl); into = ws; }
+    fs.forEach((f, i) => mix(osc(T, end, 'sawtooth', f, i % 2 ? 8 : -8), into, LITE ? .3 : 1));
   },
   distgtr(T, f, d, v, o){ INST.distchord(T, [f], d, v, o); },
   distlead(T, f, d, v, o){
@@ -1054,7 +1058,10 @@ const LITE_INST = {
   supersaw(T, f, d, v, o){ const [g, end] = amp(T, .01, .2 * v, d || .16, .15); route(g, o); const fl = lp(g, 3000); mix(osc(T, end, 'sawtooth', f, -12), fl, .45); mix(osc(T, end, 'sawtooth', f, 12), fl, .45); },
   harpsichord(T, f, d, v, o){ const [g, end] = amp(T, .001, .2 * v, 0, .5); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 7000, 1400, T, .3), .6); },
 };
-function playInst(name, T, f, d, v, o){ ((LITE && LITE_INST[name]) || INST[name])(T, f, d, v, o); }
+function playInst(name, T, f, d, v, o, prio = 0){
+  if (prio < 1 && voiceCount() > (LITE ? 20 : 40)) return;   // 멜로디와 베이스는 항상, 반주는 여유가 있을 때만
+  ((LITE && LITE_INST[name]) || INST[name])(T, f, d, v, o);
+}
 
 function play(e, T){
   if (!master) return;
@@ -1097,7 +1104,7 @@ function play(e, T){
     case 'note': {
       const o = {rev: e.rev, pan: e.pan};
       if (e.inst === 'distgtr' && e.ms.length > 1){ INST.distchord(T, e.ms.map(mtof), e.d, e.v, o); break; }
-      e.ms.forEach(m => playInst(e.inst, T, mtof(m), e.d, e.v, o));
+      e.ms.forEach(m => playInst(e.inst, T, mtof(m), e.d, e.v, o, e.lead ? 1 : 0));
       break;
     }
     case 'arp': playInst(S.arp, T, mtof(e.m), 0, .9, {pan:-.3, rev:.25, dly: S.delay ? .4 : 0}); break;
@@ -1105,11 +1112,11 @@ function play(e, T){
       const strum = S.stab === 'guitar' ? i * .014 : 0;
       playInst(S.stab, T + strum, mtof(m + 12), 0, .4, {pan:-.2, rev:.3});
     }); break;
-    case 'bass': playInst(S.bass.inst, T, mtof(e.m), 0, 1, {duck: true}); break;
+    case 'bass': playInst(S.bass.inst, T, mtof(e.m), 0, 1, {duck: true}, 1); break;
     case 'lead': {
       if (e.harm && LITE) break;
       const name = e.harm ? (S.harmInst || S.lead.inst) : S.lead.inst;
-      playInst(name, T, mtof(e.m), e.d, e.harm ? .5 : 1, {rev: e.harm ? .4 : .28, dly: S.delay && !e.harm ? .7 : 0, pan: e.harm ? .3 : 0});
+      playInst(name, T, mtof(e.m), e.d, e.harm ? .5 : 1, {rev: e.harm ? .4 : .28, dly: S.delay && !e.harm ? .7 : 0, pan: e.harm ? .3 : 0}, e.harm ? 0 : 1);
       break;
     }
     case 'pad': {
@@ -1608,8 +1615,21 @@ function release(lane){
 }
 
 /* ---------- 매 프레임 ---------- */
+let slowFrames = 0, frameCount = 0, lastFrameT = 0, autoLiteDone = false, toast = null;
 function frame(){
   requestAnimationFrame(frame);
+  const nowF = performance.now();
+  if (state === 'playing' && lastFrameT && !document.hidden){
+    frameCount++; if (nowF - lastFrameT > 45) slowFrames++;
+    if (frameCount >= 120){
+      if (!LITE && !autoLiteDone && slowFrames > 20){
+        autoLiteDone = true; setLite(true);
+        toast = {text: '렉이 생겨서 가벼운 모드로 바꿨어요', born: nowF};
+      }
+      frameCount = 0; slowFrames = 0;
+    }
+  }
+  lastFrameT = nowF;
   if (state === 'rec' && ctx && vTime() > songEnd) endRecord();
   if (state === 'playing' && ctx){
     pump();
@@ -1820,6 +1840,12 @@ function draw(){
     g.fillText(cur.name, cx, H * .42);
     g.fillStyle = colors.soft; g.font = '18px "Gowun Dodum", sans-serif';
     g.fillText(wasRandom ? '랜덤으로 골랐어요. 준비하세요!' : '준비하세요', cx, H * .42 + 32);
+  }
+
+  if (toast && now - toast.born < 3500){
+    g.globalAlpha = Math.min(1, (3500 - (now - toast.born)) / 500); g.textAlign = 'center';
+    g.fillStyle = colors.soft; g.font = '16px "Gowun Dodum", sans-serif';
+    g.fillText(toast.text, cx, H * .3); g.globalAlpha = 1;
   }
 
   // 박자가 바뀌기 전에 알려줘요
