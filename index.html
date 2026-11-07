@@ -104,7 +104,7 @@ footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);c
     <h1><span class="row">다나의</span><span class="row">오락실</span></h1>
     <span class="count"><i aria-hidden="true"></i><span id="count"></span></span>
     <button class="btn" id="installBtn" type="button" hidden style="--accent:var(--sun)">앱으로 설치하기</button>
-    <p class="install-hint" id="iosHint" hidden>아이폰이나 아이패드에서는 사파리 아래쪽의 공유 버튼을 누르고 ‘홈 화면에 추가’를 고르면 앱으로 설치돼요.</p>
+    <p class="install-hint" id="iosHint" hidden>아이폰이나 아이패드에서는 사파리의 공유 버튼(네모에서 화살표가 위로 나온 모양)을 누르고 ‘홈 화면에 추가’를 고르면 앱으로 설치돼요. 아이폰은 화면 아래쪽, 아이패드는 주소창 오른쪽에 공유 버튼이 있어요.</p>
   </header>
 
   <main>
@@ -122,8 +122,8 @@ footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);c
 const GAMES = [
   {
     title: '방울 박자',
-    desc: '떨어지는 방울이 동그라미에 겹치는 순간 키를 누르는 리듬게임이에요. 박자가 다른 12곡과 4단계 난이도가 있어요.',
-    tags: ['리듬', '키보드', '터치', '랭킹'],
+    desc: '떨어지는 방울이 동그라미에 겹치는 순간 키를 누르는 리듬게임이에요. 클래식 명곡과 록 편곡을 포함한 17곡이 있고, 내 음악 파일로 직접 곡을 만들 수도 있어요.',
+    tags: ['리듬', '클래식', '내 곡 만들기', '랭킹'],
     url: 'games/bangul-bakja.html',
     accent: 'var(--plum)',
     cover: 'bubble',
@@ -176,7 +176,9 @@ installBtn.addEventListener('click', async () => {
   deferred.prompt(); await deferred.userChoice; deferred = null; installBtn.hidden = true;
 });
 addEventListener('appinstalled', () => { installBtn.hidden = true; });
-if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !standalone) document.getElementById('iosHint').hidden = false;
+// 아이패드는 자신을 맥으로 소개해서, 터치 화면인 맥이면 아이패드로 봐요
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+if (isIOS && !standalone) document.getElementById('iosHint').hidden = false;
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
