@@ -1239,7 +1239,7 @@ async function loadAudio(S){
 /* 곡 미리 만들기: 시작 전에 음악 전체를 한 번에 만들어두고, 플레이 중에는 틀기만 해요.
    이렇게 하면 플레이하는 동안 화면 그리기만 남아서 끊기지 않아요. */
 let OFFLINE = false;
-const renderCache = new Map();
+const renderCache = new Map(), renderFailed = new Set();
 const PAD = .05;
 const renderKey = S => S.id + (LITE ? ':L' : ':F');
 async function renderSong(S){
@@ -1255,7 +1255,9 @@ async function renderSong(S){
   try {
     ctx = off; OFFLINE = true; voiceEnds = [];
     master = newBus(S);
-    for (const e of sg.ev) play(e, e.t + PAD);
+    let bad = 0, lastErr = null;
+    for (const e of sg.ev){ try { play(e, e.t + PAD); } catch(err){ bad++; lastErr = err; } }   // 문제 있는 음은 건너뛰어요
+    if (bad) console.warn(`미리 만들기: ${bad}개 음을 건너뛰었어요`, lastErr);
     job = off.startRendering();
   } finally {
     ctx = realCtx; master = realMaster; OFFLINE = false; voiceEnds = [];
@@ -1476,10 +1478,13 @@ function start(again){
     wasRandom = selected === 'random';
     cur = wasRandom ? SONGS[Math.floor(Math.random() * SONGS.length)] : allSongs().find(s => s.id === selected) || SONGS[0];
   }
-  if (!cur.audio && !renderCache.has(renderKey(cur))){
+  if (!cur.audio && !renderCache.has(renderKey(cur)) && !renderFailed.has(renderKey(cur))){
     showLoading('곡 준비 중… 처음 한 번만 잠깐 걸려요');
     setTimeout(() => renderSong(cur).then(() => start(true)).catch(err => {
-      console.error(err); state = 'menu'; show('menu'); alert('곡을 준비하지 못했어요. 다시 해볼래요?');
+      // 미리 만들기가 안 되는 기기에서는 예전처럼 실시간으로 틀어요
+      console.error(err); renderFailed.add(renderKey(cur));
+      toast = {text: '이 기기에서는 미리 만들기가 안 돼서 예전 방식으로 틀어요 (' + String(err && err.message || err).slice(0, 40) + ')', born: performance.now() + 2500};
+      start(true);
     }), 30);
     return;
   }
