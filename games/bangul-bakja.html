@@ -146,7 +146,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
           <div class="seg four" id="diffSeg" role="group" aria-labelledby="diffLabel">
             <button type="button" data-lanes="3" aria-pressed="false">3키<span class="keys">Q W E</span></button>
             <button type="button" data-lanes="4" aria-pressed="true">4키<span class="keys">D F · J K</span></button>
-            <button type="button" data-lanes="5" aria-pressed="false">5키<span class="keys">Q W E · O P</span></button>
+            <button type="button" data-lanes="6" aria-pressed="false">6키<span class="keys">Q W E · I O P</span></button>
             <button type="button" data-lanes="8" aria-pressed="false">8키<span class="keys">A S D F · J K L ;</span></button>
           </div>
         </div>
@@ -661,11 +661,11 @@ function songBpmText(S){
   return lo === hi ? `${lo} BPM` : `${lo}~${hi} BPM`;
 }
 
-const KEYMAP = {3:['KeyQ','KeyW','KeyE'], 4:['KeyD','KeyF','KeyJ','KeyK'], 5:['KeyQ','KeyW','KeyE','KeyO','KeyP'],
+const KEYMAP = {3:['KeyQ','KeyW','KeyE'], 4:['KeyD','KeyF','KeyJ','KeyK'], 6:['KeyQ','KeyW','KeyE','KeyI','KeyO','KeyP'],
   8:['KeyA','KeyS','KeyD','KeyF','KeyJ','KeyK','KeyL','Semicolon']};
-const CAPS = {3:['Q','W','E'], 4:['D','F','J','K'], 5:['Q','W','E','O','P'], 8:['A','S','D','F','J','K','L',';']};
-const SPLIT = {3:0, 4:2, 5:3, 8:4};   // 양손 사이를 살짝 띄워요
-const KCOL = {3:['k1','k2','k4'], 4:['k1','k2','k3','k5'], 5:['k1','k2','k4','k5','k6'], 8:['k1','k2','k3','k4','k5','k6','k7','k8']};
+const CAPS = {3:['Q','W','E'], 4:['D','F','J','K'], 6:['Q','W','E','I','O','P'], 8:['A','S','D','F','J','K','L',';']};
+const SPLIT = {3:0, 4:2, 6:3, 8:4};   // 양손 사이를 살짝 띄워요
+const KCOL = {3:['k1','k2','k4'], 4:['k1','k2','k3','k5'], 6:['k1','k2','k3','k4','k5','k6'], 8:['k1','k2','k3','k4','k5','k6','k7','k8']};
 const DIFFS = ['easy','normal','hard'], DNAME = {easy:'쉬움', normal:'보통', hard:'어려움'}, DCLS = {easy:'dE', normal:'dN', hard:'dH'};
 const DIFF = {2:'쉬움', 3:'보통', 4:'어려움', 8:'아주 어려움'};   // 예전 기록 표시용
 
@@ -833,12 +833,14 @@ function prepare(src, S, L){
     const o = {t: n.t, len: n.len, lane, j: null, tj: null, holding: false, ch};
     out.push(o); return o;
   };
+  const pressedAt = t => out.filter(o => Math.abs(o.t - t) < .03 || (o.len && o.t < t && o.t + o.len + .05 > t)).length;
   src.forEach((n, i) => {
     const jit = L >= 5 ? (((i * 7) % 3) - 1) * .6 : 0;   // 줄이 많을 때는 골고루 퍼지도록
+    if (pressedAt(n.t) >= 2) return;   // 이미 두 개를 누르고 있으면 더 넣지 않아요
     const lane = free(Math.max(0, Math.min(L - 1, Math.floor(cdf[n.pos] * L + jit))), n.t);
     if (lane < 0) return;
     const a = add(n, lane, false);
-    if (n.chord){
+    if (n.chord && pressedAt(n.t) < 2){
       let want = L - 1 - lane; if (want === lane) want = lane > 0 ? lane - 1 : lane + 1;
       const other = free(want, n.t);
       if (other >= 0 && other !== lane){ add(n, other, true); a.ch = true; }
@@ -1389,6 +1391,7 @@ function prepareAudio(src, srcL, L){
       if (f < 0) return;
       lane = f;
     }
+    if (out.filter(o => Math.abs(o.t - n.t) < .03 || (o.len && o.t < n.t && o.t + o.len + .05 > n.t)).length >= 2) return;
     busy[lane] = n.t + n.len + (n.len ? .12 : .02);
     out.push({t: n.t, len: n.len, lane, j: null, tj: null, holding: false});
   });
@@ -1595,7 +1598,7 @@ let rankFrom = 'menu';
 function setupRankFilters(){
   $('#rankSong').innerHTML = `<option value="all">전체 곡</option>` + allSongs().map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
   $('#rankDiff').innerHTML = `<option value="all">전체</option>` + DIFFS.map(dk => `<option value="${dk}">${DNAME[dk]}</option>`).join('');
-  $('#rankKeys').innerHTML = `<option value="all">전체</option>` + [3,4,5,8].map(L => `<option value="${L}">${L}키</option>`).join('');
+  $('#rankKeys').innerHTML = `<option value="all">전체</option>` + [3,4,6,8].map(L => `<option value="${L}">${L}키</option>`).join('');
 }
 function openRank(from){
   rankFrom = from;
