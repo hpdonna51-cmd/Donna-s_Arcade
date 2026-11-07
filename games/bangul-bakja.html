@@ -16,6 +16,7 @@
 :root{
   --bg:#EFE9FF; --ink:#1B1F3B; --soft:#5E5A85; --lane:#E1D7FF;
   --c1:#7C5CFF; --c2:#12A58F; --c3:#F26A35; --c4:#D99A00;
+  --k1:#E0368F; --k2:#0E9FC4; --k3:#F26A35; --k4:#C98F00; --k5:#16A86A; --k6:#7C5CFF; --k7:#2F5BFF; --k8:#3B3560;
   color-scheme:light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -25,12 +26,14 @@
   :root:not([data-theme="light"]){
     --bg:#141633; --ink:#F3EEFF; --soft:#A29DCF; --lane:#1F2250;
     --c1:#B8A1FF; --c2:#6EE7C8; --c3:#FFB38A; --c4:#FFE07A;
+    --k1:#FF6FB5; --k2:#5FD8FF; --k3:#FFA066; --k4:#FFE07A; --k5:#6EE7A0; --k6:#B8A1FF; --k7:#7C97FF; --k8:#F3EEFF;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#141633; --ink:#F3EEFF; --soft:#A29DCF; --lane:#1F2250;
   --c1:#B8A1FF; --c2:#6EE7C8; --c3:#FFB38A; --c4:#FFE07A;
+    --k1:#FF6FB5; --k2:#5FD8FF; --k3:#FFA066; --k4:#FFE07A; --k5:#6EE7A0; --k6:#B8A1FF; --k7:#7C97FF; --k8:#F3EEFF;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
@@ -60,7 +63,7 @@ h2{font-size:clamp(1.6rem,6vw,2.2rem);margin:0}
 .nav.prev{left:.8rem}.nav.next{right:.8rem}
 @media (max-width:520px){.nav{display:none}}
 @media (prefers-reduced-motion:reduce){.song-card{transition:none}}
-.filters{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;width:100%;text-align:left}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;width:100%;text-align:left}
 .filters label{display:flex;flex-direction:column;gap:.3rem;font-size:.9rem;color:var(--soft)}
 select{font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:14px;border:2px solid var(--lane);background:var(--bg);color:var(--ink);width:100%}
 .rank-list{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:.45rem}
@@ -73,6 +76,16 @@ select{font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:14px;borde
 .rank-list .meta{font-size:.8rem;color:var(--soft);line-height:1.4}
 .rank-list .gr{font-family:"Jua",sans-serif;font-size:1.7rem;color:var(--c1)}
 .empty{color:var(--soft);margin:0}
+.diff-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;width:100%}
+.diff-btn{font:inherit;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.9rem .4rem;border-radius:18px;border:2px solid transparent;background:var(--lane);color:var(--ink);cursor:pointer}
+.diff-btn[aria-pressed="true"]{border-color:var(--ink)}
+.diff-btn .dn{font-family:"Jua",sans-serif;font-size:1.35rem}
+.diff-btn .dl{font-size:.95rem;font-weight:700}
+.diff-btn .dr{font-size:.75rem;color:var(--soft)}
+.dE{color:var(--k5)}.dN{color:var(--k3)}.dH{color:var(--k1)}
+.song-card .lvs{font-size:.82rem;display:flex;gap:.5rem;flex-wrap:wrap}
+.pause-btn{position:absolute;right:1rem;top:calc(env(safe-area-inset-top,0px) + .8rem);z-index:2;width:3rem;height:3rem;border-radius:50%;border:2px solid var(--ink);background:var(--bg);color:var(--ink);font:inherit;font-size:1.1rem;font-weight:700;cursor:pointer;letter-spacing:-.1em}
+.rotate-icon{font-size:3.5rem;line-height:1}
 .opts input[type=text],.opts input[type=file]{display:block;font:inherit;font-size:1rem;width:100%;margin-top:.35rem;padding:.55rem .7rem;border-radius:14px;border:2px solid color-mix(in srgb,var(--soft) 35%,transparent);background:var(--bg);color:var(--ink)}
 .mk-list li{grid-template-columns:1fr auto}
 .mk-btns{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:flex-end}
@@ -129,12 +142,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
       </div>
       <div class="opts">
         <div>
-          <div class="opt-title" id="diffLabel">난이도</div>
+          <div class="opt-title" id="diffLabel">키 개수</div>
           <div class="seg four" id="diffSeg" role="group" aria-labelledby="diffLabel">
-            <button type="button" data-lanes="2" aria-pressed="false">쉬움<span class="keys">Q W</span></button>
-            <button type="button" data-lanes="3" aria-pressed="true">보통<span class="keys">Q W E</span></button>
-            <button type="button" data-lanes="4" aria-pressed="false">어려움<span class="keys">Q W E R</span></button>
-            <button type="button" data-lanes="8" aria-pressed="false">아주 어려움<span class="keys">A S D F J K L ;</span></button>
+            <button type="button" data-lanes="3" aria-pressed="false">3키<span class="keys">Q W E</span></button>
+            <button type="button" data-lanes="4" aria-pressed="true">4키<span class="keys">D F · J K</span></button>
+            <button type="button" data-lanes="5" aria-pressed="false">5키<span class="keys">Q W E · O P</span></button>
+            <button type="button" data-lanes="8" aria-pressed="false">8키<span class="keys">A S D F · J K L ;</span></button>
           </div>
         </div>
         <div>
@@ -169,6 +182,30 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
   </div>
 
   <button id="recStop" class="secondary rec-stop" type="button" hidden>기록 끝내기</button>
+  <button id="pauseBtn" class="pause-btn" type="button" aria-label="일시정지" hidden>❚❚</button>
+
+  <div id="songpop" class="overlay hidden">
+    <div class="panel">
+      <h2 id="popName"></h2>
+      <p class="song-line" id="popDesc"></p>
+      <div class="diff-btns" id="popDiffs"></div>
+      <p class="hint" id="popKeys"></p>
+      <div class="btns">
+        <button id="popStart" class="primary" type="button">시작하기</button>
+        <button id="popClose" class="secondary" type="button">돌아가기</button>
+      </div>
+      <p class="hint">숫자 1, 2, 3이나 ← →로 난이도를 고르고 스페이스로 시작해요.</p>
+    </div>
+  </div>
+
+  <div id="rotate" class="overlay hidden">
+    <div class="panel">
+      <div class="rotate-icon" aria-hidden="true">⟳</div>
+      <h2>휴대폰을 가로로 돌려주세요</h2>
+      <p class="hint">가로로 돌리면 바로 시작해요.</p>
+      <button id="rotateSkip" class="secondary" type="button">그냥 세로로 할래요</button>
+    </div>
+  </div>
 
   <div id="maker" class="overlay hidden">
     <div class="panel">
@@ -224,6 +261,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
       <div class="filters">
         <label>곡<select id="rankSong"></select></label>
         <label>난이도<select id="rankDiff"></select></label>
+        <label>키<select id="rankKeys"></select></label>
       </div>
       <ol class="rank-list" id="rankList"></ol>
       <p class="empty" id="rankEmpty" hidden>아직 기록이 없어요. 한 판 해보세요!</p>
@@ -283,7 +321,7 @@ addEventListener('resize', resize);
 const colors = {};
 function readColors(){
   const cs = getComputedStyle(document.documentElement);
-  ['bg','ink','soft','lane','c1','c2','c3','c4'].forEach(k => colors[k] = cs.getPropertyValue('--' + k).trim());
+  ['bg','ink','soft','lane','c1','c2','c3','c4','k1','k2','k3','k4','k5','k6','k7','k8'].forEach(k => colors[k] = cs.getPropertyValue('--' + k).trim());
 }
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
 
@@ -568,7 +606,7 @@ function noteNum(n){
   return 12 * (+m[3] + 1) + {C:0, D:2, E:4, F:5, G:7, A:9, B:11}[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
 }
 function buildScore(S){
-  const notes = [], ev = [], bars = [], beats = [], marks = [];
+  const notes = [], ev = [], bars = [], beats = [], marks = [], rhythm = [];
   let tc = 0, prev = null;
   S.sections.forEach((s, si) => {
     const M = s.meter || S.meter, N16 = M.steps * 2, bpm = s.bpm || S.bpm, X = 60 / bpm / 4, tr = s.transpose || 0;
@@ -583,13 +621,14 @@ function buildScore(S){
       marks.push({t: tc, text: parts.join(' ')});
     }
     prev = {label: M.label, bpm, tr};
+    const beat16 = new Set(); if (M.group.every(gl => gl === 1)) beat16.add(0); else { let gs = 0; M.group.forEach(gl => { beat16.add(gs * 2); gs += gl; }); }   // 3/8박자는 마디 첫 박만
     for (let b = 0; b < s.bars; b++){
       const bt = tc + b * N16 * X; bars.push(bt);
       let gs = 0; M.group.forEach(gl => { beats.push(bt + gs * 2 * X); gs += gl; });
       const D = s.drums;
       if (D){
-        (D.kick || []).forEach(p => ev.push({t: bt + p * X, k:'kick', kit: D.kit, E: 2 * X}));
-        (D.snare || []).forEach(p => ev.push({t: bt + p * X, k:'snare', v: 1, kit: D.kit}));
+        (D.kick || []).forEach(p => { ev.push({t: bt + p * X, k:'kick', kit: D.kit, E: 2 * X}); rhythm.push({t: bt + p * X, step: p / 2, beat: beat16.has(p)}); });
+        (D.snare || []).forEach(p => { ev.push({t: bt + p * X, k:'snare', v: 1, kit: D.kit}); rhythm.push({t: bt + p * X, step: p / 2, beat: beat16.has(p)}); });
         const hs = D.hat === '16' ? 1 : D.hat === '8' ? 2 : D.hat === '4' ? 4 : 0;
         if (hs) for (let p = 0; p < N16; p += hs) ev.push({t: bt + p * X, k:'hat', v: p % 4 === 0 ? 1 : .6, pan: (p / hs) % 2 ? .25 : -.15, kit: D.kit});
       }
@@ -601,14 +640,14 @@ function buildScore(S){
       events.forEach(n => {
         const t = tc + n.pos * X, d = n.dur * X, ms = n.ms.map(m => m + tr + (tk.oct || 0));
         ev.push({t, k:'note', lead: !!tk.chart || /bass|cello/.test(tk.inst) && (tk.v == null || tk.v >= .8), inst: tk.inst, ms, d: d * (tk.legato != null ? tk.legato : .95), v: tk.v != null ? tk.v : 1, rev: tk.rev != null ? tk.rev : .3, pan: tk.pan || 0});
-        if (tk.chart) notes.push({t, len: d >= .6 ? d * .9 : 0, pos: Math.max(...ms), step: (n.pos % N16) / 2, dbl: !!s.dbl});
+        if (tk.chart) notes.push({t, len: d >= .6 ? d * .9 : 0, pos: Math.max(...ms), step: (n.pos % N16) / 2, dbl: !!s.dbl, beat: beat16.has(n.pos % N16)});
       });
     });
     tc += s.bars * N16 * X;
   });
   bars.push(tc);
   ev.sort((a, b) => a.t - b.t); notes.sort((a, b) => a.t - b.t);
-  return {notes, ev, E: 60 / S.bpm / 2, bars, beats, marks};
+  return {notes, ev, E: 60 / S.bpm / 2, bars, beats, marks, rhythm};
 }
 
 function songMeterText(S){
@@ -622,16 +661,19 @@ function songBpmText(S){
   return lo === hi ? `${lo} BPM` : `${lo}~${hi} BPM`;
 }
 
-const KEYMAP = {2:['KeyQ','KeyW'], 3:['KeyQ','KeyW','KeyE'], 4:['KeyQ','KeyW','KeyE','KeyR'],
+const KEYMAP = {3:['KeyQ','KeyW','KeyE'], 4:['KeyD','KeyF','KeyJ','KeyK'], 5:['KeyQ','KeyW','KeyE','KeyO','KeyP'],
   8:['KeyA','KeyS','KeyD','KeyF','KeyJ','KeyK','KeyL','Semicolon']};
-const CAPS = {2:['Q','W'], 3:['Q','W','E'], 4:['Q','W','E','R'], 8:['A','S','D','F','J','K','L',';']};
-const DIFF = {2:'쉬움', 3:'보통', 4:'어려움', 8:'아주 어려움'};
+const CAPS = {3:['Q','W','E'], 4:['D','F','J','K'], 5:['Q','W','E','O','P'], 8:['A','S','D','F','J','K','L',';']};
+const SPLIT = {3:0, 4:2, 5:3, 8:4};   // 양손 사이를 살짝 띄워요
+const KCOL = {3:['k1','k2','k4'], 4:['k1','k2','k3','k5'], 5:['k1','k2','k4','k5','k6'], 8:['k1','k2','k3','k4','k5','k6','k7','k8']};
+const DIFFS = ['easy','normal','hard'], DNAME = {easy:'쉬움', normal:'보통', hard:'어려움'}, DCLS = {easy:'dE', normal:'dN', hard:'dH'};
+const DIFF = {2:'쉬움', 3:'보통', 4:'어려움', 8:'아주 어려움'};   // 예전 기록 표시용
 
 function rng(seed){ return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
 
 function buildSong(S){
   if (S.score) return buildScore(S);
-  const r = rng(S.seed), notes = [], ev = [], bars = [], beats = [], marks = [];
+  const r = rng(S.seed), notes = [], ev = [], bars = [], beats = [], marks = [], rhythm = [];
   const totalBars = S.sections.reduce((a, s) => a + s.bars, 0);
   const L = S.scale.length, mid = Math.floor(L / 2);
   const near = (idx, tones) => {
@@ -652,6 +694,7 @@ function buildSong(S){
       marks.push({t: tc, text: parts.join(' ')});
     }
     prevM = M.label; prevBpm = bpm;
+    const beatSet = new Set(); { let gs = 0; M.group.forEach(gl => { beatSet.add(gs); gs += gl; }); }
     const motifs = {};
     for (let b = 0; b < s.bars; b++, bar++){
       const bt = tc, ch = S.chords[bar % S.chords.length], tones = ch.map(n => n % 12);
@@ -669,8 +712,8 @@ function buildSong(S){
       const hs = h === 'e' ? range(0, N) : h === 'q' ? range(0, N, 2) : h === 'off' ? range(1, N, 2) : h === 's' ? range(0, N, .5) : [];
       hs.forEach((st, k) => ev.push({t: at(st), k:'hat', v: Number.isInteger(st) && st % 2 === 0 ? 1 : .6, open: h === 'off', pan: k % 2 ? .25 : -.15}));
       if (S.arp && s.bass && !last) range(0, N).forEach(st => ev.push({t: at(st), k:'arp', m: ch[st % ch.length] + 24}));
-      (last ? [0] : s.kick).filter(st => st < N).forEach(st => ev.push({t: at(st), k:'kick', E}));
-      if (!last) s.snare.filter(st => st < N && (!fillBar || st < N - 2)).forEach(st => ev.push({t: at(st), k:'snare', v:1}));
+      (last ? [0] : s.kick).filter(st => st < N).forEach(st => { ev.push({t: at(st), k:'kick', E}); if (!last) rhythm.push({t: at(st), step: st, beat: beatSet.has(st)}); });
+      if (!last) s.snare.filter(st => st < N && (!fillBar || st < N - 2)).forEach(st => { ev.push({t: at(st), k:'snare', v:1}); rhythm.push({t: at(st), step: st, beat: beatSet.has(st)}); });
       if (fillBar) [N - 2, N - 1.5, N - 1, N - .5].forEach((st, k) => ev.push({t: at(st), k:'snare', v: .45 + k * .18}));
       if (b === 0 && si > 0) ev.push({t: bt, k:'crash'});
 
@@ -705,19 +748,72 @@ function buildSong(S){
         const t = at(st), len = ls ? at(st + ls) - t : 0;
         ev.push({t, k:'lead', m: S.scale[idx], d: len});
         if (s.dbl && !last) ev.push({t, k:'lead', m: S.scale[Math.max(0, idx - 2)] - (S.harmInst ? 12 : 0), d: len, harm: true});
-        notes.push({t, len, pos: idx, step: st, dbl: !!s.dbl});
+        notes.push({t, len, pos: idx, step: st, dbl: !!s.dbl, beat: beatSet.has(st)});
       });
     }
   });
   bars.push(tc);
   ev.sort((a, b) => a.t - b.t);
-  return {notes, ev, E: 60 / S.bpm / 2, bars, beats, marks};
+  return {notes, ev, E: 60 / S.bpm / 2, bars, beats, marks, rhythm};
 }
 
 // 난이도에 맞게 방울을 줄에 배치해요 (높은 음일수록 오른쪽 줄)
+/* ---------- 난이도별 채보 ----------
+   쉬움: 박자 위에만, 동시치기 없음
+   보통: 8분음표까지, 마디 첫 박에 가끔 동시치기
+   어려움: 16분음표와 셋잇단까지 전부, 드럼의 엇박을 더하고 동시치기 자주 */
+function chartFor(sg, dk){
+  const src = sg.notes.slice().sort((a, b) => a.t - b.t);
+  const minGap = {easy: .34, normal: .15, hard: .06}[dk];
+  const keep = n => dk === 'hard' || (dk === 'normal' ? (Number.isInteger(n.step) || n.len > 0) : (n.beat || n.len >= .5));
+  const out = [];
+  let lastT = -9;
+  for (const n of src){
+    if (!keep(n) || n.t - lastT < minGap - 1e-3) continue;
+    let len = n.len;
+    if (dk === 'easy' && len && len < .5) len = 0;
+    out.push(Object.assign({}, n, {len, chord: false})); lastT = n.t;
+  }
+  if (dk === 'hard' && sg.rhythm){
+    // 드럼의 엇박에 노트를 더해서 리듬을 쪼개요
+    const extra = [];
+    let k = 0;
+    for (const r of sg.rhythm){
+      if (r.beat) continue;
+      if (out.some(n => Math.abs(n.t - r.t) < .11 || (n.len && r.t > n.t - .05 && r.t < n.t + n.len + .05)) || extra.some(n => Math.abs(n.t - r.t) < .11)) continue;
+      let near = out[0]; for (const n of out){ if (n.t > r.t) break; near = n; }
+      extra.push({t: r.t, len: 0, pos: (near ? near.pos : 0) + (k++ % 2 ? 3 : -3), step: r.step, beat: false, dbl: false, chord: false});
+    }
+    out.push(...extra); out.sort((a, b) => a.t - b.t);
+  }
+  // 동시치기
+  out.forEach(n => {
+    if (n.len) return;
+    if (dk === 'normal') n.chord = n.dbl && n.step === 0;
+    else if (dk === 'hard') n.chord = (n.dbl && n.beat) || (n.step === 0 && Math.round(n.t * 10) % 3 === 0);
+  });
+  return out;
+}
+
+// 곡마다 난이도별 레벨(1~10)을 노트 양과 빽빽함으로 계산해요
+const levelCache = {};
+function songLevels(S){
+  if (levelCache[S.id]) return levelCache[S.id];
+  const sg = buildSong(S), dur = Math.max(20, sg.bars[sg.bars.length - 1] || 60), res = {};
+  for (const dk of DIFFS){
+    const c = chartFor(sg, dk), n = c.length + c.filter(x => x.chord).length;
+    let peak = 0;
+    for (let i = 0, j = 0; i < c.length; i++){ while (c[i].t - c[j].t > 4) j++; peak = Math.max(peak, i - j + 1); }
+    res[dk] = Math.max(1, Math.min(10, Math.round(n / dur * 1.15 + peak / 4 * .75 - .3)));
+  }
+  if (res.normal <= res.easy) res.normal = Math.min(10, res.easy + 1);
+  if (res.hard <= res.normal) res.hard = Math.min(10, res.normal + 1);
+  return levelCache[S.id] = res;
+}
+
+// 정해진 키 개수에 맞게 줄을 나눠요 (높은 음일수록 오른쪽)
 function prepare(src, S, L){
   const busy = new Array(L).fill(-1), out = [];
-  // 음 높이 순서는 지키면서 줄마다 방울 수가 고르게 나뉘도록 해요
   const cdf = {}, total = src.length;
   src.forEach(n => {
     if (cdf[n.pos] !== undefined) return;
@@ -732,20 +828,20 @@ function prepare(src, S, L){
     }
     return -1;
   };
-  const add = (n, lane) => {
+  const add = (n, lane, ch) => {
     busy[lane] = n.t + n.len + (n.len ? .12 : .02);
-    out.push({t: n.t, len: n.len, lane, j: null, tj: null, holding: false});
+    const o = {t: n.t, len: n.len, lane, j: null, tj: null, holding: false, ch};
+    out.push(o); return o;
   };
   src.forEach((n, i) => {
-    if (L === 2 && n.len === 0 && !(Number.isInteger(n.step) && n.step % 2 === 0)) return;
-    if (L === 3 && n.len === 0 && !Number.isInteger(n.step)) return;
-    const jit = L === 8 ? (((i * 7) % 3) - 1) * .6 : 0;  // 8줄에서는 골고루 퍼지도록 살짝 흔들어요
-    let lane = free(Math.max(0, Math.min(L - 1, Math.floor(cdf[n.pos] * L + jit))), n.t);
+    const jit = L >= 5 ? (((i * 7) % 3) - 1) * .6 : 0;   // 줄이 많을 때는 골고루 퍼지도록
+    const lane = free(Math.max(0, Math.min(L - 1, Math.floor(cdf[n.pos] * L + jit))), n.t);
     if (lane < 0) return;
-    add(n, lane);
-    if (L === 8 && n.dbl && n.step === 0 && n.len === 0){
-      const other = free(7 - lane, n.t);
-      if (other >= 0 && other !== lane) add(n, other);
+    const a = add(n, lane, false);
+    if (n.chord){
+      let want = L - 1 - lane; if (want === lane) want = lane > 0 ? lane - 1 : lane + 1;
+      const other = free(want, n.t);
+      if (other >= 0 && other !== lane){ add(n, other, true); a.ch = true; }
     }
   });
   out.sort((a, b) => a.t - b.t);
@@ -755,6 +851,14 @@ function prepare(src, S, L){
 /* ---------- 소리 ---------- */
 let ctx = null, master = null, noiseBuf = null, irBuf = null;
 const PW = {};
+function makeIR(c){
+  const len = Math.floor(c.sampleRate * 1.6), b = c.createBuffer(2, len, c.sampleRate);
+  for (let ch = 0; ch < 2; ch++){
+    const x = b.getChannelData(ch);
+    for (let i = 0; i < len; i++) x[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2);
+  }
+  return b;
+}
 function ensureCtx(){
   if (!ctx){
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -762,12 +866,7 @@ function ensureCtx(){
     noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
     const d = noiseBuf.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    const len = Math.floor(ctx.sampleRate * 1.6);
-    irBuf = ctx.createBuffer(2, len, ctx.sampleRate);
-    for (let c = 0; c < 2; c++){
-      const x = irBuf.getChannelData(c);
-      for (let i = 0; i < len; i++) x[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2);
-    }
+    irBuf = makeIR(ctx);
   }
   if (ctx.state === 'suspended') ctx.resume();
 }
@@ -1145,8 +1244,8 @@ function thunk(){
 
 
 /* ---------- 게임 상태 ---------- */
-let state = 'menu', selected = 'candy', cur = SONGS[0], wasRandom = false;
-let song = null, notes = [], evIdx = 0, t0 = 0, travel = 1.5, offsetMs = 0, songEnd = 0, lanes = 3, BEAT = .5;
+let state = 'menu', selected = 'candy', cur = SONGS[0], wasRandom = false, diff = 'normal', popSel = 1, cdStart = 0, allowPortrait = false;
+let song = null, notes = [], evIdx = 0, t0 = 0, travel = 1.5, offsetMs = 0, songEnd = 0, lanes = 4, BEAT = .5;
 let score = 0, combo = 0, maxCombo = 0, counts = {p:0, g:0, o:0, m:0, x:0}, total = 1;
 let fx = [], judgeFx = null, nextNote = 0, lastSpark = 0;
 let pressFlash = new Array(8).fill(0), held = new Array(8).fill(null), shake = new Array(8).fill(0);
@@ -1164,21 +1263,20 @@ function addHist(entry){
   h.sort((a, b) => b.score - a.score);
   save('bangul-hist', JSON.stringify(h.slice(0, 500)));
 }
-function bestOf(id, L){ return getHist().find(x => x.song === id && x.lanes === L) || null; }
+// 같은 곡, 같은 난이도, 같은 키 개수끼리 비교해요 (내 곡은 난이도 없음)
+const sameRec = (x, id, L, dk) => x.song === id && x.lanes === L && (dk ? x.diff === dk : !x.diff && /^(my|h)-/.test(id));
+function bestOf(id, L, dk){ return getHist().find(x => sameRec(x, id, L, dk)) || null; }
 function migrate(){
   if (load('bangul-migrated')) return;
   SONGS.forEach(s => [2,3,4,8].forEach(L => {
     const r = getRec(s.id, L);
-    if (r && !bestOf(s.id, L)) addHist({song: s.id, lanes: L, score: r.score, grade: r.grade, fc: !!r.fc, acc: null, combo: null, date: null});
+    if (r && !getHist().some(x => x.song === s.id && x.lanes === L)) addHist({song: s.id, lanes: L, score: r.score, grade: r.grade, fc: !!r.fc, acc: null, combo: null, date: null});
   }));
   save('bangul-migrated', '1');
 }
 let lastEntry = null;
 
-function laneColor(k){
-  const name = lanes === 8 ? ['c1','c2','c3','c4','c4','c3','c2','c1'][k] : 'c' + (k + 1);
-  return colors[name];
-}
+function laneColor(k){ return colors[(KCOL[lanes] || KCOL[4])[k]]; }
 
 /* ---------- 내 곡: 음악 파일 + 직접 기록한 채보 ---------- */
 const MY = [], HOSTED = [];
@@ -1248,19 +1346,20 @@ async function renderSong(S){
   const sg = buildSong(S);
   const dur = (sg.ev.length ? sg.ev[sg.ev.length - 1].t : 0) + 3.5;
   const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-  const realCtx = ctx, realMaster = master, savedPW = Object.assign({}, PW);
-  const off = new OAC(2, Math.ceil(dur * realCtx.sampleRate), realCtx.sampleRate);
+  const realCtx = ctx, realMaster = master, realIR = irBuf, savedPW = Object.assign({}, PW);
+  const SR = 44100;   // 기기 설정과 상관없이 같은 품질로 만들어요
+  const off = new OAC(2, Math.ceil(dur * SR), SR);
   let job;
   Object.keys(PW).forEach(k => delete PW[k]);
   try {
-    ctx = off; OFFLINE = true; voiceEnds = [];
+    ctx = off; OFFLINE = true; voiceEnds = []; irBuf = makeIR(off);
     master = newBus(S);
     let bad = 0, lastErr = null;
     for (const e of sg.ev){ try { play(e, e.t + PAD); } catch(err){ bad++; lastErr = err; } }   // 문제 있는 음은 건너뛰어요
     if (bad) console.warn(`미리 만들기: ${bad}개 음을 건너뛰었어요`, lastErr);
     job = off.startRendering();
   } finally {
-    ctx = realCtx; master = realMaster; OFFLINE = false; voiceEnds = [];
+    ctx = realCtx; master = realMaster; OFFLINE = false; voiceEnds = []; irBuf = realIR;
     Object.keys(PW).forEach(k => delete PW[k]); Object.assign(PW, savedPW);
   }
   const buf = await job;
@@ -1300,7 +1399,7 @@ function prepareAudio(src, srcL, L){
 let recNotes = [], recHold = new Array(8).fill(null), recSong = null, recLen = 0;
 function showLoading(text){ $('#loadingText').textContent = text; state = 'loading'; show('loading'); }
 function openMaker(){
-  $('#mkInfo').textContent = `지금 고른 난이도(${DIFF[lanes]}: ${CAPS[lanes].join(' ')})의 키로 기록해요. 휴대폰에서는 각 줄을 터치하면 돼요. 다른 난이도로 플레이하면 줄 수가 자동으로 바뀌어요.`;
+  $('#mkInfo').textContent = `지금 고른 ${lanes}키(${CAPS[lanes].join(' ')})로 기록해요. 휴대폰에서는 각 줄을 터치하면 돼요. 다른 키 개수로 플레이하면 줄 수가 자동으로 바뀌어요.`;
   renderMakerList(); state = 'maker'; show('maker');
 }
 async function startRecord(){
@@ -1403,13 +1502,17 @@ function renderCards(){
     let rec;
     if (s.id === 'random') rec = '어떤 곡이 나올까요?';
     else {
-      const r = bestOf(s.id, lanes);
-      rec = r ? `${DIFF[lanes]} 최고 ${r.grade} (${Number(r.score).toLocaleString('ko-KR')})${r.fc ? ', 풀콤보' : ''}` : `${DIFF[lanes]} 기록 없음`;
+      const r = getHist().find(x => x.song === s.id && x.lanes === lanes && (s.audio ? !x.diff : x.diff));
+      rec = r ? `${lanes}키 최고 ${r.grade}${r.diff ? ` (${DNAME[r.diff]})` : ''}${r.fc ? ', 풀콤보' : ''}` : `${lanes}키 기록 없음`;
     }
-    const lv = s.lv ? `<span class="lv" aria-label="곡 난이도 5단계 중 ${s.lv}">${stars(s.lv)}</span>` : s.custom ? `<span class="lv">내 곡</span>` : s.hosted ? `<span class="lv">올린 곡</span>` : `<span class="lv">? ? ?</span>`;
+    let lv;
+    if (s.id === 'random') lv = `<span class="lvs"><span class="dE">쉬움</span><span class="dN">보통</span><span class="dH">어려움</span></span>`;
+    else if (s.custom) lv = `<span class="lv">내 곡</span>`;
+    else if (s.hosted) lv = `<span class="lv">올린 곡</span>`;
+    else { const L = songLevels(s); lv = `<span class="lvs">${DIFFS.map(dk => `<span class="${DCLS[dk]}">${DNAME[dk]} ${L[dk]}</span>`).join('')}</span>`; }
     const meta = s.bpm ? `${s.desc}. ${songMeterText(s)}, ${songBpmText(s)}` : s.desc;
     b.innerHTML = `<span class="nm"><span class="sd">${s.dots.map(d => `<i class="${d}"></i>`).join('')}</span>${esc(s.name)}</span>${lv}<span class="ds">${meta}</span><span class="rec">${rec}</span>`;
-    b.addEventListener('click', () => { b.blur(); selectCard(i); });
+    b.addEventListener('click', () => { b.blur(); if (selIdx === i) openPop(); else selectCard(i); });
     box.appendChild(b);
   });
   const idx = Math.max(0, items.findIndex(s => s.id === selected));
@@ -1437,16 +1540,63 @@ function setupCarousel(){
   }, {passive: false});
 }
 
+/* ---------- 곡 팝업: 난이도 고르기 ---------- */
+let popSong = null;
+function popOrder(){ return popSong && popSong.audio ? ['one'] : DIFFS; }
+function openPop(){
+  const id = selected;
+  popSong = id === 'random' ? {id: 'random', name: '랜덤', desc: `${SONGS.length}곡 중 하나를 골라줘요`} : allSongs().find(s => s.id === id);
+  if (!popSong) return;
+  popSel = popSong.audio ? 0 : Math.max(0, DIFFS.indexOf(diff));
+  renderPop(); state = 'songpop'; show('songpop');
+}
+function renderPop(){
+  const S = popSong;
+  $('#popName').textContent = S.name;
+  $('#popDesc').textContent = S.bpm ? `${S.desc}. ${songMeterText(S)}, ${songBpmText(S)}` : S.desc;
+  $('#popKeys').textContent = `${lanes}키로 해요: ${CAPS[lanes].join(' ')} (키 개수는 처음 화면에서 바꿀 수 있어요)`;
+  const box = $('#popDiffs');
+  if (S.audio){
+    const r = bestOf(S.id, lanes, null);
+    box.style.gridTemplateColumns = '1fr';
+    box.innerHTML = `<button type="button" class="diff-btn" aria-pressed="true" data-i="0"><span class="dn">${S.custom ? '내 곡' : '올린 곡'}</span><span class="dr">${r ? `최고 ${r.grade}, ${Number(r.score).toLocaleString('ko-KR')}` : '기록 없음'}</span></button>`;
+  } else {
+    box.style.gridTemplateColumns = '';
+    const L = S.id === 'random' ? null : songLevels(S);
+    box.innerHTML = DIFFS.map((dk, i) => {
+      const r = S.id === 'random' ? null : bestOf(S.id, lanes, dk);
+      return `<button type="button" class="diff-btn" aria-pressed="${i === popSel}" data-i="${i}"><span class="dn ${DCLS[dk]}">${DNAME[dk]}</span><span class="dl">${L ? '레벨 ' + L[dk] : '레벨 ?'}</span><span class="dr">${r ? `최고 ${r.grade}${r.fc ? ', 풀콤보' : ''}` : '기록 없음'}</span></button>`;
+    }).join('');
+  }
+  box.querySelectorAll('.diff-btn').forEach(b => b.addEventListener('click', () => {
+    const i = Number(b.dataset.i);
+    if (popSel === i) popStartNow(); else { popSel = i; renderPop(); }
+  }));
+}
+function popStartNow(){
+  if (!popSong) return;
+  if (!popSong.audio){ diff = DIFFS[popSel] || 'normal'; save('bangul-diff', diff); }
+  allowPortrait = false;
+  start(false);
+}
+function closePop(){ state = 'menu'; show('menu'); }
+async function goLandscape(){
+  if (!IS_MOBILE) return;
+  try { if (!document.fullscreenElement && document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen({navigationUI: 'hide'}); } catch(e){}
+  try { if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch(e){}
+}
+
 /* ---------- 역대 랭킹 ---------- */
 let rankFrom = 'menu';
 function setupRankFilters(){
   $('#rankSong').innerHTML = `<option value="all">전체 곡</option>` + allSongs().map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
-  $('#rankDiff').innerHTML = `<option value="all">전체 난이도</option>` + [2,3,4,8].map(L => `<option value="${L}">${DIFF[L]}</option>`).join('');
+  $('#rankDiff').innerHTML = `<option value="all">전체</option>` + DIFFS.map(dk => `<option value="${dk}">${DNAME[dk]}</option>`).join('');
+  $('#rankKeys').innerHTML = `<option value="all">전체</option>` + [3,4,5,8].map(L => `<option value="${L}">${L}키</option>`).join('');
 }
 function openRank(from){
   rankFrom = from;
-  if (from === 'result'){ $('#rankSong').value = cur.id; $('#rankDiff').value = String(lanes); }
-  else { $('#rankSong').value = selected === 'random' ? 'all' : selected; $('#rankDiff').value = 'all'; }
+  if (from === 'result'){ $('#rankSong').value = cur.id; $('#rankDiff').value = cur.audio ? 'all' : diff; $('#rankKeys').value = String(lanes); }
+  else { $('#rankSong').value = selected === 'random' ? 'all' : selected; $('#rankDiff').value = 'all'; $('#rankKeys').value = String(lanes); }
   renderRank();
   state = 'rank'; show('rank');
 }
@@ -1455,12 +1605,12 @@ function closeRank(){
   if (rankFrom === 'menu') renderCards();
 }
 function renderRank(){
-  const sid = $('#rankSong').value, d = $('#rankDiff').value;
-  const list = getHist().filter(x => (sid === 'all' || x.song === sid) && (d === 'all' || x.lanes === Number(d))).slice(0, 30);
+  const sid = $('#rankSong').value, d = $('#rankDiff').value, k = $('#rankKeys').value;
+  const list = getHist().filter(x => (sid === 'all' || x.song === sid) && (d === 'all' || x.diff === d) && (k === 'all' || (x.lanes === Number(k) && (x.diff || /^(my|h)-/.test(x.song))))).slice(0, 30);
   $('#rankList').innerHTML = list.map((x, i) => {
     const s = allSongs().find(q => q.id === x.song);
     const date = x.date ? new Date(x.date).toLocaleDateString('ko-KR', {month:'long', day:'numeric'}) : '';
-    const meta = [s ? esc(s.name) : '지운 곡', DIFF[x.lanes], x.acc != null ? x.acc + '%' : '', x.combo != null ? `최대 ${x.combo}콤보` : '', x.fc ? '풀콤보' : '', date].filter(Boolean).join(', ');
+    const meta = [s ? esc(s.name) : '지운 곡', x.diff ? `${DNAME[x.diff]} ${x.lanes}키` : /^(my|h)-/.test(x.song) ? `${x.lanes}키` : `예전 기록 (${DIFF[x.lanes] || ''})`, x.acc != null ? x.acc + '%' : '', x.combo != null ? `최대 ${x.combo}콤보` : '', x.fc ? '풀콤보' : '', date].filter(Boolean).join(', ');
     return `<li class="${x.date && x.date === lastEntry ? 'me' : ''}"><span class="no">${i + 1}</span><span class="who"><span class="sc">${Number(x.score).toLocaleString('ko-KR')}</span><span class="meta">${meta}</span></span><span class="gr">${x.grade}</span></li>`;
   }).join('');
   $('#rankEmpty').hidden = list.length > 0;
@@ -1469,10 +1619,11 @@ function renderRank(){
 /* ---------- 진행 ---------- */
 function vTime(){ return ctx ? ctx.currentTime - t0 - (ctx.outputLatency || 0) : -99; }
 function jTime(){ return vTime() - offsetMs / 1000; }
-function show(id){ ['menu','pause','result','rank','maker','recdone','loading'].forEach(k => $('#' + k).classList.toggle('hidden', k !== id)); $('#recStop').hidden = state !== 'rec'; }
+function show(id){ ['menu','pause','result','rank','maker','recdone','loading','songpop','rotate'].forEach(k => $('#' + k).classList.toggle('hidden', k !== id)); $('#recStop').hidden = state !== 'rec'; $('#pauseBtn').hidden = !(state === 'playing' || state === 'countdown'); }
 
 function start(again){
   ensureCtx();
+  if (!again) goLandscape();
   if (master){ try { master.out.disconnect(); } catch(e){} }
   if (!again){
     wasRandom = selected === 'random';
@@ -1493,11 +1644,13 @@ function start(again){
     loadAudio(cur).then(() => start(true)).catch(() => { state = 'menu'; show('menu'); alert('음악을 불러오지 못했어요.'); });
     return;
   }
+  // 휴대폰은 가로로 해요
+  if (IS_MOBILE && !allowPortrait && innerHeight > innerWidth){ state = 'rotate'; show('rotate'); return; }
   master = newBus(cur);
   song = cur.audio ? buildAudioSong(cur) : buildSong(cur); BEAT = song.E * 2;
   const synthBuf = cur.audio ? null : renderCache.get(renderKey(cur));
   if (synthBuf) song.ev = [];   // 음악은 이미 만들어져 있으니 실시간으로 만들 것이 없어요
-  notes = cur.audio ? prepareAudio(song.notes, song.audioLanes, lanes) : prepare(song.notes, cur, lanes);
+  notes = cur.audio ? prepareAudio(song.notes, song.audioLanes, lanes) : prepare(chartFor(song, diff), cur, lanes);
   total = notes.length + notes.filter(n => n.len > 0).length;
   evIdx = 0; nextNote = 0;
   score = 0; combo = 0; maxCombo = 0; counts = {p:0, g:0, o:0, m:0, x:0};
@@ -1522,9 +1675,10 @@ function pause(){
   held.forEach((n, k) => { if (n){ n.holding = false; n.tj = 'o'; judge(n, 'o', 1, true); held[k] = null; } });
   state = 'paused'; ctx.suspend(); show('pause');
 }
+// 계속하기: 3, 2, 1을 센 다음 이어서 시작해요
 function resume(){
   if (state !== 'paused') return;
-  ctx.resume(); state = 'playing'; show(null);
+  state = 'countdown'; cdStart = performance.now(); show(null);
 }
 function toMenu(){
   stopAudio();
@@ -1539,7 +1693,7 @@ function finish(){
   const fc = counts.m === 0 && counts.x === 0, allP = fc && counts.g === 0 && counts.o === 0;
   $('#grade').textContent = grade;
   $('#resultMsg').textContent = msg;
-  $('#rSong').textContent = `${cur.name}${wasRandom ? ' (랜덤)' : ''}, ${DIFF[lanes]}`;
+  $('#rSong').textContent = `${cur.name}${wasRandom ? ' (랜덤)' : ''}, ${cur.audio ? '' : DNAME[diff] + ', '}${lanes}키`;
   $('#rScore').textContent = score.toLocaleString('ko-KR');
   $('#rAcc').textContent = acc.toFixed(1) + '%';
   $('#rCombo').textContent = maxCombo;
@@ -1547,12 +1701,15 @@ function finish(){
   $('#rO').textContent = counts.o; $('#rM').textContent = counts.m; $('#rX').textContent = counts.x;
   $('#fc').hidden = !fc;
   $('#fc').textContent = allP ? '모두 완벽!' : '풀콤보!';
-  const prev = bestOf(cur.id, lanes);
+  const dk = cur.audio ? null : diff;
+  const prev = bestOf(cur.id, lanes, dk);
   lastEntry = Date.now();
-  addHist({song: cur.id, lanes, score, grade, acc: +acc.toFixed(1), combo: maxCombo, fc, date: lastEntry});
-  const mine = getHist().filter(x => x.song === cur.id && x.lanes === lanes);
+  const entry = {song: cur.id, lanes, score, grade, acc: +acc.toFixed(1), combo: maxCombo, fc, date: lastEntry};
+  if (dk) entry.diff = dk;
+  addHist(entry);
+  const mine = getHist().filter(x => sameRec(x, cur.id, lanes, dk));
   const pos = mine.findIndex(x => x.date === lastEntry) + 1;
-  $('#rankPos').textContent = pos ? `${cur.name} ${DIFF[lanes]} 랭킹 ${pos}위 (총 ${mine.length}판)` : '';
+  $('#rankPos').textContent = pos ? `${cur.name} ${dk ? DNAME[dk] + ' ' : ''}${lanes}키 랭킹 ${pos}위 (총 ${mine.length}판)` : '';
   $('#newBest').hidden = !(prev && score > prev.score);
   const box = $('#bubbles'); box.innerHTML = '';
   if (fc){
@@ -1660,6 +1817,7 @@ function release(lane){
 let slowFrames = 0, frameCount = 0, lastFrameT = 0, autoLiteDone = false, toast = null;
 function frame(){
   requestAnimationFrame(frame);
+  if (state === 'countdown' && performance.now() - cdStart >= 3000){ ctx.resume(); state = 'playing'; show(null); }
   const nowF = performance.now();
   if (state === 'playing' && lastFrameT && !document.hidden){
     frameCount++; if (nowF - lastFrameT > 34) slowFrames++;
@@ -1724,12 +1882,12 @@ function draw(){
   const now = performance.now();
   g.fillStyle = colors.bg; g.fillRect(0, 0, W, H);
   const cx = W / 2, jy = H * .8;
-  const units = lanes + (lanes === 8 ? .5 : 0);
+  const units = lanes + (SPLIT[lanes] ? .5 : 0);
   const baseR = Math.max(22, Math.min(38, Math.min(W, H) * .055));
   const laneW = Math.min(baseR * 3.4, (W - 24) / units);
   const R = Math.min(38, laneW * .36);
   const left = cx - laneW * units / 2;
-  const lx = k => left + laneW * (k + .5) + (lanes === 8 && k >= 4 ? laneW * .5 : 0);
+  const lx = k => left + laneW * (k + .5) + (SPLIT[lanes] && k >= SPLIT[lanes] ? laneW * .5 : 0);
   geom = {centers: Array.from({length: lanes}, (_, k) => lx(k)), R, jy};
   const st = (state === 'menu' || !song) ? -99 : vTime();
   const yOf = d => jy - d / travel * (jy + R);
@@ -1791,6 +1949,7 @@ function draw(){
       if (n.len === 0){
         if (n.j || dt < -.3) continue;
         bubble(x, yOf(dt), R, col, 1);
+        if (n.ch){ g.strokeStyle = colors.ink; g.lineWidth = 3; circle(x, yOf(dt), R * 1.2); g.stroke(); }   // 동시치기 표시
         continue;
       }
       const tailY = yOf(dt + n.len);
@@ -1890,6 +2049,17 @@ function draw(){
     g.fillText(toast.text, cx, H * .3); g.globalAlpha = 1;
   }
 
+  // 계속하기 전 3, 2, 1
+  if (state === 'countdown'){
+    const left3 = 3 - Math.floor((now - cdStart) / 1000);
+    if (left3 > 0){
+      const p = ((now - cdStart) % 1000) / 1000;
+      g.globalAlpha = 1 - p * .6; g.textAlign = 'center'; g.fillStyle = colors.ink;
+      g.font = `${Math.round(Math.min(W, H) * (.22 - p * .06))}px Jua, sans-serif`;
+      g.fillText(String(left3), cx, H * .45); g.globalAlpha = 1;
+    }
+  }
+
   // 박자가 바뀌기 전에 알려줘요
   if (song && state === 'playing'){
     for (const mk of song.marks){
@@ -1937,6 +2107,17 @@ addEventListener('keydown', e => {
     return;
   }
   if (state === 'rank'){ if (e.code === 'Escape') closeRank(); return; }
+  if (state === 'songpop'){
+    const order = popOrder();
+    const di = {Digit1: 0, Digit2: 1, Digit3: 2, Numpad1: 0, Numpad2: 1, Numpad3: 2}[e.code];
+    if (di != null && di < order.length){ e.preventDefault(); popSel = di; popStartNow(); }
+    else if (e.code === 'ArrowLeft' || e.code === 'ArrowRight'){ e.preventDefault(); if (order.length > 1){ popSel = (popSel + (e.code === 'ArrowRight' ? 1 : order.length - 1)) % order.length; renderPop(); } }
+    else if (e.code === 'Space' || e.code === 'Enter'){ e.preventDefault(); if (!e.repeat) popStartNow(); }
+    else if (e.code === 'Escape'){ closePop(); }
+    return;
+  }
+  if (state === 'countdown'){ if (e.code === 'Escape' || e.code === 'KeyP'){ state = 'paused'; show('pause'); } e.preventDefault(); return; }
+  if (state === 'rotate' || state === 'loading') return;
   if (state === 'menu' && (e.code === 'ArrowRight' || e.code === 'ArrowLeft') && e.target.tagName !== 'INPUT'){
     e.preventDefault(); selectCard(selIdx + (e.code === 'ArrowRight' ? 1 : -1)); return;
   }
@@ -1945,7 +2126,7 @@ addEventListener('keydown', e => {
   if (e.code === 'Space'){
     e.preventDefault(); if (e.repeat) return;
     if (state === 'paused') resume();
-    else if (state === 'menu') start(false);
+    else if (state === 'menu') openPop();
     else if (state === 'result') start(true);
     return;
   }
@@ -1978,7 +2159,15 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
 addEventListener('blur', () => pause());
 
 function onBtn(el, fn){ el.addEventListener('click', e => { e.currentTarget.blur(); fn(); }); }
-onBtn($('#startBtn'), () => start(false));
+onBtn($('#startBtn'), () => openPop());
+onBtn($('#popStart'), () => popStartNow());
+onBtn($('#popClose'), () => closePop());
+onBtn($('#pauseBtn'), () => pause());
+onBtn($('#rotateSkip'), () => { allowPortrait = true; start(true); });
+addEventListener('resize', () => {
+  if (state === 'rotate' && innerWidth >= innerHeight) start(true);
+  else if (IS_MOBILE && !allowPortrait && state === 'playing' && innerHeight > innerWidth) pause();
+});
 onBtn($('#againBtn'), () => start(true));
 onBtn($('#resumeBtn'), resume);
 onBtn($('#makerBtn'), openMaker);
@@ -2009,10 +2198,11 @@ onBtn($('#prevSong'), () => selectCard(selIdx - 1));
 onBtn($('#nextSong'), () => selectCard(selIdx + 1));
 $('#rankSong').addEventListener('change', renderRank);
 $('#rankDiff').addEventListener('change', renderRank);
+$('#rankKeys').addEventListener('change', renderRank);
 document.querySelectorAll('.toMenu').forEach(b => onBtn(b, toMenu));
 document.querySelectorAll('#diffSeg button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#diffSeg button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
-  lanes = Number(b.dataset.lanes); save('bangul-lanes', b.dataset.lanes); renderCards(); b.blur();
+  lanes = Number(b.dataset.lanes); save('bangul-keys', b.dataset.lanes); renderCards(); b.blur();
 }));
 document.querySelectorAll('#speedSeg button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#speedSeg button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
@@ -2031,17 +2221,9 @@ const savedSong = load('bangul-song');
 if (savedSong && (savedSong === 'random' || /^(my|h)-/.test(savedSong) || SONGS.some(s => s.id === savedSong))) selected = savedSong;
 const sv = load('bangul-speed');
 if (sv){ const b = document.querySelector(`#speedSeg button[data-speed="${sv}"]`); if (b) b.click(); }
-const dv = load('bangul-lanes');
-if (dv){ const b = document.querySelector(`#diffSeg button[data-lanes="${dv}"]`); if (b) b.click(); }
-// 터치 화면에서는 8줄 모드가 너무 좁아서 숨겨요
-if (matchMedia('(pointer: coarse)').matches && !matchMedia('(pointer: fine)').matches){
-  const b8 = document.querySelector('#diffSeg button[data-lanes="8"]');
-  if (b8){
-    if (lanes === 8) document.querySelector('#diffSeg button[data-lanes="4"]').click();
-    b8.hidden = true;
-    document.querySelector('#diffSeg').style.gridTemplateColumns = 'repeat(3,1fr)';
-  }
-}
+const dv = load('bangul-keys');
+{ const b = document.querySelector(`#diffSeg button[data-lanes="${KEYMAP[dv] ? dv : 4}"]`); if (b) b.click(); }
+const dsv = load('bangul-diff'); if (DIFFS.includes(dsv)) diff = dsv;
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js', {scope: '../'}).catch(() => {});
 function setLite(on){
   LITE = on; save('bangul-lite', on ? '1' : '0');
