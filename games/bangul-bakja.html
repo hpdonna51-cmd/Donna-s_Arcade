@@ -76,6 +76,13 @@ select{font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:14px;borde
 .rank-list .meta{font-size:.8rem;color:var(--soft);line-height:1.4}
 .rank-list .gr{font-family:"Jua",sans-serif;font-size:1.7rem;color:var(--c1)}
 .empty{color:var(--soft);margin:0}
+.key-slots{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;width:100%}
+.key-slot{font:inherit;min-width:3.6rem;height:4.2rem;padding:0 .5rem;border-radius:16px;border:3px solid var(--kc);background:var(--bg);color:var(--kc);font-family:"Jua",sans-serif;font-size:1.5rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem}
+.key-slot small{font-family:"Gowun Dodum",sans-serif;font-size:.7rem;color:var(--soft)}
+.key-slot.wait{background:var(--kc);color:var(--bg);animation:blink 1s infinite}
+.key-gap{width:1rem}
+@keyframes blink{50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.key-slot.wait{animation:none}}
 .load-wrap{width:100%;max-width:22rem;display:flex;flex-direction:column;gap:.6rem}
 .load-bar{height:14px;border-radius:999px;background:var(--lane);overflow:hidden}
 .load-bar i{display:block;height:100%;width:0;border-radius:999px;background:var(--c1);transition:width .25s}
@@ -153,6 +160,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
             <button type="button" data-lanes="6" aria-pressed="false">6키<span class="keys">Q W E · I O P</span></button>
             <button type="button" data-lanes="8" aria-pressed="false">8키<span class="keys">A S D F · J K L ;</span></button>
           </div>
+          <button type="button" class="mini" id="keysBtn" style="margin-top:.6rem">키 바꾸기</button>
         </div>
         <div>
           <div class="opt-title" id="speedLabel">떨어지는 속도</div>
@@ -199,6 +207,19 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="popClose" class="secondary" type="button">돌아가기</button>
       </div>
       <p class="hint">숫자 1, 2, 3이나 ← →로 난이도를 고르고 스페이스로 시작해요.</p>
+    </div>
+  </div>
+
+  <div id="keys" class="overlay hidden">
+    <div class="panel">
+      <h2 id="keysTitle">키 바꾸기</h2>
+      <p class="hint" id="keysHint">바꾸고 싶은 칸을 누른 다음, 쓰고 싶은 키를 눌러요.</p>
+      <div class="key-slots" id="keySlots"></div>
+      <div class="btns">
+        <button id="keysDone" class="primary" type="button">다 됐어요</button>
+        <button id="keysReset" class="secondary" type="button">처음 배치로</button>
+      </div>
+      <p class="hint">키 개수(3 · 4 · 6 · 8키)마다 따로 기억해요. 다른 키 개수는 처음 화면에서 바꾼 다음 여기서 설정하면 돼요.</p>
     </div>
   </div>
 
@@ -675,6 +696,27 @@ const KEYMAP = {3:['KeyQ','KeyW','KeyE'], 4:['KeyD','KeyF','KeyJ','KeyK'], 6:['K
   8:['KeyA','KeyS','KeyD','KeyF','KeyJ','KeyK','KeyL','Semicolon']};
 const CAPS = {3:['Q','W','E'], 4:['D','F','J','K'], 6:['Q','W','E','I','O','P'], 8:['A','S','D','F','J','K','L',';']};
 const SPLIT = {3:0, 4:2, 6:3, 8:4};   // 양손 사이를 살짝 띄워요
+// 키 바꾸기: 기본 배치를 기억해두고, 바꾼 배치는 저장해서 덮어써요
+const DEFAULT_KEYMAP = JSON.parse(JSON.stringify(KEYMAP));
+function keyLabel(code){
+  const named = {Semicolon:';', Quote:"'", Comma:',', Period:'.', Slash:'/', Backslash:'\\', BracketLeft:'[', BracketRight:']', Minus:'-', Equal:'=', Backquote:'`',
+    Space:'스페이스', ShiftLeft:'왼Shift', ShiftRight:'오른Shift', ControlLeft:'왼Ctrl', ControlRight:'오른Ctrl', AltLeft:'왼Alt', AltRight:'오른Alt',
+    ArrowLeft:'←', ArrowRight:'→', ArrowUp:'↑', ArrowDown:'↓', Enter:'Enter', Tab:'Tab', CapsLock:'Caps', Backspace:'⌫'};
+  if (named[code]) return named[code];
+  let m = /^Key([A-Z])$/.exec(code); if (m) return m[1];
+  m = /^Digit(\d)$/.exec(code); if (m) return m[1];
+  m = /^Numpad(.+)$/.exec(code); if (m) return '숫자판' + m[1];
+  return code;
+}
+function applyKeymap(){
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('bangul-keymap') || '{}') || {}; } catch(e){}
+  for (const L of [3,4,6,8]){
+    const codes = Array.isArray(saved[L]) && saved[L].length === L ? saved[L] : DEFAULT_KEYMAP[L];
+    KEYMAP[L] = codes.slice(); CAPS[L] = codes.map(keyLabel);
+  }
+}
+applyKeymap();
 const KCOL = {3:['k1','k2','k4'], 4:['k1','k2','k3','k5'], 6:['k1','k2','k3','k4','k5','k6'], 8:['k1','k2','k3','k4','k5','k6','k7','k8']};
 const DIFFS = ['easy','normal','hard'], DNAME = {easy:'쉬움', normal:'보통', hard:'어려움'}, DCLS = {easy:'dE', normal:'dN', hard:'dH'};
 const DIFF = {2:'쉬움', 3:'보통', 4:'어려움', 8:'아주 어려움'};   // 예전 기록 표시용
@@ -1659,7 +1701,45 @@ function renderRank(){
 /* ---------- 진행 ---------- */
 function vTime(){ return ctx ? ctx.currentTime - t0 - (ctx.outputLatency || 0) : -99; }
 function jTime(){ return vTime() - offsetMs / 1000; }
-function show(id){ ['menu','pause','result','rank','maker','recdone','loading','songpop','rotate'].forEach(k => $('#' + k).classList.toggle('hidden', k !== id)); $('#recStop').hidden = state !== 'rec'; $('#pauseBtn').hidden = !(state === 'playing' || state === 'countdown'); }
+/* ---------- 키 바꾸기 ---------- */
+let keyWait = -1;
+function openKeys(){ keyWait = -1; renderKeys(); state = 'keys'; show('keys'); }
+function renderKeys(){
+  $('#keysTitle').textContent = `키 바꾸기 (${lanes}키)`;
+  $('#keysHint').textContent = keyWait >= 0 ? `${keyWait + 1}번째 칸에 쓸 키를 눌러요. Esc를 누르면 취소돼요.` : '바꾸고 싶은 칸을 누른 다음, 쓰고 싶은 키를 눌러요.';
+  const box = $('#keySlots'); box.innerHTML = '';
+  KEYMAP[lanes].forEach((code, i) => {
+    if (SPLIT[lanes] && i === SPLIT[lanes]){ const gap = document.createElement('span'); gap.className = 'key-gap'; box.appendChild(gap); }
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'key-slot' + (keyWait === i ? ' wait' : '');
+    b.style.setProperty('--kc', laneColor(i));
+    b.innerHTML = `${esc(keyWait === i ? '?' : keyLabel(code))}<small>${i + 1}번</small>`;
+    b.addEventListener('click', () => { keyWait = keyWait === i ? -1 : i; renderKeys(); b.blur(); });
+    box.appendChild(b);
+  });
+}
+function setKey(i, code){
+  const codes = KEYMAP[lanes].slice(), dup = codes.indexOf(code);
+  if (dup >= 0 && dup !== i) codes[dup] = codes[i];   // 이미 쓰는 키면 서로 자리를 바꿔요
+  codes[i] = code;
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem('bangul-keymap') || '{}') || {}; } catch(e){}
+  saved[lanes] = codes; save('bangul-keymap', JSON.stringify(saved));
+  applyKeymap(); renderKeyLabels();
+}
+function resetKeys(){
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem('bangul-keymap') || '{}') || {}; } catch(e){}
+  delete saved[lanes]; save('bangul-keymap', JSON.stringify(saved));
+  applyKeymap(); renderKeyLabels(); keyWait = -1; renderKeys();
+}
+// 처음 화면의 키 개수 버튼에도 바뀐 키를 보여줘요
+function renderKeyLabels(){
+  document.querySelectorAll('#diffSeg button').forEach(b => {
+    const L = Number(b.dataset.lanes), c = CAPS[L], sp = SPLIT[L];
+    b.querySelector('.keys').textContent = sp ? c.slice(0, sp).join(' ') + ' · ' + c.slice(sp).join(' ') : c.join(' ');
+  });
+}
+
+function show(id){ ['menu','pause','result','rank','maker','recdone','loading','songpop','rotate','keys'].forEach(k => $('#' + k).classList.toggle('hidden', k !== id)); $('#recStop').hidden = state !== 'rec'; $('#pauseBtn').hidden = !(state === 'playing' || state === 'countdown'); }
 
 function start(again){
   ensureCtx();
@@ -2147,6 +2227,14 @@ addEventListener('keydown', e => {
     else if (e.code === 'Escape') endRecord();
     return;
   }
+  if (state === 'keys'){
+    e.preventDefault();
+    if (keyWait >= 0){
+      if (e.code !== 'Escape') setKey(keyWait, e.code);
+      keyWait = -1; renderKeys();
+    } else if (e.code === 'Escape' || e.code === 'Enter'){ state = 'menu'; show('menu'); }
+    return;
+  }
   if (state === 'rank'){ if (e.code === 'Escape') closeRank(); return; }
   if (state === 'songpop'){
     const order = popOrder();
@@ -2202,6 +2290,9 @@ addEventListener('blur', () => pause());
 function onBtn(el, fn){ el.addEventListener('click', e => { e.currentTarget.blur(); fn(); }); }
 onBtn($('#startBtn'), () => openPop());
 onBtn($('#popStart'), () => popStartNow());
+onBtn($('#keysBtn'), openKeys);
+onBtn($('#keysDone'), () => { keyWait = -1; state = 'menu'; show('menu'); });
+onBtn($('#keysReset'), resetKeys);
 onBtn($('#popClose'), () => closePop());
 onBtn($('#pauseBtn'), () => pause());
 onBtn($('#rotateSkip'), () => { allowPortrait = true; start(true); });
@@ -2262,6 +2353,7 @@ const savedSong = load('bangul-song');
 if (savedSong && (savedSong === 'random' || /^(my|h)-/.test(savedSong) || SONGS.some(s => s.id === savedSong))) selected = savedSong;
 const sv = load('bangul-speed');
 if (sv){ const b = document.querySelector(`#speedSeg button[data-speed="${sv}"]`); if (b) b.click(); }
+renderKeyLabels();
 const dv = load('bangul-keys');
 { const b = document.querySelector(`#diffSeg button[data-lanes="${KEYMAP[dv] ? dv : 4}"]`); if (b) b.click(); }
 const dsv = load('bangul-diff'); if (DIFFS.includes(dsv)) diff = dsv;
