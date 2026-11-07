@@ -293,7 +293,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button class="secondary" id="rankBtn2" type="button">랭킹 보기</button>
         <button class="secondary toMenu" type="button">처음 화면으로</button>
       </div>
-      <p class="hint">스페이스를 누르면 같은 곡을 바로 다시 시작해요.</p>
+      <p class="hint">다시 하기나 스페이스를 누르면 난이도를 다시 고를 수 있어요.</p>
     </div>
   </div>
 </div>
@@ -1541,11 +1541,15 @@ function setupCarousel(){
 }
 
 /* ---------- 곡 팝업: 난이도 고르기 ---------- */
-let popSong = null;
+let popSong = null, popFrom = 'menu';
 function popOrder(){ return popSong && popSong.audio ? ['one'] : DIFFS; }
-function openPop(){
-  const id = selected;
-  popSong = id === 'random' ? {id: 'random', name: '랜덤', desc: `${SONGS.length}곡 중 하나를 골라줘요`} : allSongs().find(s => s.id === id);
+function openPop(fromResult){
+  popFrom = fromResult ? 'result' : 'menu';
+  if (fromResult) popSong = cur;   // 결과 화면에서는 방금 한 곡 그대로
+  else {
+    const id = selected;
+    popSong = id === 'random' ? {id: 'random', name: '랜덤', desc: `${SONGS.length}곡 중 하나를 골라줘요`} : allSongs().find(s => s.id === id);
+  }
   if (!popSong) return;
   popSel = popSong.audio ? 0 : Math.max(0, DIFFS.indexOf(diff));
   renderPop(); state = 'songpop'; show('songpop');
@@ -1577,9 +1581,9 @@ function popStartNow(){
   if (!popSong) return;
   if (!popSong.audio){ diff = DIFFS[popSel] || 'normal'; save('bangul-diff', diff); }
   allowPortrait = false;
-  start(false);
+  start(popFrom === 'result');
 }
-function closePop(){ state = 'menu'; show('menu'); }
+function closePop(){ state = popFrom; show(popFrom); }
 async function goLandscape(){
   if (!IS_MOBILE) return;
   try { if (!document.fullscreenElement && document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen({navigationUI: 'hide'}); } catch(e){}
@@ -2127,7 +2131,7 @@ addEventListener('keydown', e => {
     e.preventDefault(); if (e.repeat) return;
     if (state === 'paused') resume();
     else if (state === 'menu') openPop();
-    else if (state === 'result') start(true);
+    else if (state === 'result') openPop(true);
     return;
   }
   if (e.code === 'Escape' || e.code === 'KeyP'){ if (state === 'playing') pause(); else if (state === 'paused') resume(); }
@@ -2168,7 +2172,7 @@ addEventListener('resize', () => {
   if (state === 'rotate' && innerWidth >= innerHeight) start(true);
   else if (IS_MOBILE && !allowPortrait && state === 'playing' && innerHeight > innerWidth) pause();
 });
-onBtn($('#againBtn'), () => start(true));
+onBtn($('#againBtn'), () => openPop(true));
 onBtn($('#resumeBtn'), resume);
 onBtn($('#makerBtn'), openMaker);
 onBtn($('#mkClose'), toMenu);
