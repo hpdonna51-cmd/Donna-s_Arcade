@@ -113,7 +113,7 @@ footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);c
   </main>
 
   <footer>
-    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요.
+    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요. <span style="opacity:.6">(버전 17)</span>
   </footer>
 </div>
 
@@ -179,7 +179,12 @@ addEventListener('appinstalled', () => { installBtn.hidden = true; });
 // 아이패드는 자신을 맥으로 소개해서, 터치 화면인 맥이면 아이패드로 봐요
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 if (isIOS && !standalone) document.getElementById('iosHint').hidden = false;
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+if ('serviceWorker' in navigator){
+  const hadSW = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js').then(reg => reg.update()).catch(() => {});
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadSW && !reloaded){ reloaded = true; location.reload(); } });
+}
 </script>
 </body>
 </html>

@@ -189,6 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
+      <p class="hint" style="opacity:.6">버전 17</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -1802,6 +1803,7 @@ function resume(){
   state = 'countdown'; cdStart = performance.now(); show(null);
 }
 function toMenu(){
+  if (reloadPending){ location.reload(); return; }   // 새 버전이 와 있으면 이때 바꿔요
   stopAudio();
   if (ctx && ctx.state === 'suspended') ctx.resume();
   state = 'menu'; renderCards(); show('menu');
@@ -2357,7 +2359,16 @@ renderKeyLabels();
 const dv = load('bangul-keys');
 { const b = document.querySelector(`#diffSeg button[data-lanes="${KEYMAP[dv] ? dv : 4}"]`); if (b) b.click(); }
 const dsv = load('bangul-diff'); if (DIFFS.includes(dsv)) diff = dsv;
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js', {scope: '../'}).catch(() => {});
+let reloadPending = false;
+if ('serviceWorker' in navigator){
+  const hadSW = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('../sw.js', {scope: '../'}).then(reg => reg.update()).catch(() => {});
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadSW || reloadPending) return;
+    reloadPending = true;
+    if (state === 'menu') location.reload();
+  });
+}
 function setLite(on){
   LITE = on; save('bangul-lite', on ? '1' : '0');
   document.querySelectorAll('#perfSeg button').forEach(x => x.setAttribute('aria-pressed', (x.dataset.lite === '1') === on ? 'true' : 'false'));
