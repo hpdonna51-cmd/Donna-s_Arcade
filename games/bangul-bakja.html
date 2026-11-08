@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 19</p>
+      <p class="hint" style="opacity:.6">버전 21</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -631,7 +631,7 @@ const J = (...parts) => parts.join(' ');
 function harm(mel, key, bar16, beat16){
   const k = PC[key], {events, len} = parseTrack(mel);
   const CH = [[0,4,7],[5,9,0],[7,11,2],[9,0,4],[2,5,9]];   // I IV V vi ii
-  const bars = Math.round(len / bar16), bass = [], pad = [], comp = [];
+  const bars = Math.round(len / bar16), bass = [], pad = [], comp = [], roots = [];
   for (let b = 0; b < bars; b++){
     const s0 = b * bar16, s1 = s0 + bar16;
     let best = 0, bs = -1;
@@ -648,21 +648,23 @@ function harm(mel, key, bar16, beat16){
     });
     const c = CH[best], root = 36 + ((k + c[0]) % 12), tri = c.map(x => 60 + ((k + x) % 12)).sort((a, b) => a - b);
     for (let p = 0; p < bar16; p += beat16) bass.push(noteName((p / beat16) % 2 && bar16 / beat16 > 2 ? root + 7 : root) + ':' + beat16);
-    pad.push(tri.map(noteName).join('+') + ':' + bar16);
+    pad.push(tri.map(noteName).join('+') + ':' + bar16); roots.push(root);
     const arp = [tri[0], tri[1], tri[2], tri[1]];
     for (let p = 0, i = 0; p < bar16; p += 2, i++) comp.push(noteName(arp[i % 4]) + ':2');
   }
-  return {bass: bass.join(' '), pad: pad.join(' '), comp: comp.join(' ')};
+  return {bass: bass.join(' '), pad: pad.join(' '), comp: comp.join(' '), roots};
 }
 // 곡 한 구간 만들기
 function sec(bars, meter, mel, key, o = {}){
   const bar16 = meter.steps * 2, beat16 = meter.label === '6/8' ? 6 : 4;
   const h = harm(mel, key, bar16, beat16);
-  const t = [{inst: o.lead, notes: mel, chart: true, oct: o.oct || 0, rev: .3}];
-  if (o.bass) t.push({inst: o.bass, notes: h.bass, v: .85});
-  if (o.pad) t.push({inst: o.pad, notes: h.pad, v: .7, legato: 1});
-  if (o.comp) t.push({inst: o.comp, notes: h.comp, v: .4, pan: -.25});
-  if (o.dbl) t.push({inst: o.dbl, notes: mel, oct: o.dblOct || 0, v: .4, pan: .3});
+  const t = [{inst: o.lead, notes: mel, chart: true, oct: o.oct || 0, rev: .3, v: o.leadV || 1}];
+  if (o.bass) t.push({inst: o.bass, notes: h.bass, v: o.bassV || .85});
+  if (o.pad) t.push({inst: o.pad, notes: h.pad, v: o.padV || .7, legato: 1, oct: o.padOct || 0});
+  if (o.comp) t.push({inst: o.comp, notes: h.comp, v: o.compV || .4, pan: -.25, oct: o.compOct || 0});
+  if (o.dbl) t.push({inst: o.dbl, notes: mel, oct: o.dblOct || 0, v: o.dblV || .4, pan: .3});
+  // 종소리: 몇 마디마다 화음 뿌리음으로 땡~
+  if (o.bells) t.push({inst: 'bell', notes: h.roots.map((r, i) => i % o.bells === 0 ? `${noteName(r + 36)}:${bar16}` : `R:${bar16}`).join(' '), v: o.bellV || .7, pan: .35, rev: .5, legato: 1});
   return Object.assign({bars, meter, tracks: t}, o.extra || {});
 }
 const rest = (bars, meter) => `R:${bars * meter.steps * 2}`;
@@ -682,10 +684,13 @@ function vary(mel, kind){
 }
 
 // --- 멜로디 ---
+// 아리랑(솔.라 솔라) 아리랑(시.레 시라) 아라리요(솔.라 솔미) ~(레)
+// 아리랑(레.미 솔) 고개로(솔.라 시라) 넘어간(솔.미 레미) 다(솔)
+// 나를 버(레.레 레) 리고(시.라 솔) 가시는(라.시 라솔) 님은(솔.미)
 const ARI = {
-  a: 'G4:6 A4:2 G4:4  A4:4 B4:4 D5:2 B4:2  A4:4 G4:2 A4:2 G4:2 E4:2  D4:12',
-  b: 'D4:6 E4:2 G4:4  G4:4 A4:4 B4:2 A4:2  G4:4 E4:2 D4:2 E4:4  G4:12',
-  c: 'D5:6 D5:2 D5:4  B4:4 A4:4 G4:2 A4:2  B4:4 A4:2 G4:2 E4:2 D4:2  E4:12',
+  a: 'G4:6 A4:2 G4:2 A4:2  B4:6 D5:2 B4:2 A4:2  G4:6 A4:2 G4:2 E4:2  D4:12',
+  b: 'D4:6 E4:2 G4:4  G4:6 A4:2 B4:2 A4:2  G4:6 E4:2 D4:2 E4:2  G4:12',
+  c: 'D5:6 D5:2 D5:4  B4:6 A4:2 G4:4  A4:6 B4:2 A4:2 G4:2  G4:6 E4:6',
 };
 const ariMel = J(ARI.a, ARI.b, ARI.c, ARI.b);
 const JB = {
@@ -738,17 +743,14 @@ const CANCAN = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
 const TAIKO3 = {kit:'taiko', kick:[0, 6], snare:[4, 8, 10], hat:false};
 
 const MORE = [
-  { id:'arirang', name:'아리랑', desc:'우리 민요를 피리와 가야금, 북으로', lv:2, bpm:96, dots:['d2','d3'], kit:'taiko', rev:.35, score:true, meter:M34,
+  { id:'arirang', name:'아리랑', desc:'대금, 해금, 가야금과 장구 세마치장단으로', lv:2, bpm:92, dots:['d2','d3'], kit:'janggu', rev:.4, score:true, meter:M34,
     sections:[
-      {bars:2, meter:M34, drums: TAIKO3, tracks:[{inst:'pluck', notes:'G3+D4:12 G3+D4:12', v:.6}]},
-      sec(16, M34, ariMel, 'G', {lead:'flute', oct:12, comp:'pluck', pad:'warmpad', extra:{drums:{kit:'taiko', kick:[0], snare:[8], hat:false}}}),
-      sec(16, M34, ariMel, 'G', {lead:'flute', oct:12, comp:'pluck', bass:'subbass', dbl:'pluck', extra:{drums: TAIKO3, crash:true, dbl:true}}),
-    ]},
-  { id:'jingle', name:'징글벨', desc:'썰매 방울이 짤랑짤랑, 신나는 캐롤', lv:3, bpm:160, dots:['d4','d1'], kit:'std', rev:.3, score:true, meter:M44,
-    sections:[
-      sec(16, M44, JB.chorus, 'G', {lead:'glock', bass:'fingerbass', comp:'piano', extra:{drums: JING}}),
-      sec(16, M44, JB.verse, 'G', {lead:'glock', bass:'fingerbass', pad:'strings', extra:{drums: JING, crash:true}}),
-      sec(16, M44, JB.chorus, 'G', {lead:'glock', bass:'fingerbass', comp:'piano', dbl:'brass', dblOct:-12, extra:{drums: STD, crash:true, dbl:true}}),
+      {bars:2, meter:M34, crash:true, drums:{kit:'janggu', kick:[0, 4, 8], snare:[0, 6, 10], hat:false},
+        tracks:[{inst:'gayageum', notes:'G3:2 D4:2 G4:2 A4:2 B4:2 D5:2 G4:2 D4:2 B3:2 A3:2 G3:4', v:.7}]},
+      sec(16, M34, ariMel, 'G', {lead:'daegeum', comp:'gayageum', bass:'gayageum',
+        extra:{drums:{kit:'janggu', kick:[0, 8], snare:[0, 6], hat:false}}}),
+      sec(16, M34, ariMel, 'G', {lead:'haegeum', comp:'gayageum', bass:'gayageum', dbl:'daegeum', dblOct:-12,
+        extra:{drums:{kit:'janggu', kick:[0, 4, 8], snare:[0, 6, 10], hat:false}, crash:true, dbl:true}}),
     ]},
   { id:'twinkle', name:'반짝반짝 작은 별 변주곡', desc:'모차르트처럼, 갈수록 화려해지는 변주', lv:2, bpm:90, dots:['d4','d2'], kit:'soft', rev:.35, score:true, meter:M44,
     sections:[
@@ -777,32 +779,42 @@ const MORE = [
       sec(9, M34, HB, 'C', {lead:'piano', bass:'cello', pad:'strings', extra:{drums: WALTZ}}),
       sec(9, M34, HB, 'C', {lead:'brass', bass:'fingerbass', comp:'piano', dbl:'glock', dblOct:12, extra:{drums:{kit:'std', kick:[0], snare:[4, 8], hat:'8'}, transpose:2, crash:true, mark:'한 음 올라가요!'}}),
     ]},
-  { id:'silent', name:'고요한 밤 (캐롤)', desc:'조용히 흔들리는 6/8박자 자장가 캐롤', lv:1, bpm:100, dots:['d2','d4'], kit:'soft', rev:.5, score:true, meter:M68,
+  { id:'jingle', name:'징글벨', desc:'썰매 방울이 짤랑짤랑, 신나는 캐롤', lv:3, bpm:160, dots:['d4','d1'], kit:'xmas', rev:.35, score:true, meter:M44,
     sections:[
-      {bars:2, meter:M68, tracks:[{inst:'celesta', notes:'C5:6 G4:6 E5:6 G4:6', v:.6}, {inst:'strings', notes:'C4+E4+G4:24', legato:1, v:.6}]},
-      sec(12, M68, SN, 'C', {lead:'musicbox', pad:'strings', bass:'cello'}),
-      sec(12, M68, SN, 'C', {lead:'violin', pad:'strings', bass:'cello', comp:'celesta', extra:{crash:false}}),
+      {bars:2, meter:M44, crash:true, drums:{kit:'xmas', kick:[], snare:[], hat:'16'}, tracks:[{inst:'bell', notes:'G5:16 D5:16', v:.7}, {inst:'celesta', notes:'C7:1 B6:1 A6:1 G6:1 F6:1 E6:1 D6:1 C6:1 R:24', v:.5}]},
+      sec(16, M44, JB.chorus, 'G', {lead:'xmaslead', leadV:1.25, bass:'fingerbass', bassV:.7, comp:'piano', compOct:-12, compV:.28, pad:'choir', padV:.6, bells:4, extra:{drums:{kit:'xmas', kick:[0, 8], snare:[4, 12], hat:'8'}}}),
+      sec(16, M44, JB.verse, 'G', {lead:'xmaslead', leadV:1.25, bass:'fingerbass', bassV:.7, pad:'strings', padV:.6, bells:4, extra:{drums:{kit:'xmas', kick:[0, 8], snare:[4, 12], hat:'8'}, crash:true}}),
+      sec(16, M44, JB.chorus, 'G', {lead:'xmaslead', leadV:1.3, bass:'fingerbass', bassV:.7, comp:'piano', compOct:-12, compV:.28, pad:'choir', padV:.6, dbl:'glock', dblOct:12, dblV:.25, bells:2, extra:{drums:{kit:'xmas', kick:[0, 8], snare:[4, 12], hat:'8'}, crash:true, dbl:true}}),
     ]},
-  { id:'joyworld', name:'기쁘다 구주 오셨네 (캐롤)', desc:'금관과 오르간의 웅장한 캐롤', lv:2, bpm:108, dots:['d4','d3'], kit:'soft', rev:.45, score:true, meter:M24,
+  { id:'silent', name:'고요한 밤 (캐롤)', desc:'오르골과 합창, 눈 내리는 밤의 6/8박자 캐롤', lv:1, bpm:100, dots:['d2','d4'], kit:'xmas', rev:.55, score:true, meter:M68,
     sections:[
-      sec(19, M24, JW, 'D', {lead:'brass', pad:'organ', bass:'cello'}),
-      sec(19, M24, JW, 'D', {lead:'piano', bass:'cello', pad:'organ', dbl:'brass', dblOct:-12, extra:{drums:{kit:'soft', kick:[0], snare:[4], hat:'4'}, crash:true}}),
+      {bars:2, meter:M68, crash:true, tracks:[{inst:'celesta', notes:'C5:6 G4:6 E5:6 G4:6', v:.6}, {inst:'choir', notes:'C4+E4+G4:24', legato:1, v:.6}]},
+      sec(12, M68, SN, 'C', {lead:'musicbox', leadV:1.2, pad:'choir', padV:.55, bass:'cello', bassV:.6, bells:4, bellV:.5}),
+      sec(12, M68, SN, 'C', {lead:'violin', leadV:1.1, pad:'choir', padV:.55, bass:'cello', bassV:.6, comp:'celesta', compOct:12, compV:.25, bells:2, bellV:.5, extra:{drums:{kit:'xmas', kick:[], snare:[], hat:false}, crash:true}}),
     ]},
-  { id:'noel', name:'저 들 밖에 한밤중에 (캐롤)', desc:'바이올린과 하프로 부르는 첫 번째 노엘', lv:1, bpm:120, dots:['d2','d1'], kit:'soft', rev:.45, score:true, meter:M34,
+  { id:'joyworld', name:'기쁘다 구주 오셨네 (캐롤)', desc:'교회 종과 금관, 오르간의 웅장한 캐롤', lv:2, bpm:108, dots:['d4','d3'], kit:'xmas', rev:.5, score:true, meter:M24,
     sections:[
-      sec(17, M34, FN, 'D', {lead:'violin', pad:'strings', bass:'cello'}),
-      sec(17, M34, FN, 'D', {lead:'flute', oct:12, comp:'pluck', pad:'strings', bass:'cello'}),
+      {bars:2, meter:M24, crash:true, tracks:[{inst:'bell', notes:'D5:8 A4:8', v:.9}, {inst:'organ', notes:'D3+A3+D4:16', v:.6, legato:1}]},
+      sec(19, M24, JW, 'D', {lead:'brass', leadV:1.2, pad:'organ', padOct:-12, padV:.5, bass:'cello', bells:2, bellV:.8}),
+      sec(19, M24, JW, 'D', {lead:'xmaslead', leadV:1.25, bass:'cello', pad:'choir', padV:.6, dbl:'brass', dblOct:-12, dblV:.35, bells:1, bellV:.6, extra:{drums:{kit:'xmas', kick:[0], snare:[4], hat:'8'}, crash:true}}),
     ]},
-  { id:'wewish', name:'We Wish You a Merry Christmas', desc:'종소리 가득, 즐거운 성탄 캐롤', lv:2, bpm:150, dots:['d4','d2'], kit:'std', rev:.3, score:true, meter:M34,
+  { id:'noel', name:'저 들 밖에 한밤중에 (캐롤)', desc:'바이올린과 합창, 반짝이는 첼레스타', lv:1, bpm:120, dots:['d2','d1'], kit:'xmas', rev:.5, score:true, meter:M34,
     sections:[
-      sec(17, M34, WW, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', extra:{drums: WALTZ}}),
-      sec(17, M34, WW, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', dbl:'brass', dblOct:-12, extra:{drums:{kit:'std', kick:[0], snare:[4, 8], hat:'8'}, crash:true}}),
-      sec(17, M34, WW, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', dbl:'brass', dblOct:-12, extra:{drums:{kit:'std', kick:[0], snare:[4, 8], hat:'8'}, transpose:2, crash:true, dbl:true, mark:'한 음 올라가요!'}}),
+      sec(17, M34, FN, 'D', {lead:'violin', leadV:1.15, pad:'choir', padV:.55, bass:'cello', bassV:.7, bells:4, bellV:.5, extra:{crash:true}}),
+      sec(17, M34, FN, 'D', {lead:'xmaslead', leadV:1.2, comp:'celesta', compOct:12, compV:.25, pad:'strings', padV:.55, bass:'cello', bassV:.7, bells:2, bellV:.5, extra:{drums:{kit:'xmas', kick:[0], snare:[], hat:'4'}, crash:true}}),
     ]},
-  { id:'deck', name:'Deck the Halls (캐롤)', desc:'팔랄랄라~ 하프시코드와 종소리 캐롤', lv:2, bpm:132, dots:['d1','d4'], kit:'std', rev:.35, score:true, meter:M44,
+  { id:'wewish', name:'We Wish You a Merry Christmas', desc:'썰매 방울과 종소리 가득, 즐거운 캐롤', lv:2, bpm:150, dots:['d4','d2'], kit:'xmas', rev:.35, score:true, meter:M34,
     sections:[
-      sec(16, M44, DH, 'G', {lead:'harpsichord', pad:'strings', bass:'cello'}),
-      sec(16, M44, DH, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', dbl:'harpsichord', extra:{drums: STD, crash:true, dbl:true}}),
+      {bars:2, meter:M34, crash:true, drums:{kit:'xmas', kick:[], snare:[], hat:'8'}, tracks:[{inst:'bell', notes:'G5:12 D5:12', v:.7}]},
+      sec(17, M34, WW, 'G', {lead:'xmaslead', leadV:1.3, comp:'piano', compOct:-12, compV:.28, bass:'fingerbass', bassV:.7, pad:'choir', padV:.5, bells:4, extra:{drums:{kit:'xmas', kick:[0], snare:[4, 8], hat:'8'}}}),
+      sec(17, M34, WW, 'G', {lead:'xmaslead', leadV:1.3, comp:'piano', compOct:-12, compV:.28, bass:'fingerbass', bassV:.7, pad:'strings', padV:.5, dbl:'glock', dblOct:12, dblV:.22, bells:2, extra:{drums:{kit:'xmas', kick:[0], snare:[4, 8], hat:'8'}, crash:true}}),
+      sec(17, M34, WW, 'G', {lead:'xmaslead', leadV:1.35, comp:'piano', compOct:-12, compV:.28, bass:'fingerbass', bassV:.7, pad:'choir', padV:.55, dbl:'brass', dblOct:-12, dblV:.25, bells:1, extra:{drums:{kit:'xmas', kick:[0], snare:[4, 8], hat:'8'}, transpose:2, crash:true, dbl:true, mark:'한 음 올라가요!'}}),
+    ]},
+  { id:'deck', name:'Deck the Halls (캐롤)', desc:'팔랄랄라~ 하프시코드와 썰매 방울 캐롤', lv:2, bpm:132, dots:['d1','d4'], kit:'xmas', rev:.4, score:true, meter:M44,
+    sections:[
+      {bars:1, meter:M44, crash:true, drums:{kit:'xmas', kick:[], snare:[], hat:'8'}, tracks:[{inst:'bell', notes:'G5:16', v:.7}]},
+      sec(16, M44, DH, 'G', {lead:'harpsichord', leadV:1.25, pad:'choir', padV:.5, bass:'cello', bassV:.7, bells:4, extra:{drums:{kit:'xmas', kick:[0], snare:[], hat:'8'}}}),
+      sec(16, M44, DH, 'G', {lead:'xmaslead', leadV:1.3, comp:'piano', compOct:-12, compV:.28, bass:'fingerbass', bassV:.7, pad:'strings', padV:.5, dbl:'harpsichord', dblOct:12, dblV:.25, bells:2, extra:{drums:{kit:'xmas', kick:[0, 8], snare:[4, 12], hat:'8'}, crash:true, dbl:true}}),
     ]},
 ];
 SONGS.push(...MORE);
@@ -1415,8 +1427,64 @@ Object.assign(INST, {
   },
 });
 
+// 크리스마스 악기
+Object.assign(INST, {
+  // 캐롤 멜로디: 종처럼 딩~ 하고 시작해서 부드럽게 이어져요 (잘 들리도록)
+  xmaslead(T, f, d, v, o){
+    const [g, end] = amp(T, .002, .3 * v, 0, .9); route(g, o);
+    fm(T, end, f, 3.5, 1.6, .25, g);
+    const [b, e2] = amp(T, .02, .22 * v, d || .25, .18); route(b, o);
+    const s = osc(T, e2, 'sine', f); vibrato(T, e2, s, f, 5, .006, .3); mix(s, b, 1);
+    mix(osc(T, e2, 'triangle', f * 2), lp(b, 3000), .15);
+  },
+  // 교회 종: 데엥~ 하고 길게 울려요
+  bell(T, f, d, v, o){
+    const [g, end] = amp(T, .002, .16 * v, 0, 3.2); route(g, o);
+    fm(T, end, f, 2.76, 1.6, 1.8, g); fm(T, end, f * 2.01, 3.5, .8, .6, g, .35);
+  },
+});
+
+// 우리 전통악기
+Object.assign(INST, {
+  // 대금: 숨소리 섞인 낮은 대나무 피리. 음 첫머리를 살짝 밀어 올리고, 길게 끌면 깊게 떨어요(농음)
+  daegeum(T, f, d, v, o){
+    const [g, end] = amp(T, .07, .32 * v, d || .25, .25); route(g, o);
+    const s = osc(T, end, 'sine', f);
+    s.frequency.setValueAtTime(f * .97, T); s.frequency.exponentialRampToValueAtTime(f, T + .09);
+    if (d > .5){ const l = osc(T, end, 'sine', 4.2), lg = ctx.createGain(); lg.gain.setValueAtTime(0, T); lg.gain.linearRampToValueAtTime(f * .018, T + Math.min(.6, d * .6)); l.connect(lg); lg.connect(s.frequency); }
+    mix(s, g, 1);
+    mix(osc(T, end, 'triangle', f * 2), lp(g, 2200), .12);
+    const n = ctx.createBufferSource(); n.buffer = noiseBuf; n.loop = true;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f * 2.5; bp.Q.value = 3;
+    n.connect(bp); mix(bp, g, .22); n.start(T, Math.random() * .5); n.stop(end);
+  },
+  // 가야금: 비단 줄을 튕기는 소리. 긴 음은 줄을 눌러 떨어줘요(농현)
+  gayageum(T, f, d, v, o){
+    const [g, end] = amp(T, .002, .3 * v, 0, 1.3); route(g, o);
+    const fl = lp(g, 3600, 700, T, .35, 2.5);
+    const s = osc(T, end, 'triangle', f), s2 = osc(T, end, 'sawtooth', f);
+    s.frequency.setValueAtTime(f * 1.01, T); s.frequency.exponentialRampToValueAtTime(f, T + .04);
+    if (d > .45){ [s, s2].forEach(x => { const l = osc(T, end, 'sine', 5.5), lg = ctx.createGain(); lg.gain.setValueAtTime(0, T + .25); lg.gain.linearRampToValueAtTime(f * .015, T + .5); l.connect(lg); lg.connect(x.frequency); }); }
+    mix(s, fl, .8); mix(s2, fl, .25);
+  },
+  // 해금: 두 줄을 활로 긋는 코맹맹이 소리. 아래에서 미끄러져 올라와요
+  haegeum(T, f, d, v, o){
+    const [g, end] = amp(T, .06, .2 * v, d || .3, .15); route(g, o);
+    const s = osc(T, end, 'sawtooth', f);
+    s.frequency.setValueAtTime(f * .95, T); s.frequency.exponentialRampToValueAtTime(f, T + .12);
+    vibrato(T, end, s, f, 5.5, .012, .25);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1300; bp.Q.value = 1.4;
+    s.connect(bp); mix(bp, lp(g, 3200), 1.4);
+  },
+});
+
 // 휴대폰용으로 부품 수를 줄인 악기들
 const LITE_INST = {
+  xmaslead(T, f, d, v, o){ const [g, end] = amp(T, .002, .32 * v, d, d ? .2 : .6); route(g, o); fm(T, end, f, 3.5, 1.2, .3, g); },
+  bell(T, f, d, v, o){ const [g, end] = amp(T, .002, .14 * v, 0, 1.6); route(g, o); fm(T, end, f, 2.76, 1.2, 1, g); },
+  daegeum(T, f, d, v, o){ const [g, end] = amp(T, .07, .3 * v, d || .25, .2); route(g, o); const s = osc(T, end, 'sine', f); s.frequency.setValueAtTime(f * .97, T); s.frequency.exponentialRampToValueAtTime(f, T + .09); mix(s, g, 1); },
+  gayageum(T, f, d, v, o){ const [g, end] = amp(T, .002, .28 * v, 0, .9); route(g, o); mix(osc(T, end, 'triangle', f), lp(g, 3000, 700, T, .3), 1); },
+  haegeum(T, f, d, v, o){ const [g, end] = amp(T, .06, .2 * v, d || .3, .12); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 1800), 1); },
   musicbox(T, f, d, v, o){ const [g, end] = amp(T, .002, .3 * v, 0, .9); route(g, o); fm(T, end, f, 3.5, 2.2, .3, g); },
   glass(T, f, d, v, o){ const [g, end] = amp(T, .01, .25 * v, d, d ? .4 : .7); route(g, o); fm(T, end, f, 2, 1.6, .9, g); },
   epiano(T, f, d, v, o){ const [g, end] = amp(T, .004, .3 * v, d, d ? .3 : .7); route(g, o); fm(T, end, f, 1, 1.6, .6, g); },
@@ -1437,7 +1505,9 @@ function play(e, T){
   const S = cur, kit = e.kit || S.kit;
   switch (e.k){
     case 'kick':
-      if (kit === 'soft') tone(T, 'sine', 120, 45, .12, .55, .25, {});
+      if (kit === 'janggu'){ tone(T, 'sine', 120, 65, .18, .75, .35, {rev:.2}); noise(T, 'lowpass', 400, .18, .06, {}); }   // 장구 북편 '쿵'
+      else if (kit === 'xmas') tone(T, 'sine', 120, 50, .12, .6, .25, {});
+      else if (kit === 'soft') tone(T, 'sine', 120, 45, .12, .55, .25, {});
       else if (kit === 'chip') tone(T, 'triangle', 180, 50, .08, .7, .15, {});
       else if (kit === 'taiko'){ tone(T, 'sine', 95, 55, .25, 1, .55, {rev:.15}); noise(T, 'lowpass', 250, .3, .1, {}); }
       else if (kit === 'electro'){ tone(T, 'sine', 170, 40, .1, 1, .32, {}); noise(T, 'highpass', 3000, .06, .012, {}); }
@@ -1449,7 +1519,9 @@ function play(e, T){
       break;
     case 'snare': {
       const v = e.v || 1;
-      if (kit === 'soft'){ noise(T, 'bandpass', 3000, .07 * v, .12, {rev:.2, pan:.1}); tone(T, 'triangle', 380, 0, 0, .06 * v, .04, {}); }
+      if (kit === 'janggu'){ noise(T, 'bandpass', 2600, .22 * v, .05, {rev:.25, pan:.2}); tone(T, 'triangle', 520, 380, .03, .14 * v, .05, {pan:.2}); }   // 채편 '덕'
+      else if (kit === 'xmas'){ noise(T, 'bandpass', 2400, .12 * v, .14, {rev:.25}); [0, .02, .04].forEach(d0 => noise(T + d0, 'bandpass', 8000, .04 * v, .05, {pan:-.2})); }   // 탬버린 같은 스네어
+      else if (kit === 'soft'){ noise(T, 'bandpass', 3000, .07 * v, .12, {rev:.2, pan:.1}); tone(T, 'triangle', 380, 0, 0, .06 * v, .04, {}); }
       else if (kit === 'chip') noise(T, 'highpass', 1000, .25 * v, .12, {});
       else if (kit === 'taiko'){ tone(T, 'triangle', 700, 0, 0, .25 * v, .04, {rev:.2, pan:.2}); noise(T, 'bandpass', 3500, .15 * v, .03, {pan:.2}); }
       else if (kit === 'electro'){ [0, .012, .024].forEach((d, i) => noise(T + d, 'bandpass', 1400, .3 * v, i === 2 ? .15 : .03, {rev:.15})); }
@@ -1458,7 +1530,11 @@ function play(e, T){
     }
     case 'hat': {
       const v = e.v, o = {pan: e.pan};
-      if (kit === 'soft') noise(T, 'highpass', 8000, .03 * v, .05, o);
+      if (kit === 'xmas'){   // 썰매 방울: 작은 방울 여러 개가 짤랑
+        const k = LITE ? 1 : 3;
+        for (let i = 0; i < k; i++) noise(T + i * .011 + Math.random() * .004, 'bandpass', 6500 + i * 1700, .055 * v, .06 + i * .02, {pan: e.pan + (i - 1) * .2, rev: .15});
+      }
+      else if (kit === 'soft') noise(T, 'highpass', 8000, .03 * v, .05, o);
       else if (kit === 'chip') noise(T, 'highpass', 6000, .05 * v, .03, o);
       else if (kit === 'taiko') noise(T, 'highpass', 5000, .04 * v, .06, o);
       else if (kit === 'electro') noise(T, 'highpass', 7500, .055 * v, e.open ? .12 : .04, o);
@@ -1466,6 +1542,14 @@ function play(e, T){
       break;
     }
     case 'crash': {
+      if (kit === 'xmas'){   // 반짝이는 차임
+        [96, 93, 91, 88, 86, 84].forEach((m, i) => INST.bell(T + i * .07, mtof(m), 0, .5, {rev:.5, pan: (i % 2 ? .3 : -.3)}));
+        break;
+      }
+      if (kit === 'janggu'){   // 징: 길게 우웅~ 울려요
+        [[98, .2], [98.6, .16], [147, .06], [196, .04]].forEach(([fr, a]) => tone(T, 'sine', fr * 1.02, fr, .4, a, 3.2, {rev:.4}));
+        break;
+      }
       const pk = kit === 'soft' ? .05 : kit === 'chip' ? .09 : .1;
       noise(T, 'highpass', kit === 'chip' ? 3000 : 5000, pk, kit === 'chip' ? .4 : 1.1, {rev:.35});
       break;
