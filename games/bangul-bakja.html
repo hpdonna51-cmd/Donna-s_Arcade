@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 29 · 장구 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 31 · 장구 소리: 국립국악원 국악 디지털 음원</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -814,8 +814,8 @@ const MORE = [
   { id:'arirang', name:'아리랑', desc:'경기민요. 대금과 해금 가락에 장구 세마치장단', lv:2, bpm:120, dots:['d2','d3'], kit:'janggu', rev:.2, score:true, meter:M98,
     sections:[
       {bars:2, meter:M98, drums: SEMACHI, tracks:[]},
-      {bars:16, meter:M98, drums: SEMACHI, tracks:[{inst:'daegeum', notes: ariMel, chart:true, v:1.1}]},
-      {bars:16, meter:M98, dbl:true, drums: SEMACHI, tracks:[{inst:'haegeum', notes: ariMel, chart:true, v:1.1}]},
+      {bars:16, meter:M98, drums: SEMACHI, tracks:[{inst:'daegeum', notes: ariMel, chart:true, v:1.25}]},
+      {bars:16, meter:M98, dbl:true, drums: SEMACHI, tracks:[{inst:'haegeum', notes: ariMel, chart:true, v:1.3}]},
       {bars:1, meter:M98, drums:{kit:'janggu', strokes:[[0, 'deong', '강']]}, tracks:[]},
     ]},
   { id:'twinkle', name:'반짝반짝 작은 별 변주곡', desc:'모차르트처럼, 갈수록 화려해지는 변주', lv:2, bpm:90, dots:['d4','d2'], kit:'soft', rev:.35, score:true, meter:M44,
@@ -1321,8 +1321,8 @@ function amp(T, a, peak, d, rel){
 function mix(src, dest, v){ const g = ctx.createGain(); g.gain.value = v; src.connect(g); g.connect(dest); return g; }
 function lp(dest, f0, f1, t0, sweep, q = .7){
   const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = q;
-  f.frequency.setValueAtTime(f0, t0);
-  if (f1) f.frequency.exponentialRampToValueAtTime(f1, t0 + sweep);
+  if (t0 == null) f.frequency.value = f0;   // 시각을 안 주면 그냥 고정 값으로 (브라우저 에러 방지)
+  else { f.frequency.setValueAtTime(f0, t0); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t0 + sweep); }
   f.connect(dest); return f;
 }
 function fm(T, end, f, ratio, index, idxDecay, dest, v = 1){
@@ -1528,8 +1528,9 @@ Object.assign(INST, {
     s.frequency.setValueAtTime(f * .988, T); s.frequency.exponentialRampToValueAtTime(f, T + .035);
     if (d > .5){ const l = osc(T, end, 'sine', 4.2), lg = ctx.createGain(); lg.gain.setValueAtTime(0, T); lg.gain.linearRampToValueAtTime(f * .018, T + Math.min(.6, d * .6)); l.connect(lg); lg.connect(s.frequency); }
     if (d > .9){ s.frequency.setValueAtTime(f, T + d - .2); s.frequency.linearRampToValueAtTime(f * .95, T + d); }   // 긴 음 끝을 살짝 꺾어 내려요
-    mix(s, g, 1);
-    mix(osc(T, end, 'triangle', f * 2), lp(g, 2200), .12);
+    const lowBoost = f < 360 ? 1.35 : f < 420 ? 1.15 : 1;   // 낮은 레·미가 장구에 묻히지 않게
+    mix(s, g, lowBoost);
+    mix(osc(T, end, 'triangle', f * 2), lp(g, 2400), f < 420 ? .22 : .12);
     const n = ctx.createBufferSource(); n.buffer = noiseBuf; n.loop = true;
     const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f * 2.5; bp.Q.value = 3;
     n.connect(bp); mix(bp, g, .22); n.start(T, Math.random() * .5); n.stop(end);
@@ -1556,8 +1557,9 @@ Object.assign(INST, {
     const s = osc(T, end, 'sawtooth', f);
     s.frequency.setValueAtTime(f * .985, T); s.frequency.exponentialRampToValueAtTime(f, T + .04);
     vibrato(T, end, s, f, 5.5, .012, .35);
-    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1300; bp.Q.value = 1.4;
-    s.connect(bp); mix(bp, lp(g, 3200), 1.4);
+    const pk = ctx.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 1300; pk.Q.value = 1.2; pk.gain.value = 7;   // 해금 특유의 콧소리
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = f * .7;
+    s.connect(hp); hp.connect(pk); mix(pk, lp(g, 3400), f < 360 ? .75 : .6);   // 낮은 음은 조금 더 크게
   },
 });
 
@@ -1654,7 +1656,7 @@ function play(e, T){
     case 'jg': {
       const set = JG[e.type], b = set && (set[e.dyn || '강'] || set['강']);
       if (b){
-        const gain = ({deong: .95, kung: .95, deok: .85}[e.type] || .8) * (e.v || 1);
+        const gain = ({deong: .78, kung: .78, deok: .75}[e.type] || .7) * (e.v || 1);
         const src = ctx.createBufferSource(); src.buffer = b.buf;
         const g = ctx.createGain(); g.gain.value = gain; src.connect(g); route(g, {rev: .12});
         src.start(Math.max(0, T - b.lead));   // 기덕은 '기'가 먼저 나와서 '덕'이 박에 맞도록 앞당겨요
@@ -2813,7 +2815,7 @@ function pump(){
   const now = ctx.currentTime;
   while (evIdx < song.ev.length && song.ev[evIdx].t + t0 < now + .35){
     const e = song.ev[evIdx], T = e.t + t0;
-    if (T >= now - .02) play(e, Math.max(T, now));
+    if (T >= now - .02){ try { play(e, Math.max(T, now)); } catch(err){ console.warn('음 하나를 건너뛰었어요', err); } }   // 한 음이 에러가 나도 음악은 계속
     evIdx++;
   }
 }
