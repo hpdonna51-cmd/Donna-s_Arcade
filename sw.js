@@ -1,6 +1,6 @@
 // 다나의 오락실 오프라인 지원
-// 게임을 새로 추가하거나 고치면 아래 버전 숫자를 하나 올려주세요 (v32 → v33)
-const CACHE = 'dana-arcade-v32';
+// 게임을 새로 추가하거나 고치면 아래 버전 숫자를 하나 올려주세요 (v34 → v35)
+const CACHE = 'dana-arcade-v34';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './games/bangul-bakja.html',
@@ -16,7 +16,8 @@ const SHELL = [
   './sounds/haegeum_67.wav',
   './sounds/haegeum_70.wav',
   './sounds/haegeum_72.wav',
-  './sounds/haegeum_75.wav'
+  './sounds/haegeum_75.wav',
+  './sounds/jing.wav'
 ];
 // 설치할 때 기억된 옛날 파일 말고 항상 새 파일을 받아요
 self.addEventListener('install', e => {
