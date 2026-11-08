@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 31 · 장구 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 32 · 장구·대금·해금 소리: 국립국악원 국악 디지털 음원</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -811,11 +811,11 @@ const CANCAN = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
 const TAIKO3 = {kit:'taiko', kick:[0, 6], snare:[4, 8, 10], hat:false};
 
 const MORE = [
-  { id:'arirang', name:'아리랑', desc:'경기민요. 대금과 해금 가락에 장구 세마치장단', lv:2, bpm:120, dots:['d2','d3'], kit:'janggu', rev:.2, score:true, meter:M98,
+  { id:'arirang', name:'아리랑', desc:'경기민요. 대금과 해금 가락에 장구 세마치장단', lv:2, bpm:120, dots:['d2','d3'], kit:'janggu', samples:['daegeum','haegeum'], rev:.2, score:true, meter:M98,
     sections:[
       {bars:2, meter:M98, drums: SEMACHI, tracks:[]},
-      {bars:16, meter:M98, drums: SEMACHI, tracks:[{inst:'daegeum', notes: ariMel, chart:true, v:1.25}]},
-      {bars:16, meter:M98, dbl:true, drums: SEMACHI, tracks:[{inst:'haegeum', notes: ariMel, chart:true, v:1.3}]},
+      {bars:16, meter:M98, drums: SEMACHI, tracks:[{inst:'daegeum', notes: ariMel, chart:true, v:1}]},
+      {bars:16, meter:M98, dbl:true, drums: SEMACHI, tracks:[{inst:'haegeum', notes: ariMel, chart:true, v:1}]},
       {bars:1, meter:M98, drums:{kit:'janggu', strokes:[[0, 'deong', '강']]}, tracks:[]},
     ]},
   { id:'twinkle', name:'반짝반짝 작은 별 변주곡', desc:'모차르트처럼, 갈수록 화려해지는 변주', lv:2, bpm:90, dots:['d4','d2'], kit:'soft', rev:.35, score:true, meter:M44,
@@ -1519,10 +1519,43 @@ Object.assign(INST, {
   },
 });
 
+
+// 진짜 녹음한 대금·해금 소리 (국립국악원 국악 디지털 음원에서 한 음씩 잘라낸 것)
+const INST_SAMPLES = {"haegeum": [{"file": "haegeum_63.wav", "midi": 63.109, "lead": 0.008, "gain": 1.061}, {"file": "haegeum_65.wav", "midi": 64.926, "lead": 0.033, "gain": 1.116}, {"file": "haegeum_67.wav", "midi": 67.034, "lead": 0.033, "gain": 1.043}, {"file": "haegeum_70.wav", "midi": 69.998, "lead": 0.008, "gain": 0.879}, {"file": "haegeum_72.wav", "midi": 72.044, "lead": 0.023, "gain": 1.111}, {"file": "haegeum_75.wav", "midi": 75.052, "lead": 0.018, "gain": 0.923}], "daegeum": [{"file": "daegeum_63.wav", "midi": 63.468, "lead": 0.06, "gain": 0.863}, {"file": "daegeum_66.wav", "midi": 65.99, "lead": 0.013, "gain": 0.887}, {"file": "daegeum_68.wav", "midi": 67.97, "lead": 0.003, "gain": 0.972}, {"file": "daegeum_71.wav", "midi": 71.264, "lead": 0, "gain": 1.675}, {"file": "daegeum_75.wav", "midi": 75.171, "lead": 0.003, "gain": 1.049}]};
+const SMP = {}, smpLoading = {};
+function loadInstSamples(names){
+  return Promise.all(names.map(name => smpLoading[name] || (smpLoading[name] = Promise.all(INST_SAMPLES[name].map(async s => {
+    const ab = await (await fetch('../sounds/' + s.file)).arrayBuffer();
+    const buf = await new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej));
+    return Object.assign({buf}, s);
+  })).then(list => { SMP[name] = list; }).catch(err => { console.warn(name + ' 소리를 못 불러와서 합성 소리로 해요', err); }))));
+}
+// 가장 가까운 녹음 음을 골라 음높이만 살짝 맞춰서 틀어요
+function sampleNote(name, T, f, d, v, o){
+  const list = SMP[name]; if (!list || !list.length) return false;
+  const target = 69 + 12 * Math.log2(f / 440);
+  let s = list[0]; for (const x of list) if (Math.abs(x.midi - target) < Math.abs(s.midi - target)) s = x;
+  const rate = Math.pow(2, (target - s.midi) / 12), t0 = Math.max(0, T - s.lead);
+  const src = ctx.createBufferSource(); src.buffer = s.buf; src.playbackRate.value = rate;
+  const len = d || .3, peak = .95 * v * s.gain;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(peak, t0 + .012);
+  g.gain.setValueAtTime(peak, T + len); g.gain.setTargetAtTime(0.0001, T + len, .05);
+  if (len > .6){   // 긴 음은 살짝 농음
+    const l = ctx.createOscillator(), lg = ctx.createGain(); l.frequency.value = 4.5;
+    lg.gain.setValueAtTime(0, t0); lg.gain.linearRampToValueAtTime(.006, T + Math.min(.6, len * .6));
+    l.connect(lg); lg.connect(src.playbackRate); l.start(t0); l.stop(T + len + .3);
+  }
+  src.connect(g); route(g, o);
+  src.start(t0); src.stop(Math.min(t0 + s.buf.duration / rate, T + len + .35));
+  return true;
+}
+
 // 우리 전통악기
 Object.assign(INST, {
   // 대금: 숨소리 섞인 낮은 대나무 피리. 음 첫머리를 살짝 밀어 올리고, 길게 끌면 깊게 떨어요(농음)
   daegeum(T, f, d, v, o){
+    if (sampleNote('daegeum', T, f, d, v, o)) return;
     const [g, end] = amp(T, .015, .32 * v, d || .25, .25); route(g, o);   // 박에 바로 들리도록 빠르게 시작
     const s = osc(T, end, 'sine', f);
     s.frequency.setValueAtTime(f * .988, T); s.frequency.exponentialRampToValueAtTime(f, T + .035);
@@ -1553,6 +1586,7 @@ Object.assign(INST, {
   },
   // 해금: 두 줄을 활로 긋는 코맹맹이 소리. 아래에서 미끄러져 올라와요
   haegeum(T, f, d, v, o){
+    if (sampleNote('haegeum', T, f, d, v, o)) return;
     const [g, end] = amp(T, .012, .2 * v, d || .3, .15); route(g, o);   // 박에 바로 들리도록 빠르게 시작
     const s = osc(T, end, 'sawtooth', f);
     s.frequency.setValueAtTime(f * .985, T); s.frequency.exponentialRampToValueAtTime(f, T + .04);
@@ -1568,9 +1602,9 @@ const LITE_INST = {
   ajaeng(T, f, d, v, o){ const [g, end] = amp(T, .18, .18 * v, d || .6, .3); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 700), 1); },
   xmaslead(T, f, d, v, o){ const [g, end] = amp(T, .002, .32 * v, d, d ? .2 : .6); route(g, o); fm(T, end, f, 3.5, 1.2, .3, g); },
   bell(T, f, d, v, o){ const [g, end] = amp(T, .002, .14 * v, 0, 1.6); route(g, o); fm(T, end, f, 2.76, 1.2, 1, g); },
-  daegeum(T, f, d, v, o){ const [g, end] = amp(T, .015, .3 * v, d || .25, .2); route(g, o); const s = osc(T, end, 'sine', f); s.frequency.setValueAtTime(f * .988, T); s.frequency.exponentialRampToValueAtTime(f, T + .035); mix(s, g, 1); },
+  daegeum(T, f, d, v, o){ if (sampleNote('daegeum', T, f, d, v, o)) return; const [g, end] = amp(T, .015, .3 * v, d || .25, .2); route(g, o); const s = osc(T, end, 'sine', f); s.frequency.setValueAtTime(f * .988, T); s.frequency.exponentialRampToValueAtTime(f, T + .035); mix(s, g, 1); },
   gayageum(T, f, d, v, o){ const [g, end] = amp(T, .002, .28 * v, 0, .9); route(g, o); mix(osc(T, end, 'triangle', f), lp(g, 3000, 700, T, .3), 1); },
-  haegeum(T, f, d, v, o){ const [g, end] = amp(T, .012, .2 * v, d || .3, .12); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 1800), 1); },
+  haegeum(T, f, d, v, o){ if (sampleNote('haegeum', T, f, d, v, o)) return; const [g, end] = amp(T, .012, .2 * v, d || .3, .12); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 1800), 1); },
   musicbox(T, f, d, v, o){ const [g, end] = amp(T, .002, .3 * v, 0, .9); route(g, o); fm(T, end, f, 3.5, 2.2, .3, g); },
   glass(T, f, d, v, o){ const [g, end] = amp(T, .01, .25 * v, d, d ? .4 : .7); route(g, o); fm(T, end, f, 2, 1.6, .9, g); },
   epiano(T, f, d, v, o){ const [g, end] = amp(T, .004, .3 * v, d, d ? .3 : .7); route(g, o); fm(T, end, f, 1, 1.6, .6, g); },
@@ -1824,6 +1858,7 @@ function loadJanggu(){
 }
 async function renderSong(S, onProgress){
   if (S.kit === 'janggu') await loadJanggu();
+  if (S.samples) await loadInstSamples(S.samples);
   const key = renderKey(S);
   if (renderCache.has(key)) return renderCache.get(key);
   const sg = buildSong(S);
