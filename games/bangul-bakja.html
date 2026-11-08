@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 21</p>
+      <p class="hint" style="opacity:.6">버전 22</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -684,15 +684,31 @@ function vary(mel, kind){
 }
 
 // --- 멜로디 ---
-// 아리랑(솔.라 솔라) 아리랑(시.레 시라) 아라리요(솔.라 솔미) ~(레)
-// 아리랑(레.미 솔) 고개로(솔.라 시라) 넘어간(솔.미 레미) 다(솔)
-// 나를 버(레.레 레) 리고(시.라 솔) 가시는(라.시 라솔) 님은(솔.미)
+// 아리랑 (경기민요, 9/8박자 세마치) - 받은 악보 그대로. 붙임줄로 이어진 음은 길게 누르는 노트가 돼요
+const M98 = {steps:9, group:[3,3,3], label:'9/8'};
 const ARI = {
-  a: 'G4:6 A4:2 G4:2 A4:2  B4:6 D5:2 B4:2 A4:2  G4:6 A4:2 G4:2 E4:2  D4:12',
-  b: 'D4:6 E4:2 G4:4  G4:6 A4:2 B4:2 A4:2  G4:6 E4:2 D4:2 E4:2  G4:12',
-  c: 'D5:6 D5:2 D5:4  B4:6 A4:2 G4:4  A4:6 B4:2 A4:2 G4:2  G4:6 E4:6',
+  l1: 'D4:10 E4:2 D4:4 E4:2  G4:10 A4:2 G4:4 A4:2  B4:6 A4:2 B4:2 A4:2 G4:4 E4:2  D4:10 E4:2 D4:2 E4:2 R:2',   // 아리랑 아리랑 아라리요
+  l2: 'G4:10 A4:2 G4:4 A4:2  B4:4 A4:2 G4:4 E4:2 D4:4 E4:2  G4:10 A4:2 G4:6  G4:12 R:6',                   // 아리랑 고개로 넘어간다
+  l3: 'D5:12 D5:6  D5:6 B4:6 A4:6  B4:6 A4:4 B4:2 G4:4 E4:2  D4:10 E4:2 D4:2 E4:2 R:2',                    // 나를 버리고 가시는 님은
 };
-const ariMel = J(ARI.a, ARI.b, ARI.c, ARI.b);
+const ariMel = J(ARI.l1, ARI.l2, ARI.l3, ARI.l2);                                                          // 십리도 못가서 발병난다
+// 악보에 적힌 화음 그대로 [화음, 길이(16분음표)]
+const ARI_CH = [['G',18],['Em',18],['Bm',12],['C',6],['D',18],  ['G',18],['Em',18],['C',18],['G',18],
+                ['G',18],['Bm',18],['Em',9],['A7',9],['D',18],  ['G',18],['Em',18],['C',12],['Cm',6],['G',18]];
+const CHORDN = {G:[7,11,2], Em:[4,7,11], Bm:[11,2,6], C:[0,4,7], D:[2,6,9], A7:[9,1,4], Cm:[0,3,7]};
+function chordTracks(chs){
+  const bass = [], comp = [];
+  chs.forEach(([nm, len]) => {
+    const pcs = CHORDN[nm], bm = 43 + ((pcs[0] - 7 + 12) % 12);
+    for (let p = 0; p < len; p += 6) bass.push(`${noteName(bm)}:${Math.min(6, len - p)}`);
+    const t = pcs.map(pc => 55 + ((pc - 7 + 12) % 12)).sort((x, y) => x - y);
+    const arp = [t[0], t[1], t[2], t[0] + 12, t[2], t[1]];
+    for (let p = 0, i = 0; p < len; p += 2, i++) comp.push(`${noteName(arp[i % 6])}:${Math.min(2, len - p)}`);
+  });
+  return {bass: bass.join(' '), comp: comp.join(' ')};
+}
+const ariAcc = chordTracks(ARI_CH);
+const SEMACHI = {kit:'janggu', kick:[0, 4, 6, 12], snare:[0, 4, 8, 14], hat:false};   // 덩 덩 쿵 덕 쿵 덕
 const JB = {
   chorus: J('B4:4 B4:4 B4:8  B4:4 B4:4 B4:8  B4:4 D5:4 G4:6 A4:2  B4:16',
             'C5:4 C5:4 C5:6 C5:2  C5:4 B4:4 B4:4 B4:2 B4:2  B4:4 A4:4 A4:4 B4:4  A4:8 D5:8',
@@ -743,14 +759,20 @@ const CANCAN = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
 const TAIKO3 = {kit:'taiko', kick:[0, 6], snare:[4, 8, 10], hat:false};
 
 const MORE = [
-  { id:'arirang', name:'아리랑', desc:'대금, 해금, 가야금과 장구 세마치장단으로', lv:2, bpm:92, dots:['d2','d3'], kit:'janggu', rev:.4, score:true, meter:M34,
+  { id:'arirang', name:'아리랑', desc:'경기민요. 대금, 해금, 가야금과 장구 세마치장단으로', lv:2, bpm:108, dots:['d2','d3'], kit:'janggu', rev:.4, score:true, meter:M98,
     sections:[
-      {bars:2, meter:M34, crash:true, drums:{kit:'janggu', kick:[0, 4, 8], snare:[0, 6, 10], hat:false},
-        tracks:[{inst:'gayageum', notes:'G3:2 D4:2 G4:2 A4:2 B4:2 D5:2 G4:2 D4:2 B3:2 A3:2 G3:4', v:.7}]},
-      sec(16, M34, ariMel, 'G', {lead:'daegeum', comp:'gayageum', bass:'gayageum',
-        extra:{drums:{kit:'janggu', kick:[0, 8], snare:[0, 6], hat:false}}}),
-      sec(16, M34, ariMel, 'G', {lead:'haegeum', comp:'gayageum', bass:'gayageum', dbl:'daegeum', dblOct:-12,
-        extra:{drums:{kit:'janggu', kick:[0, 4, 8], snare:[0, 6, 10], hat:false}, crash:true, dbl:true}}),
+      {bars:2, meter:M98, crash:true, drums:{kit:'janggu', kick:[0, 12], snare:[0, 6], hat:false},
+        tracks:[{inst:'gayageum', notes: chordTracks([['G',18],['D',18]]).comp, v:.7}]},
+      {bars:16, meter:M98, drums:{kit:'janggu', kick:[0, 12], snare:[0, 6], hat:false}, tracks:[
+        {inst:'daegeum', notes: ariMel, chart:true, rev:.4, v:1.1},
+        {inst:'gayageum', notes: ariAcc.comp, v:.4, pan:-.25},
+        {inst:'gayageum', notes: ariAcc.bass, v:.6}]},
+      {bars:16, meter:M98, crash:true, dbl:true, drums: SEMACHI, tracks:[
+        {inst:'haegeum', notes: ariMel, chart:true, rev:.4, v:1.1},
+        {inst:'daegeum', notes: ariMel, oct:-12, v:.35, pan:.3},
+        {inst:'gayageum', notes: ariAcc.comp, v:.4, pan:-.25},
+        {inst:'gayageum', notes: ariAcc.bass, v:.6}]},
+      {bars:1, meter:M98, crash:true, tracks:[{inst:'gayageum', notes:'G2+D3+G3+B3:18', v:.7}]},
     ]},
   { id:'twinkle', name:'반짝반짝 작은 별 변주곡', desc:'모차르트처럼, 갈수록 화려해지는 변주', lv:2, bpm:90, dots:['d4','d2'], kit:'soft', rev:.35, score:true, meter:M44,
     sections:[
