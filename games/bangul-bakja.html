@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 35 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 36 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -1691,7 +1691,7 @@ function play(e, T){
     case 'jg': {
       if (e.type === 'buk'){   // 교방고: 큰 북 둥~
         const bl = SMP.gyobanggo && SMP.gyobanggo[0];
-        if (bl){ const src = ctx.createBufferSource(); src.buffer = bl.buf; const g = ctx.createGain(); g.gain.value = .6 * (e.v || 1); src.connect(g); route(g, {rev: .12}); src.start(Math.max(0, T - bl.lead)); }
+        if (bl){ const src = ctx.createBufferSource(); src.buffer = bl.buf; const g = ctx.createGain(); g.gain.value = 1.15 * (e.v || 1); src.connect(g); route(g, {rev: .12}); src.start(Math.max(0, T - bl.lead)); }   // 북소리 크게
         else tone(T, 'sine', 90, 60, .2, .5, .6, {});
         break;
       }
