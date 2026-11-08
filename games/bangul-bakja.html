@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 28 · 장구 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 29 · 장구 소리: 국립국악원 국악 디지털 음원</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -1523,9 +1523,9 @@ Object.assign(INST, {
 Object.assign(INST, {
   // 대금: 숨소리 섞인 낮은 대나무 피리. 음 첫머리를 살짝 밀어 올리고, 길게 끌면 깊게 떨어요(농음)
   daegeum(T, f, d, v, o){
-    const [g, end] = amp(T, .07, .32 * v, d || .25, .25); route(g, o);
+    const [g, end] = amp(T, .015, .32 * v, d || .25, .25); route(g, o);   // 박에 바로 들리도록 빠르게 시작
     const s = osc(T, end, 'sine', f);
-    s.frequency.setValueAtTime(f * .97, T); s.frequency.exponentialRampToValueAtTime(f, T + .09);
+    s.frequency.setValueAtTime(f * .988, T); s.frequency.exponentialRampToValueAtTime(f, T + .035);
     if (d > .5){ const l = osc(T, end, 'sine', 4.2), lg = ctx.createGain(); lg.gain.setValueAtTime(0, T); lg.gain.linearRampToValueAtTime(f * .018, T + Math.min(.6, d * .6)); l.connect(lg); lg.connect(s.frequency); }
     if (d > .9){ s.frequency.setValueAtTime(f, T + d - .2); s.frequency.linearRampToValueAtTime(f * .95, T + d); }   // 긴 음 끝을 살짝 꺾어 내려요
     mix(s, g, 1);
@@ -1552,10 +1552,10 @@ Object.assign(INST, {
   },
   // 해금: 두 줄을 활로 긋는 코맹맹이 소리. 아래에서 미끄러져 올라와요
   haegeum(T, f, d, v, o){
-    const [g, end] = amp(T, .06, .2 * v, d || .3, .15); route(g, o);
+    const [g, end] = amp(T, .012, .2 * v, d || .3, .15); route(g, o);   // 박에 바로 들리도록 빠르게 시작
     const s = osc(T, end, 'sawtooth', f);
-    s.frequency.setValueAtTime(f * .95, T); s.frequency.exponentialRampToValueAtTime(f, T + .12);
-    vibrato(T, end, s, f, 5.5, .012, .25);
+    s.frequency.setValueAtTime(f * .985, T); s.frequency.exponentialRampToValueAtTime(f, T + .04);
+    vibrato(T, end, s, f, 5.5, .012, .35);
     const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1300; bp.Q.value = 1.4;
     s.connect(bp); mix(bp, lp(g, 3200), 1.4);
   },
@@ -1566,9 +1566,9 @@ const LITE_INST = {
   ajaeng(T, f, d, v, o){ const [g, end] = amp(T, .18, .18 * v, d || .6, .3); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 700), 1); },
   xmaslead(T, f, d, v, o){ const [g, end] = amp(T, .002, .32 * v, d, d ? .2 : .6); route(g, o); fm(T, end, f, 3.5, 1.2, .3, g); },
   bell(T, f, d, v, o){ const [g, end] = amp(T, .002, .14 * v, 0, 1.6); route(g, o); fm(T, end, f, 2.76, 1.2, 1, g); },
-  daegeum(T, f, d, v, o){ const [g, end] = amp(T, .07, .3 * v, d || .25, .2); route(g, o); const s = osc(T, end, 'sine', f); s.frequency.setValueAtTime(f * .97, T); s.frequency.exponentialRampToValueAtTime(f, T + .09); mix(s, g, 1); },
+  daegeum(T, f, d, v, o){ const [g, end] = amp(T, .015, .3 * v, d || .25, .2); route(g, o); const s = osc(T, end, 'sine', f); s.frequency.setValueAtTime(f * .988, T); s.frequency.exponentialRampToValueAtTime(f, T + .035); mix(s, g, 1); },
   gayageum(T, f, d, v, o){ const [g, end] = amp(T, .002, .28 * v, 0, .9); route(g, o); mix(osc(T, end, 'triangle', f), lp(g, 3000, 700, T, .3), 1); },
-  haegeum(T, f, d, v, o){ const [g, end] = amp(T, .06, .2 * v, d || .3, .12); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 1800), 1); },
+  haegeum(T, f, d, v, o){ const [g, end] = amp(T, .012, .2 * v, d || .3, .12); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 1800), 1); },
   musicbox(T, f, d, v, o){ const [g, end] = amp(T, .002, .3 * v, 0, .9); route(g, o); fm(T, end, f, 3.5, 2.2, .3, g); },
   glass(T, f, d, v, o){ const [g, end] = amp(T, .01, .25 * v, d, d ? .4 : .7); route(g, o); fm(T, end, f, 2, 1.6, .9, g); },
   epiano(T, f, d, v, o){ const [g, end] = amp(T, .004, .3 * v, d, d ? .3 : .7); route(g, o); fm(T, end, f, 1, 1.6, .6, g); },
