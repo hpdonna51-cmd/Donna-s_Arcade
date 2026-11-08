@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 17</p>
+      <p class="hint" style="opacity:.6">버전 19</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -621,6 +621,192 @@ const CLASSICS = [
     ]},
 ];
 SONGS.push(...CLASSICS);
+/* ---------- 새로 더한 곡들 (저작권이 끝난 노래와 캐롤) ---------- */
+const M24 = {steps:4, group:[2,2], label:'2/4'};
+const PC = {C:0, D:2, E:4, F:5, G:7, A:9, B:11};
+const NN = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const noteName = m => NN[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+const J = (...parts) => parts.join(' ');
+// 멜로디에 맞는 화음을 마디마다 골라서 베이스, 화음, 분산화음 반주를 만들어요
+function harm(mel, key, bar16, beat16){
+  const k = PC[key], {events, len} = parseTrack(mel);
+  const CH = [[0,4,7],[5,9,0],[7,11,2],[9,0,4],[2,5,9]];   // I IV V vi ii
+  const bars = Math.round(len / bar16), bass = [], pad = [], comp = [];
+  for (let b = 0; b < bars; b++){
+    const s0 = b * bar16, s1 = s0 + bar16;
+    let best = 0, bs = -1;
+    CH.forEach((c, ci) => {
+      let sc = ci === 0 ? .3 : ci === 2 ? .2 : 0;
+      events.forEach(n => {
+        const o = Math.max(s0, n.pos), e = Math.min(s1, n.pos + n.dur);
+        if (e <= o) return;
+        const pc = ((n.ms[0] - k) % 12 + 12) % 12;
+        if (c.includes(pc)) sc += (e - o) * (n.pos === s0 ? 2 : 1);
+        else sc -= (e - o) * .4;
+      });
+      if (sc > bs){ bs = sc; best = ci; }
+    });
+    const c = CH[best], root = 36 + ((k + c[0]) % 12), tri = c.map(x => 60 + ((k + x) % 12)).sort((a, b) => a - b);
+    for (let p = 0; p < bar16; p += beat16) bass.push(noteName((p / beat16) % 2 && bar16 / beat16 > 2 ? root + 7 : root) + ':' + beat16);
+    pad.push(tri.map(noteName).join('+') + ':' + bar16);
+    const arp = [tri[0], tri[1], tri[2], tri[1]];
+    for (let p = 0, i = 0; p < bar16; p += 2, i++) comp.push(noteName(arp[i % 4]) + ':2');
+  }
+  return {bass: bass.join(' '), pad: pad.join(' '), comp: comp.join(' ')};
+}
+// 곡 한 구간 만들기
+function sec(bars, meter, mel, key, o = {}){
+  const bar16 = meter.steps * 2, beat16 = meter.label === '6/8' ? 6 : 4;
+  const h = harm(mel, key, bar16, beat16);
+  const t = [{inst: o.lead, notes: mel, chart: true, oct: o.oct || 0, rev: .3}];
+  if (o.bass) t.push({inst: o.bass, notes: h.bass, v: .85});
+  if (o.pad) t.push({inst: o.pad, notes: h.pad, v: .7, legato: 1});
+  if (o.comp) t.push({inst: o.comp, notes: h.comp, v: .4, pan: -.25});
+  if (o.dbl) t.push({inst: o.dbl, notes: mel, oct: o.dblOct || 0, v: .4, pan: .3});
+  return Object.assign({bars, meter, tracks: t}, o.extra || {});
+}
+const rest = (bars, meter) => `R:${bars * meter.steps * 2}`;
+// 반짝반짝 변주용: 음계에서 바로 위·아래 음
+const CMAJ = [0,2,4,5,7,9,11];
+function nb(m, dir){ for (let d = 1; d < 3; d++){ const x = m + d * dir; if (CMAJ.includes(((x % 12) + 12) % 12)) return x; } return m; }
+function vary(mel, kind){
+  return parseTrack(mel).events.map(n => {
+    const m = n.ms[0], out = [];
+    for (let q = 0; q < n.dur; q += 4){
+      if (kind === 8) out.push(`${noteName(m)}:2`, `${noteName(m)}:2`);
+      else if (kind === 3) out.push(`${noteName(m)}:1.3333`, `${noteName(nb(m, 1))}:1.3333`, `${noteName(m)}:1.3334`);
+      else out.push(`${noteName(m)}:1`, `${noteName(nb(m, 1))}:1`, `${noteName(m)}:1`, `${noteName(nb(m, -1))}:1`);
+    }
+    return out.join(' ');
+  }).join(' ');
+}
+
+// --- 멜로디 ---
+const ARI = {
+  a: 'G4:6 A4:2 G4:4  A4:4 B4:4 D5:2 B4:2  A4:4 G4:2 A4:2 G4:2 E4:2  D4:12',
+  b: 'D4:6 E4:2 G4:4  G4:4 A4:4 B4:2 A4:2  G4:4 E4:2 D4:2 E4:4  G4:12',
+  c: 'D5:6 D5:2 D5:4  B4:4 A4:4 G4:2 A4:2  B4:4 A4:2 G4:2 E4:2 D4:2  E4:12',
+};
+const ariMel = J(ARI.a, ARI.b, ARI.c, ARI.b);
+const JB = {
+  chorus: J('B4:4 B4:4 B4:8  B4:4 B4:4 B4:8  B4:4 D5:4 G4:6 A4:2  B4:16',
+            'C5:4 C5:4 C5:6 C5:2  C5:4 B4:4 B4:4 B4:2 B4:2  B4:4 A4:4 A4:4 B4:4  A4:8 D5:8',
+            'B4:4 B4:4 B4:8  B4:4 B4:4 B4:8  B4:4 D5:4 G4:6 A4:2  B4:16',
+            'C5:4 C5:4 C5:6 C5:2  C5:4 B4:4 B4:4 B4:2 B4:2  D5:4 D5:4 C5:4 A4:4  G4:16'),
+  verse: J('D4:4 B4:4 A4:4 G4:4  D4:12 D4:2 D4:2  D4:4 B4:4 A4:4 G4:4  E4:16',
+           'E4:4 C5:4 B4:4 A4:4  F#4:16  D5:4 D5:4 C5:4 A4:4  B4:16',
+           'D4:4 B4:4 A4:4 G4:4  D4:16  D4:4 B4:4 A4:4 G4:4  E4:12 E4:4',
+           'E4:4 C5:4 B4:4 A4:4  D5:4 D5:4 D5:4 D5:4  E5:4 D5:4 C5:4 A4:4  G4:8 D5:8'),
+};
+const TW = {
+  l12: 'C4:4 C4:4 G4:4 G4:4  A4:4 A4:4 G4:8  F4:4 F4:4 E4:4 E4:4  D4:4 D4:4 C4:8',
+  l34: 'G4:4 G4:4 F4:4 F4:4  E4:4 E4:4 D4:8  G4:4 G4:4 F4:4 F4:4  E4:4 E4:4 D4:8',
+};
+const CC = (() => {
+  const b1 = 'C4:4 D4:1 F4:1 E4:1 D4:1', b2 = 'G4:2 G4:2 G4:2 A4:1 E4:1', b3 = 'F4:2 D4:2 D4:2 D4:1 F4:1';
+  return J(b1, b2, b3, 'E4:1 D4:1 C4:1 C5:1 B4:1 A4:1 G4:1 F4:1', b1, b2, b3, 'C4:2 G4:2 D4:1 E4:1 C4:2');
+})();
+const WT = (() => {
+  const g = 'B3:1 B3:1 B3:2 B3:1 B3:1 B3:2';
+  return J(g, 'B3:1 B3:1 E4:2 F#4:2 G#4:2', g, 'B3:1 B3:1 G#4:2 E4:2 G#4:2', g, 'B3:1 B3:1 E4:2 F#4:2 G#4:2', 'B3:1 B3:1 B3:2 E4:2 G#4:2', 'F#4:2 D#4:2 E4:4');
+})();
+const HB = J('R:8 G4:3 G4:1', 'A4:4 G4:4 C5:4', 'B4:8 G4:3 G4:1', 'A4:4 G4:4 D5:4', 'C5:8 G4:3 G4:1', 'G5:4 E5:4 C5:4', 'B4:4 A4:4 F5:3 F5:1', 'E5:4 C5:4 D5:4', 'C5:12');
+const SN = J('G4:3 A4:1 G4:2 E4:6', 'G4:3 A4:1 G4:2 E4:6', 'D5:4 D5:2 B4:6', 'C5:4 C5:2 G4:6',
+             'A4:4 A4:2 C5:3 B4:1 A4:2', 'G4:3 A4:1 G4:2 E4:6', 'A4:4 A4:2 C5:3 B4:1 A4:2', 'G4:3 A4:1 G4:2 E4:6',
+             'D5:4 D5:2 F5:3 D5:1 B4:2', 'C5:6 E5:6', 'C5:3 G4:1 E4:2 G4:3 F4:1 D4:2', 'C4:12');
+const JW = J('D5:4 C#5:3 B4:1', 'A4:6 G4:2', 'F#4:4 E4:4', 'D4:6 A4:2', 'B4:6 B4:2', 'C#5:6 C#5:2', 'D5:8',
+             'D5:2 D5:2 C#5:2 B4:2', 'A4:3 G4:1 F#4:2 D5:2', 'D5:2 C#5:2 B4:2 A4:2', 'A4:3 G4:1 F#4:2 F#4:2',
+             'F#4:2 F#4:2 F#4:2 F#4:1 G4:1', 'A4:6 G4:1 F#4:1', 'E4:2 E4:2 E4:2 E4:1 F#4:1', 'G4:6 F#4:1 E4:1',
+             'D4:2 D5:4 B4:2', 'A4:3 G4:1 F#4:2 G4:2', 'F#4:4 E4:4', 'D4:8');
+const FN = J('R:8 F#4:2 E4:2', 'D4:6 E4:2 F#4:2 G4:2', 'A4:8 B4:2 C#5:2', 'D5:4 C#5:4 B4:4', 'A4:8 B4:2 C#5:2',
+             'D5:4 C#5:4 B4:4', 'A4:4 B4:4 C#5:4', 'D5:4 A4:4 G4:4', 'F#4:8 F#4:2 E4:2',
+             'D4:6 E4:2 F#4:2 G4:2', 'A4:8 D5:2 C#5:2', 'B4:8 B4:4', 'A4:12',
+             'D5:6 C#5:2 B4:4', 'A4:8 B4:2 C#5:2', 'D5:4 A4:4 G4:4', 'F#4:12');
+const WW = J('R:8 D4:4', 'G4:4 G4:2 A4:2 G4:2 F#4:2', 'E4:4 C4:4 E4:4', 'A4:4 A4:2 B4:2 A4:2 G4:2', 'F#4:4 D4:4 D4:4',
+             'B4:4 B4:2 C5:2 B4:2 A4:2', 'G4:4 E4:4 D4:2 D4:2', 'E4:4 A4:4 F#4:4', 'G4:8 D4:4',
+             'G4:4 G4:4 G4:4', 'F#4:8 F#4:4', 'G4:4 F#4:4 E4:4', 'D4:8 A4:4',
+             'B4:4 A4:2 A4:2 G4:2 G4:2', 'D5:4 D4:4 D4:2 D4:2', 'E4:4 A4:4 F#4:4', 'G4:12');
+const DH = (() => {
+  const a = J('D5:6 C5:2 B4:4 A4:4', 'G4:4 A4:4 B4:4 G4:4', 'A4:2 B4:2 C5:2 A4:2 B4:6 A4:2', 'G4:4 F#4:4 G4:8');
+  return J(a, a, 'A4:6 B4:2 C5:4 A4:4', 'B4:6 C5:2 D5:4 A4:4', 'B4:2 C#5:2 D5:4 E5:2 F#5:2 G5:4', 'F#5:4 E5:4 D5:8', a);
+})();
+const STD = {kit:'std', kick:[0, 8], snare:[4, 12], hat:'8'};
+const JING = {kit:'std', kick:[0, 8], snare:[4, 12], hat:'8'};
+const WALTZ = {kit:'soft', kick:[0], snare:[4, 8], hat:false};
+const GALLOP = {kit:'std', kick:[0, 4], snare:[2, 3, 6, 7], hat:'16'};
+const CANCAN = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
+const TAIKO3 = {kit:'taiko', kick:[0, 6], snare:[4, 8, 10], hat:false};
+
+const MORE = [
+  { id:'arirang', name:'아리랑', desc:'우리 민요를 피리와 가야금, 북으로', lv:2, bpm:96, dots:['d2','d3'], kit:'taiko', rev:.35, score:true, meter:M34,
+    sections:[
+      {bars:2, meter:M34, drums: TAIKO3, tracks:[{inst:'pluck', notes:'G3+D4:12 G3+D4:12', v:.6}]},
+      sec(16, M34, ariMel, 'G', {lead:'flute', oct:12, comp:'pluck', pad:'warmpad', extra:{drums:{kit:'taiko', kick:[0], snare:[8], hat:false}}}),
+      sec(16, M34, ariMel, 'G', {lead:'flute', oct:12, comp:'pluck', bass:'subbass', dbl:'pluck', extra:{drums: TAIKO3, crash:true, dbl:true}}),
+    ]},
+  { id:'jingle', name:'징글벨', desc:'썰매 방울이 짤랑짤랑, 신나는 캐롤', lv:3, bpm:160, dots:['d4','d1'], kit:'std', rev:.3, score:true, meter:M44,
+    sections:[
+      sec(16, M44, JB.chorus, 'G', {lead:'glock', bass:'fingerbass', comp:'piano', extra:{drums: JING}}),
+      sec(16, M44, JB.verse, 'G', {lead:'glock', bass:'fingerbass', pad:'strings', extra:{drums: JING, crash:true}}),
+      sec(16, M44, JB.chorus, 'G', {lead:'glock', bass:'fingerbass', comp:'piano', dbl:'brass', dblOct:-12, extra:{drums: STD, crash:true, dbl:true}}),
+    ]},
+  { id:'twinkle', name:'반짝반짝 작은 별 변주곡', desc:'모차르트처럼, 갈수록 화려해지는 변주', lv:2, bpm:90, dots:['d4','d2'], kit:'soft', rev:.35, score:true, meter:M44,
+    sections:[
+      sec(4, M44, TW.l12, 'C', {lead:'piano', bass:'piano'}),
+      sec(4, M44, vary(TW.l34, 8), 'C', {lead:'piano', bass:'cello', extra:{mark:'변주 1: 두 배로!'}}),
+      sec(4, M44, vary(TW.l12, 3), 'C', {lead:'piano', bass:'cello', pad:'strings', extra:{mark:'변주 2: 셋잇단!'}}),
+      sec(4, M44, vary(TW.l34, 16), 'C', {lead:'piano', bass:'cello', pad:'strings', extra:{mark:'변주 3: 가장 빠르게!', dbl:true}}),
+      sec(4, M44, TW.l12, 'C', {lead:'piano', bass:'cello', pad:'strings', dbl:'glock', dblOct:12, extra:{crash:true}}),
+    ]},
+  { id:'cancan', name:'캉캉', desc:'오펜바흐, 다리를 번쩍번쩍 드는 빠른 춤곡', lv:4, bpm:124, dots:['d3','d1'], kit:'std', rev:.25, score:true, meter:M24,
+    sections:[
+      sec(16, M24, J(CC, CC), 'C', {lead:'brass', oct:12, bass:'fingerbass', comp:'piano', extra:{drums: CANCAN}}),
+      sec(16, M24, J(CC, CC), 'C', {lead:'brass', oct:12, bass:'fingerbass', comp:'piano', dbl:'violin', dblOct:12, extra:{drums: CANCAN, crash:true, dbl:true}}),
+      Object.assign(sec(16, M24, J(CC, CC), 'C', {lead:'brass', oct:12, bass:'fingerbass', comp:'piano', dbl:'violin', dblOct:12, extra:{drums:{kit:'std', kick:[0, 2, 4, 6], snare:[2, 6], hat:'16'}, crash:true, dbl:true}}), {bpm:142}),
+    ]},
+  { id:'tell', name:'윌리엄 텔 서곡', desc:'로시니, 말 달리는 리듬의 질주곡', lv:5, bpm:128, dots:['d3','d4'], kit:'std', rev:.25, score:true, meter:M24,
+    sections:[
+      {bars:2, meter:M24, drums: GALLOP, tracks:[{inst:'brass', notes:'B2+E3+G#3:8 B2+F#3+B3:8', v:.7}]},
+      sec(16, M24, J(WT, WT), 'E', {lead:'violin', oct:12, bass:'cello', comp:'pluck', extra:{drums: GALLOP}}),
+      sec(16, M24, J(WT, WT), 'E', {lead:'brass', oct:12, bass:'cello', pad:'strings', dbl:'violin', dblOct:12, extra:{drums: GALLOP, crash:true, dbl:true}}),
+      Object.assign(sec(16, M24, J(WT, WT), 'E', {lead:'brass', oct:12, bass:'cello', pad:'strings', dbl:'violin', dblOct:24, extra:{drums:{kit:'taiko', kick:[0, 2, 4, 6], snare:[2, 3, 6, 7], hat:'16'}, crash:true, dbl:true}}), {bpm:146}),
+    ]},
+  { id:'birthday', name:'생일 축하합니다', desc:'오르골에서 밴드까지, 친구 생일에 다 같이', lv:1, bpm:110, dots:['d1','d4'], kit:'soft', rev:.35, score:true, meter:M34,
+    sections:[
+      sec(9, M34, HB, 'C', {lead:'musicbox', comp:'celesta'}),
+      sec(9, M34, HB, 'C', {lead:'piano', bass:'cello', pad:'strings', extra:{drums: WALTZ}}),
+      sec(9, M34, HB, 'C', {lead:'brass', bass:'fingerbass', comp:'piano', dbl:'glock', dblOct:12, extra:{drums:{kit:'std', kick:[0], snare:[4, 8], hat:'8'}, transpose:2, crash:true, mark:'한 음 올라가요!'}}),
+    ]},
+  { id:'silent', name:'고요한 밤 (캐롤)', desc:'조용히 흔들리는 6/8박자 자장가 캐롤', lv:1, bpm:100, dots:['d2','d4'], kit:'soft', rev:.5, score:true, meter:M68,
+    sections:[
+      {bars:2, meter:M68, tracks:[{inst:'celesta', notes:'C5:6 G4:6 E5:6 G4:6', v:.6}, {inst:'strings', notes:'C4+E4+G4:24', legato:1, v:.6}]},
+      sec(12, M68, SN, 'C', {lead:'musicbox', pad:'strings', bass:'cello'}),
+      sec(12, M68, SN, 'C', {lead:'violin', pad:'strings', bass:'cello', comp:'celesta', extra:{crash:false}}),
+    ]},
+  { id:'joyworld', name:'기쁘다 구주 오셨네 (캐롤)', desc:'금관과 오르간의 웅장한 캐롤', lv:2, bpm:108, dots:['d4','d3'], kit:'soft', rev:.45, score:true, meter:M24,
+    sections:[
+      sec(19, M24, JW, 'D', {lead:'brass', pad:'organ', bass:'cello'}),
+      sec(19, M24, JW, 'D', {lead:'piano', bass:'cello', pad:'organ', dbl:'brass', dblOct:-12, extra:{drums:{kit:'soft', kick:[0], snare:[4], hat:'4'}, crash:true}}),
+    ]},
+  { id:'noel', name:'저 들 밖에 한밤중에 (캐롤)', desc:'바이올린과 하프로 부르는 첫 번째 노엘', lv:1, bpm:120, dots:['d2','d1'], kit:'soft', rev:.45, score:true, meter:M34,
+    sections:[
+      sec(17, M34, FN, 'D', {lead:'violin', pad:'strings', bass:'cello'}),
+      sec(17, M34, FN, 'D', {lead:'flute', oct:12, comp:'pluck', pad:'strings', bass:'cello'}),
+    ]},
+  { id:'wewish', name:'We Wish You a Merry Christmas', desc:'종소리 가득, 즐거운 성탄 캐롤', lv:2, bpm:150, dots:['d4','d2'], kit:'std', rev:.3, score:true, meter:M34,
+    sections:[
+      sec(17, M34, WW, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', extra:{drums: WALTZ}}),
+      sec(17, M34, WW, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', dbl:'brass', dblOct:-12, extra:{drums:{kit:'std', kick:[0], snare:[4, 8], hat:'8'}, crash:true}}),
+      sec(17, M34, WW, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', dbl:'brass', dblOct:-12, extra:{drums:{kit:'std', kick:[0], snare:[4, 8], hat:'8'}, transpose:2, crash:true, dbl:true, mark:'한 음 올라가요!'}}),
+    ]},
+  { id:'deck', name:'Deck the Halls (캐롤)', desc:'팔랄랄라~ 하프시코드와 종소리 캐롤', lv:2, bpm:132, dots:['d1','d4'], kit:'std', rev:.35, score:true, meter:M44,
+    sections:[
+      sec(16, M44, DH, 'G', {lead:'harpsichord', pad:'strings', bass:'cello'}),
+      sec(16, M44, DH, 'G', {lead:'glock', comp:'piano', bass:'fingerbass', dbl:'harpsichord', extra:{drums: STD, crash:true, dbl:true}}),
+    ]},
+];
+SONGS.push(...MORE);
+
 SONGS.sort((a, b) => a.lv - b.lv);
 
 function parseTrack(str){
@@ -668,7 +854,7 @@ function buildScore(S){
     if (s.crash) ev.push({t: tc, k:'crash', kit: s.drums && s.drums.kit});
     s.tracks.forEach(tk => {
       const {events, len} = parseTrack(tk.notes);
-      if (len !== s.bars * N16) console.warn(`${S.name} 구간 ${si + 1}: 길이가 맞지 않아요`, len, s.bars * N16);
+      if (Math.abs(len - s.bars * N16) > 1e-6) console.warn(`${S.name} 구간 ${si + 1}: 길이가 맞지 않아요`, len, s.bars * N16);
       events.forEach(n => {
         const t = tc + n.pos * X, d = n.dur * X, ms = n.ms.map(m => m + tr + (tk.oct || 0));
         ev.push({t, k:'note', lead: !!tk.chart || /bass|cello/.test(tk.inst) && (tk.v == null || tk.v >= .8), inst: tk.inst, ms, d: d * (tk.legato != null ? tk.legato : .95), v: tk.v != null ? tk.v : 1, rev: tk.rev != null ? tk.rev : .3, pan: tk.pan || 0});
@@ -923,8 +1109,40 @@ function ensureCtx(){
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     irBuf = makeIR(ctx);
   }
-  if (ctx.state === 'suspended') ctx.resume();
+  unlockAudio();
+  if (ctx.state !== 'running' && ctx.state !== 'closed') ctx.resume();
 }
+// 아이폰·아이패드: 무음 모드여도 게임 소리가 나도록, 그리고 첫 터치 때 소리를 깨워둬요
+let audioUnlocked = false, silentEl = null;
+function silentWav(){
+  const n = 4410, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+  const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 44100, true);
+  v.setUint32(28, 88200, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+  let bin = ''; new Uint8Array(b).forEach(x => bin += String.fromCharCode(x));
+  return 'data:audio/wav;base64,' + btoa(bin);
+}
+function unlockAudio(){
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e){}
+  if (audioUnlocked || !ctx) return;
+  audioUnlocked = true;
+  try {
+    const src = ctx.createBufferSource(); src.buffer = ctx.createBuffer(1, 1, 22050);
+    src.connect(ctx.destination); src.start(0);
+  } catch(e){}
+  try {
+    if (!silentEl){ silentEl = new Audio(silentWav()); silentEl.loop = true; silentEl.setAttribute('playsinline', ''); silentEl.volume = 0.01; }
+    const pr = silentEl.play(); if (pr && pr.catch) pr.catch(() => {});
+  } catch(e){}
+}
+// 다른 앱을 쓰다 오거나 전화가 와서 소리가 멈췄으면 다음 터치 때 다시 켜요
+['pointerdown', 'touchend', 'keydown'].forEach(ev => addEventListener(ev, () => {
+  if (!ctx) return;
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e){}
+  if (ctx.state !== 'running' && ctx.state !== 'closed' && state !== 'paused' && state !== 'countdown') ctx.resume();
+  if (silentEl && silentEl.paused){ const pr = silentEl.play(); if (pr && pr.catch) pr.catch(() => {}); }
+}, {passive: true}));
 function newBus(S){
   const out = ctx.createGain(); out.gain.value = .8;
   const comp = ctx.createDynamicsCompressor();
