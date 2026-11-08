@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 22</p>
+      <p class="hint" style="opacity:.6">버전 24</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -707,8 +707,58 @@ function chordTracks(chs){
   });
   return {bass: bass.join(' '), comp: comp.join(' ')};
 }
-const ariAcc = chordTracks(ARI_CH);
-const SEMACHI = {kit:'janggu', kick:[0, 4, 6, 12], snare:[0, 4, 8, 14], hat:false};   // 덩 덩 쿵 덕 쿵 덕
+// 국악식 반주: 화음을 쌓지 않고, 같은 가락을 악기마다 다르게 꾸며서 함께 연주해요
+const PENTA = [7, 9, 11, 2, 4];   // 솔 라 시 레 미 (평조)
+const upNb = m => { for (let d = 1; d <= 3; d++) if (PENTA.includes((m + d) % 12)) return m + d; return m + 2; };
+const downNb = m => { for (let d = 1; d <= 3; d++) if (PENTA.includes(((m - d) % 12 + 12) % 12)) return m - d; return m - 2; };
+function lineTrack(items, total){
+  items.sort((a, b) => a.p - b.p);
+  const out = []; let pos = 0;
+  for (const it of items){
+    if (it.p < pos || it.d <= 0) continue;
+    if (it.p > pos) out.push(`R:${it.p - pos}`);
+    out.push(`${noteName(it.m)}:${it.d}`); pos = it.p + it.d;
+  }
+  if (total > pos) out.push(`R:${total - pos}`);
+  return out.join(' ');
+}
+const ariEv = parseTrack(ariMel), ARI_LEN = ariEv.len;
+const ariMel128 = stretchTo128(ariEv);
+// 가야금: 한 옥타브 아래에서 가락을 뜯고, 긴 음은 박마다 다시 뜯으며 아래 음으로 살짝 굴려요
+const ariGaya = lineTrack(ariEv.events.flatMap(e => {
+  const m = e.ms[0] - 12, out = [{p: e.pos, d: Math.min(e.dur, 6), m}];
+  if (e.dur >= 10){ out.push({p: e.pos + 6, d: 2, m: downNb(m)}, {p: e.pos + 8, d: Math.min(4, e.dur - 8), m}); }
+  return out;
+}), ARI_LEN);
+// 대금(두 번째): 긴 음 앞에 윗음을 살짝 붙이는 꾸밈음
+const ariOrn = lineTrack(ariEv.events.flatMap(e => {
+  const m = e.ms[0];
+  return e.dur >= 6 && e.pos > 0 ? [{p: e.pos, d: 1, m: upNb(m)}, {p: e.pos + 1, d: e.dur - 1, m}] : [{p: e.pos, d: e.dur, m}];
+}), ARI_LEN);
+// 아쟁: 낮은 소리로 마디의 중심음(솔 또는 레)을 길게 끌어요
+const ariAjaeng = (() => {
+  const bars = ARI_LEN / 18, out = [];
+  for (let b = 0; b < bars; b++){
+    const first = ariEv.events.find(e => e.pos >= b * 18);
+    const pc = first ? first.ms[0] % 12 : 7;
+    out.push(`${pc === 2 || pc === 9 ? 'D3' : 'G2'}:18`);
+  }
+  return out.join(' ');
+})();
+const SEMACHI = {kit:'janggu', kick:[0, 4, 6, 12], snare:[0, 4, 8, 14], ghost:[13], hat:false};   // 세마치: 덩 . 덩 | 쿵 덕 . | 쿵 (기)덕 .
+// 굿거리 (12/8): 덩 . 기덕 쿵 . 더러러러 | 쿵 . 기덕 쿵 . 더러러러
+const GUTGEORI = {kit:'janggu', kick:[0, 6, 12, 18], snare:[0, 4, 16], ghost:[3, 15, 10, 10.5, 11, 11.5, 22, 22.5, 23, 23.5], hat:false};
+const M128 = {steps:12, group:[3,3,3,3], label:'12/8'};
+// 세마치(9/8) 가락을 굿거리(12/8)에 맞게: 마디마다 가장 긴 음을 한 박 더 끌어요
+function stretchTo128(ev){
+  const bars = ev.len / 18, items = [];
+  for (let b = 0; b < bars; b++){
+    const es = ev.events.filter(e => e.pos >= b * 18 && e.pos < (b + 1) * 18);
+    let li = 0; es.forEach((e, i) => { if (e.dur > es[li].dur) li = i; });
+    es.forEach((e, i) => items.push({p: b * 24 + (e.pos - b * 18) + (i > li ? 6 : 0), d: e.dur + (i === li ? 6 : 0), m: e.ms[0]}));
+  }
+  return lineTrack(items, bars * 24);
+}
 const JB = {
   chorus: J('B4:4 B4:4 B4:8  B4:4 B4:4 B4:8  B4:4 D5:4 G4:6 A4:2  B4:16',
             'C5:4 C5:4 C5:6 C5:2  C5:4 B4:4 B4:4 B4:2 B4:2  B4:4 A4:4 A4:4 B4:4  A4:8 D5:8',
@@ -759,20 +809,13 @@ const CANCAN = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
 const TAIKO3 = {kit:'taiko', kick:[0, 6], snare:[4, 8, 10], hat:false};
 
 const MORE = [
-  { id:'arirang', name:'아리랑', desc:'경기민요. 대금, 해금, 가야금과 장구 세마치장단으로', lv:2, bpm:108, dots:['d2','d3'], kit:'janggu', rev:.4, score:true, meter:M98,
+  { id:'arirang', name:'아리랑', desc:'경기민요. 대금과 해금 가락에 장구 세마치장단, 굿거리장단', lv:2, bpm:120, dots:['d2','d3'], kit:'janggu', rev:.2, score:true, meter:M98,
     sections:[
-      {bars:2, meter:M98, crash:true, drums:{kit:'janggu', kick:[0, 12], snare:[0, 6], hat:false},
-        tracks:[{inst:'gayageum', notes: chordTracks([['G',18],['D',18]]).comp, v:.7}]},
-      {bars:16, meter:M98, drums:{kit:'janggu', kick:[0, 12], snare:[0, 6], hat:false}, tracks:[
-        {inst:'daegeum', notes: ariMel, chart:true, rev:.4, v:1.1},
-        {inst:'gayageum', notes: ariAcc.comp, v:.4, pan:-.25},
-        {inst:'gayageum', notes: ariAcc.bass, v:.6}]},
-      {bars:16, meter:M98, crash:true, dbl:true, drums: SEMACHI, tracks:[
-        {inst:'haegeum', notes: ariMel, chart:true, rev:.4, v:1.1},
-        {inst:'daegeum', notes: ariMel, oct:-12, v:.35, pan:.3},
-        {inst:'gayageum', notes: ariAcc.comp, v:.4, pan:-.25},
-        {inst:'gayageum', notes: ariAcc.bass, v:.6}]},
-      {bars:1, meter:M98, crash:true, tracks:[{inst:'gayageum', notes:'G2+D3+G3+B3:18', v:.7}]},
+      {bars:2, meter:M98, drums: SEMACHI, tracks:[]},
+      {bars:16, meter:M98, drums: SEMACHI, tracks:[{inst:'daegeum', notes: ariMel, chart:true, v:1.1}]},
+      {bars:1, meter:M128, mark:'굿거리장단으로 바뀌어요!', drums: GUTGEORI, tracks:[]},
+      {bars:16, meter:M128, dbl:true, drums: GUTGEORI, tracks:[{inst:'haegeum', notes: ariMel128, chart:true, v:1.1}]},
+      {bars:1, meter:M128, drums:{kit:'janggu', kick:[0], snare:[0], hat:false}, tracks:[]},
     ]},
   { id:'twinkle', name:'반짝반짝 작은 별 변주곡', desc:'모차르트처럼, 갈수록 화려해지는 변주', lv:2, bpm:90, dots:['d4','d2'], kit:'soft', rev:.35, score:true, meter:M44,
     sections:[
@@ -881,6 +924,7 @@ function buildScore(S){
       if (D){
         (D.kick || []).forEach(p => { ev.push({t: bt + p * X, k:'kick', kit: D.kit, E: 2 * X}); rhythm.push({t: bt + p * X, step: p / 2, beat: beat16.has(p)}); });
         (D.snare || []).forEach(p => { ev.push({t: bt + p * X, k:'snare', v: 1, kit: D.kit}); rhythm.push({t: bt + p * X, step: p / 2, beat: beat16.has(p)}); });
+        (D.ghost || []).forEach(p => ev.push({t: bt + p * X, k:'snare', v: .4, kit: D.kit}));
         const hs = D.hat === '16' ? 1 : D.hat === '8' ? 2 : D.hat === '4' ? 4 : 0;
         if (hs) for (let p = 0; p < N16; p += hs) ev.push({t: bt + p * X, k:'hat', v: p % 4 === 0 ? 1 : .6, pan: (p / hs) % 2 ? .25 : -.15, kit: D.kit});
       }
@@ -1474,11 +1518,19 @@ Object.assign(INST, {
     const s = osc(T, end, 'sine', f);
     s.frequency.setValueAtTime(f * .97, T); s.frequency.exponentialRampToValueAtTime(f, T + .09);
     if (d > .5){ const l = osc(T, end, 'sine', 4.2), lg = ctx.createGain(); lg.gain.setValueAtTime(0, T); lg.gain.linearRampToValueAtTime(f * .018, T + Math.min(.6, d * .6)); l.connect(lg); lg.connect(s.frequency); }
+    if (d > .9){ s.frequency.setValueAtTime(f, T + d - .2); s.frequency.linearRampToValueAtTime(f * .95, T + d); }   // 긴 음 끝을 살짝 꺾어 내려요
     mix(s, g, 1);
     mix(osc(T, end, 'triangle', f * 2), lp(g, 2200), .12);
     const n = ctx.createBufferSource(); n.buffer = noiseBuf; n.loop = true;
     const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f * 2.5; bp.Q.value = 3;
     n.connect(bp); mix(bp, g, .22); n.start(T, Math.random() * .5); n.stop(end);
+  },
+  // 아쟁: 낮게 긁는 활 소리, 느리고 깊게 떨어요
+  ajaeng(T, f, d, v, o){
+    const [g, end] = amp(T, .18, .2 * v, d || .6, .4); route(g, o);
+    const s = osc(T, end, 'sawtooth', f); vibrato(T, end, s, f, 3.8, .02, .35);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 520; bp.Q.value = 1.1;
+    s.connect(bp); mix(bp, lp(g, 1400), 1.3);
   },
   // 가야금: 비단 줄을 튕기는 소리. 긴 음은 줄을 눌러 떨어줘요(농현)
   gayageum(T, f, d, v, o){
@@ -1502,6 +1554,7 @@ Object.assign(INST, {
 
 // 휴대폰용으로 부품 수를 줄인 악기들
 const LITE_INST = {
+  ajaeng(T, f, d, v, o){ const [g, end] = amp(T, .18, .18 * v, d || .6, .3); route(g, o); mix(osc(T, end, 'sawtooth', f), lp(g, 700), 1); },
   xmaslead(T, f, d, v, o){ const [g, end] = amp(T, .002, .32 * v, d, d ? .2 : .6); route(g, o); fm(T, end, f, 3.5, 1.2, .3, g); },
   bell(T, f, d, v, o){ const [g, end] = amp(T, .002, .14 * v, 0, 1.6); route(g, o); fm(T, end, f, 2.76, 1.2, 1, g); },
   daegeum(T, f, d, v, o){ const [g, end] = amp(T, .07, .3 * v, d || .25, .2); route(g, o); const s = osc(T, end, 'sine', f); s.frequency.setValueAtTime(f * .97, T); s.frequency.exponentialRampToValueAtTime(f, T + .09); mix(s, g, 1); },
