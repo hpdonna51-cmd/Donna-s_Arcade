@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 34 · 장구·징·해금 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 35 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -747,7 +747,7 @@ const ariAjaeng = (() => {
 })();
 // 세마치 (정간보):  더   덩   · | 덩   ·   덕 | 쿵   덕   ·
 //           세기:  약   중     | 강       약 | 중   약
-const SEMACHI_JING = {kit:'janggu', strokes:[[0, 'deong', '약'], [0, 'jing', '강'], [2, 'deong', '중'], [6, 'deong', '강'], [10, 'deok', '약'], [12, 'kung', '중'], [14, 'deok', '약']]};   // 장단 첫 칸 '더'에 징
+const SEMACHI_JING = {kit:'janggu', strokes:[[0, 'deong', '약'], [0, 'jing', '강'], [0, 'buk', '강'], [2, 'deong', '중'], [6, 'deong', '강'], [6, 'buk', '강'], [10, 'deok', '약'], [12, 'kung', '중'], [12, 'buk', '강'], [14, 'deok', '약']]};   // 장단 첫 칸 '더'에 징, 큰 박마다 교방고 둥 둥 둥
 const SEMACHI = {kit:'janggu', strokes:[[0, 'deong', '약'], [2, 'deong', '중'], [6, 'deong', '강'], [10, 'deok', '약'], [12, 'kung', '중'], [14, 'deok', '약']]};
 // 굿거리 (12/8): 덩 . 기덕 쿵 . 더러러러 | 쿵 . 기덕 쿵 . 더러러러
 const GUTGEORI = {kit:'janggu', deong:[0], gideok:[4, 16], kung:[6, 12, 18], roll:[10, 22]};   // 굿거리: 덩 . 기덕 쿵 . 더러러러 | 쿵 . 기덕 쿵 . 더러러러
@@ -812,12 +812,12 @@ const CANCAN = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
 const TAIKO3 = {kit:'taiko', kick:[0, 6], snare:[4, 8, 10], hat:false};
 
 const MORE = [
-  { id:'arirang', name:'아리랑', desc:'경기민요. 해금 가락에 장구 세마치장단과 징', lv:2, bpm:120, dots:['d2','d3'], kit:'janggu', samples:['haegeum','jing'], rev:.2, score:true, meter:M98,
+  { id:'arirang', name:'아리랑', desc:'경기민요. 해금 가락에 장구 세마치장단, 징과 교방고', lv:2, bpm:120, dots:['d2','d3'], kit:'janggu', samples:['haegeum','jing','gyobanggo'], rev:.2, score:true, meter:M98,
     sections:[
       {bars:2, meter:M98, drums: SEMACHI, tracks:[]},
       {bars:16, meter:M98, drums: SEMACHI, tracks:[{inst:'haegeum', notes: ariMel, chart:true, v:1}]},
       {bars:16, meter:M98, dbl:true, drums: SEMACHI_JING, tracks:[{inst:'haegeum', notes: ariMel, chart:true, v:1}]},
-      {bars:1, meter:M98, drums:{kit:'janggu', strokes:[[0, 'deong', '강'], [0, 'jing', '강']]}, tracks:[]},
+      {bars:1, meter:M98, drums:{kit:'janggu', strokes:[[0, 'deong', '강'], [0, 'jing', '강'], [0, 'buk', '강']]}, tracks:[]},
     ]},
   { id:'twinkle', name:'반짝반짝 작은 별 변주곡', desc:'모차르트처럼, 갈수록 화려해지는 변주', lv:2, bpm:90, dots:['d4','d2'], kit:'soft', rev:.35, score:true, meter:M44,
     sections:[
@@ -1522,7 +1522,7 @@ Object.assign(INST, {
 
 
 // 진짜 녹음한 대금·해금 소리 (국립국악원 국악 디지털 음원에서 한 음씩 잘라낸 것)
-const INST_SAMPLES = {"haegeum": [{"file": "haegeum_63.wav", "midi": 63.109, "lead": 0.008, "gain": 1.061}, {"file": "haegeum_65.wav", "midi": 64.926, "lead": 0.033, "gain": 1.116}, {"file": "haegeum_67.wav", "midi": 67.034, "lead": 0.033, "gain": 1.043}, {"file": "haegeum_70.wav", "midi": 69.998, "lead": 0.008, "gain": 0.879}, {"file": "haegeum_72.wav", "midi": 72.044, "lead": 0.023, "gain": 1.111}, {"file": "haegeum_75.wav", "midi": 75.052, "lead": 0.018, "gain": 0.923}], "daegeum": [{"file": "daegeum_63.wav", "midi": 63.468, "lead": 0.06, "gain": 0.863}, {"file": "daegeum_66.wav", "midi": 65.99, "lead": 0.013, "gain": 0.887}, {"file": "daegeum_68.wav", "midi": 67.97, "lead": 0.003, "gain": 0.972}, {"file": "daegeum_71.wav", "midi": 71.264, "lead": 0, "gain": 1.675}, {"file": "daegeum_75.wav", "midi": 75.171, "lead": 0.003, "gain": 1.049}], "jing": [{"file": "jing.wav", "midi": 0, "lead": 0.023, "gain": 1}]};
+const INST_SAMPLES = {"haegeum": [{"file": "haegeum_63.wav", "midi": 63.109, "lead": 0.008, "gain": 1.061}, {"file": "haegeum_65.wav", "midi": 64.926, "lead": 0.033, "gain": 1.116}, {"file": "haegeum_67.wav", "midi": 67.034, "lead": 0.033, "gain": 1.043}, {"file": "haegeum_70.wav", "midi": 69.998, "lead": 0.008, "gain": 0.879}, {"file": "haegeum_72.wav", "midi": 72.044, "lead": 0.023, "gain": 1.111}, {"file": "haegeum_75.wav", "midi": 75.052, "lead": 0.018, "gain": 0.923}], "daegeum": [{"file": "daegeum_63.wav", "midi": 63.468, "lead": 0.06, "gain": 0.863}, {"file": "daegeum_66.wav", "midi": 65.99, "lead": 0.013, "gain": 0.887}, {"file": "daegeum_68.wav", "midi": 67.97, "lead": 0.003, "gain": 0.972}, {"file": "daegeum_71.wav", "midi": 71.264, "lead": 0, "gain": 1.675}, {"file": "daegeum_75.wav", "midi": 75.171, "lead": 0.003, "gain": 1.049}], "jing": [{"file": "jing.wav", "midi": 0, "lead": 0.023, "gain": 1}], "gyobanggo": [{"file": "gyobanggo.wav", "midi": 0, "lead": 0.024, "gain": 1}]};
 const SMP = {}, smpLoading = {};
 function loadInstSamples(names){
   return Promise.all(names.map(name => smpLoading[name] || (smpLoading[name] = Promise.all(INST_SAMPLES[name].map(async s => {
@@ -1689,6 +1689,12 @@ function play(e, T){
       break;
     }
     case 'jg': {
+      if (e.type === 'buk'){   // 교방고: 큰 북 둥~
+        const bl = SMP.gyobanggo && SMP.gyobanggo[0];
+        if (bl){ const src = ctx.createBufferSource(); src.buffer = bl.buf; const g = ctx.createGain(); g.gain.value = .6 * (e.v || 1); src.connect(g); route(g, {rev: .12}); src.start(Math.max(0, T - bl.lead)); }
+        else tone(T, 'sine', 90, 60, .2, .5, .6, {});
+        break;
+      }
       if (e.type === 'jing'){   // 징: 녹음 그대로 길게 웅~
         const jl = SMP.jing && SMP.jing[0];
         if (jl){ const src = ctx.createBufferSource(); src.buffer = jl.buf; const g = ctx.createGain(); g.gain.value = .55 * (e.v || 1); src.connect(g); route(g, {rev: .1}); src.start(Math.max(0, T - jl.lead)); }
