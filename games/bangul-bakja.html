@@ -14,27 +14,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#EFE9FF; --ink:#1B1F3B; --soft:#5E5A85; --lane:#E1D7FF;
-  --c1:#7C5CFF; --c2:#12A58F; --c3:#F26A35; --c4:#D99A00;
-  --k1:#E0368F; --k2:#0E9FC4; --k3:#F26A35; --k4:#C98F00; --k5:#16A86A; --k6:#7C5CFF; --k7:#2F5BFF; --k8:#3B3560;
-  color-scheme:light;
+  --bg:#0A0A1C; --ink:#ECECFF; --soft:#8C8CBE; --lane:#16163A;
+  --c1:#A98BFF; --c2:#46E6C0; --c3:#FF9650; --c4:#FFDE5A;
+  --k1:#FF5CAA; --k2:#46D6FF; --k3:#FF9650; --k4:#FFDE5A; --k5:#5AF096; --k6:#B08CFF; --k7:#6F8BFF; --k8:#F3EEFF;
+  color-scheme:dark;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#141633; --ink:#F3EEFF; --soft:#A29DCF; --lane:#1F2250;
-    --c1:#B8A1FF; --c2:#6EE7C8; --c3:#FFB38A; --c4:#FFE07A;
-    --k1:#FF6FB5; --k2:#5FD8FF; --k3:#FFA066; --k4:#FFE07A; --k5:#6EE7A0; --k6:#B8A1FF; --k7:#7C97FF; --k8:#F3EEFF;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#141633; --ink:#F3EEFF; --soft:#A29DCF; --lane:#1F2250;
-  --c1:#B8A1FF; --c2:#6EE7C8; --c3:#FFB38A; --c4:#FFE07A;
-    --k1:#FF6FB5; --k2:#5FD8FF; --k3:#FFA066; --k4:#FFE07A; --k5:#6EE7A0; --k6:#B8A1FF; --k7:#7C97FF; --k8:#F3EEFF;
-  color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -46,7 +32,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .overlay.hidden{display:none}
 .panel{position:relative;margin:auto;max-width:36rem;width:100%;display:flex;flex-direction:column;align-items:center;gap:1.1rem}
 h1,h2,.grade,.primary,.fc,.song-card .nm{font-family:"Jua","Gowun Dodum",system-ui,sans-serif;font-weight:400}
-h1{font-size:clamp(3.2rem,15vw,6rem);line-height:1;margin:0;letter-spacing:-0.01em}
+h1{font-size:clamp(3.2rem,15vw,6rem);line-height:1;margin:0;letter-spacing:-0.01em;text-shadow:0 0 18px color-mix(in srgb,var(--ink) 55%,transparent)}
 h2{font-size:clamp(1.6rem,6vw,2.2rem);margin:0}
 .dots{display:flex;gap:.6rem}
 .dots i{width:14px;height:14px;border-radius:50%;display:block}
@@ -57,7 +43,7 @@ h2{font-size:clamp(1.6rem,6vw,2.2rem);margin:0}
 .songs{position:relative;display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:.4rem calc(50% - 6.5rem) .8rem;scrollbar-width:none;overscroll-behavior-x:contain}
 .songs::-webkit-scrollbar{display:none}
 .song-card{flex:0 0 13rem;scroll-snap-align:center;font:inherit;text-align:left;background:var(--lane);color:var(--ink);border:2px solid transparent;border-radius:20px;padding:1rem;cursor:pointer;display:flex;flex-direction:column;gap:.35rem;min-height:10rem;opacity:.55;transform:scale(.92);transition:transform .2s,opacity .2s,border-color .2s}
-.song-card[aria-pressed="true"]{border-color:var(--ink);opacity:1;transform:none}
+.song-card[aria-pressed="true"]{border-color:var(--k1);opacity:1;transform:none;box-shadow:0 0 18px color-mix(in srgb,var(--k1) 45%,transparent)}
 .song-card .lv{font-size:.85rem;color:var(--c3);letter-spacing:.12em}
 .nav{position:absolute;top:50%;transform:translateY(-60%);width:2.6rem;height:2.6rem;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:1.5rem;line-height:1;cursor:pointer;z-index:1}
 .nav.prev{left:.8rem}.nav.next{right:.8rem}
@@ -89,7 +75,7 @@ select{font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:14px;borde
 #loadInfo{font-variant-numeric:tabular-nums}
 .diff-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;width:100%}
 .diff-btn{font:inherit;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.9rem .4rem;border-radius:18px;border:2px solid transparent;background:var(--lane);color:var(--ink);cursor:pointer}
-.diff-btn[aria-pressed="true"]{border-color:var(--ink)}
+.diff-btn[aria-pressed="true"]{border-color:var(--k2);box-shadow:0 0 14px color-mix(in srgb,var(--k2) 40%,transparent)}
 .diff-btn .dn{font-family:"Jua",sans-serif;font-size:1.35rem}
 .diff-btn .dl{font-size:.95rem;font-weight:700}
 .diff-btn .dr{font-size:.75rem;color:var(--soft)}
@@ -113,13 +99,13 @@ select{font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:14px;borde
 .seg.four{display:grid;grid-template-columns:repeat(2,1fr)}
 @media (min-width:480px){.seg.four{grid-template-columns:repeat(4,1fr)}}
 .seg button{flex:1;font:inherit;padding:.55rem .3rem;border-radius:16px;border:2px solid transparent;background:var(--bg);color:var(--ink);cursor:pointer}
-.seg button[aria-pressed="true"]{border-color:var(--ink);font-weight:700}
+.seg button[aria-pressed="true"]{border-color:var(--k2);font-weight:700;box-shadow:0 0 12px color-mix(in srgb,var(--k2) 40%,transparent)}
 .seg .keys{display:block;font-size:.78rem;color:var(--soft);font-weight:400;margin-top:.1rem;letter-spacing:.06em}
 input[type=range]{width:100%;accent-color:var(--c1);margin-top:.45rem}
 .small{font-size:.85rem;color:var(--soft);margin:.3rem 0 0;line-height:1.5}
 .btns{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
-.primary{font-size:1.5rem;padding:.75rem 2.6rem;border-radius:999px;border:none;background:var(--ink);color:var(--bg);cursor:pointer}
-.secondary{font:inherit;font-size:1.05rem;padding:.75rem 1.6rem;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.primary{font-size:1.5rem;padding:.75rem 2.6rem;border-radius:999px;border:none;background:var(--k1);color:#fff;cursor:pointer;box-shadow:0 0 22px color-mix(in srgb,var(--k1) 55%,transparent)}
+.secondary{font:inherit;font-size:1.05rem;padding:.75rem 1.6rem;border-radius:999px;border:2px solid color-mix(in srgb,var(--ink) 55%,transparent);background:transparent;color:var(--ink);cursor:pointer}
 button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-offset:3px}
 .hint{font-size:.9rem;color:var(--soft);margin:0;line-height:1.55;max-width:30em}
 .grade{font-size:clamp(6rem,32vw,10rem);line-height:.9;color:var(--c1)}
@@ -144,7 +130,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
     <div class="panel">
       <div class="dots" aria-hidden="true"><i class="d1"></i><i class="d2"></i><i class="d3"></i><i class="d4"></i></div>
       <h1>방울 박자</h1>
-      <p class="lede">떨어지는 방울이 아래 동그라미에 겹치는 순간 그 줄의 키를 누르세요. 꼬리가 달린 방울은 꼬리 끝이 닿을 때까지 누르고 있다가 그때 떼면 돼요. 방울이 없는 줄을 누르면 헛침으로 50점이 깎이고 콤보가 끊겨요.</p>
+      <p class="lede">떨어지는 방울이 아래 동그라미에 겹치는 순간 그 줄의 키를 누르세요. 선으로 이어진 방울은 동시에 쳐요. <b>띠 노트</b>는 줄 키와 <b>스페이스</b>를 같이 누르고, 스페이스를 누른 채 띠가 꺾이는 흰 점마다 다음 줄 키를 눌러요. 휴대폰은 손가락을 댄 채 미끄러뜨리면 돼요.</p>
       <div class="sec-title" id="songsLabel">곡 고르기 (옆으로 넘겨서 골라요)</div>
       <div class="carousel">
         <button type="button" class="nav prev" id="prevSong" aria-label="이전 곡">‹</button>
@@ -189,7 +175,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="makerBtn" class="secondary" type="button">내 곡 만들기</button>
         <a class="secondary" href="../index.html" style="text-decoration:none">오락실로</a>
       </div>
-      <p class="hint" style="opacity:.6">버전 36 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 43 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -1123,22 +1109,232 @@ function chartFor(sg, dk){
 }
 
 // 곡마다 난이도별 레벨(1~10)을 노트 양과 빽빽함으로 계산해요
+/* ---------- 새 채보 만들기 ----------
+   채보는 PC와 모바일이 같아요 (누르는 방법만 달라요).
+   - 손 구역: 왼손은 왼쪽 키들, 오른손은 오른쪽 키들. 한 손이 반대쪽으로 넘어가지 않아요.
+   - 동시치기는 양손에 하나씩, 한 줄 이상 떨어지게. 동시에 누르는 건 최대 2개.
+   - 레벨 8 이하는 양손 검지 두 개로 칠 수 있게 (같은 손으로 키를 옮길 시간을 넉넉히).
+   - 띠 노트: 길게 누른 채 줄을 옮겨 다녀요. PC는 줄 키 + 스페이스, 모바일은 손가락을 미끄러뜨려요.
+   - 같은 키 연타, 같은 두 줄 번갈아 치기(트릴)는 최대 3번. */
+function zonesOf(L){
+  if (L === 3) return [[0, 1], [1, 2]];
+  const s = SPLIT[L]; return [Array.from({length: s}, (_, i) => i), Array.from({length: L - s}, (_, i) => s + i)];
+}
+function hashStr(str){ let h = 2166136261; for (const c of str) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return h; }
+function estimateLevels(S){   // 손 배치 전, 노트 양만 보고 대략 레벨 (검지 규칙을 쓸지 정할 때)
+  const sg = buildSong(S), dur = Math.max(20, sg.bars[sg.bars.length - 1] || 60), res = {};
+  for (const dk of DIFFS){
+    const c = chartFor(sg, dk), n = c.length + c.filter(x => x.chord).length;
+    let peak = 0; for (let i = 0, j = 0; i < c.length; i++){ while (c[i].t - c[j].t > 4) j++; peak = Math.max(peak, i - j + 1); }
+    res[dk] = Math.max(1, Math.min(10, Math.round(n / dur * 1.15 + peak / 4 * .75 - .3)));
+  }
+  return res;
+}
+const estCache = {};
+function makeChart(sg, S, dk, L){
+  const base = chartFor(sg, dk).sort((a, b) => a.t - b.t);
+  if (!base.length) return [];
+  const r = rng(hashStr(S.id + '|' + dk + '|' + L));
+  const Z = zonesOf(L), span = sg.bars[sg.bars.length - 1] || base[base.length - 1].t + 2;
+  const est = estCache[S.id] || (estCache[S.id] = estimateLevels(S));
+  const IDX = dk !== 'hard' || est.hard <= 8;          // 검지 두 개로 칠 수 있게
+  const easyish = dk !== 'hard';                       // 쉬움·보통은 대칭 위주
+  // 음높이 → 원하는 줄 (높은 음일수록 오른쪽)
+  const cdf = {}, total = base.length;
+  base.forEach(n => { if (cdf[n.pos] === undefined){ const less = base.filter(m => m.pos < n.pos).length, same = base.filter(m => m.pos === n.pos).length; cdf[n.pos] = (less + same / 2) / total; } });
+  const want = n => Math.max(0, Math.min(L - 1, Math.floor(cdf[n.pos] * L)));
+  const clampZ = (h, l) => Math.max(Z[h][0], Math.min(Z[h][Z[h].length - 1], l));
+
+  /* 1) 띠 노트 자리 고르기: 곡이 진행될수록 조금씩 많아지고, 노트가 가장 적은 구간 하나는 비워둬요 */
+  const ratio = {easy: .14, normal: .3, hard: .38}[dk];
+  let quiet = [-1, -1];
+  if (span > 30){
+    let best = 1e9;
+    for (let s0 = span * .2; s0 < span * .8 - 8; s0 += 1){
+      const c = base.filter(n => n.t >= s0 && n.t < s0 + 8).length;
+      if (c < best){ best = c; quiet = [s0, s0 + 8]; }
+    }
+  }
+  const maxTurns = {easy: 2, normal: 4, hard: 7}[dk], maxDur = {easy: 1.8, normal: 2.2, hard: 2.6}[dk];
+  const minTurnGap = IDX ? .2 : .14;
+  const plan = []; let cover = 0;
+  for (let i = 0; i < base.length; i++){
+    const n = base[i];
+    if (cover >= ratio * span) break;
+    if (n.t >= quiet[0] && n.t <= quiet[1]) continue;
+    if (!n.beat || n.len > 0) continue;
+    if (plan.length && n.t < plan[plan.length - 1].end + .5) continue;
+    const prog = n.t / span;
+    if (r() > (dk === 'easy' ? .22 : .32) * (.55 + .9 * prog)) continue;
+    const pts = [n], others = [];
+    let j = i + 1;
+    while (j < base.length && base[j].t - n.t <= maxDur && pts.length - 1 < maxTurns){
+      const m = base[j];
+      if (m.t - pts[pts.length - 1].t > .7) break;
+      if (m.len > 0) break;
+      if (m.t - pts[pts.length - 1].t >= minTurnGap && (m.beat || r() < .55)) pts.push(m); else others.push(m);
+      j++;
+    }
+    const next = base[j];
+    while (pts.length > 1 && next && pts[pts.length - 1].t > next.t - .28) others.push(pts.pop());   // 마지막 꺾임 뒤에 띠 끝이 올 자리를 남겨요
+    if (pts.length < 2) continue;
+    const end = Math.max(pts[pts.length - 1].t + .12, Math.min(next ? next.t - .14 : span, pts[pts.length - 1].t + (dk === 'easy' ? .45 : .32)));
+    if (end - n.t < .5) continue;
+    const twin = L >= 4 && (easyish ? r() < .38 : r() < .28);
+    plan.push({i, j, pts, others, end, twin});
+    cover += end - n.t;
+  }
+  const planAt = new Map(plan.map(p => [p.i, p]));
+
+  /* 2) 손가락 상태와 규칙 검사 */
+  const F = [{lane: Z[0][0], free: -9, rep: 0}, {lane: Z[1][Z[1].length - 1], free: -9, rep: 0}];
+  const occ = [[], []];   // 손마다 길게 누르는/띠 구간 {t0, t1, laneAt}
+  const seq = [];
+  const occAt = (h, t) => occ[h].find(o => t >= o.t0 - .04 && t <= o.t1 + .08);
+  const travel = (h, lane) => lane === F[h].lane ? (IDX ? .12 : .06) : (IDX ? .14 + .05 * Math.abs(lane - F[h].lane) : .08);
+  function ok(h, lane, t, len = 0){
+    if (!Z[h].includes(lane)) return false;
+    if (occAt(h, t) || (len && occ[h].some(o => o.t0 < t + len + .08 && o.t1 > t - .04))) return false;
+    if (t < F[h].free + travel(h, lane)) return false;
+    if (lane === F[h].lane && F[h].rep >= 2) return false;                         // 같은 키는 최대 3번
+    if (seq.length >= 3 && seq.slice(-3).every(x => x === lane)) return false;     // 어느 손으로 치든 같은 키 4번 연속 금지
+    const o = occAt(1 - h, t); if (o && Math.abs(lane - o.laneAt(t)) < 2) return false;   // 누르고 있는 손가락 바로 옆은 피해요
+    const s = seq; if (s.length >= 3 && s[s.length - 1] !== s[s.length - 2] && s[s.length - 3] === s[s.length - 1] && lane === s[s.length - 2]) return false;   // 트릴 최대 3번
+    return true;
+  }
+  function put(h, lane, t, len = 0){
+    F[h].rep = lane === F[h].lane ? F[h].rep + 1 : 0; F[h].lane = lane; F[h].free = t + len;
+    if (len) occ[h].push({t0: t, t1: t + len, laneAt: () => lane});
+    seq.push(lane); if (seq.length > 6) seq.shift();
+  }
+  const out = [];
+  const lanesNear = (h, w) => Z[h].slice().sort((a, b) => Math.abs(a - w) - Math.abs(b - w) + (r() - .5) * .9);
+
+  /* 3) 띠 노트 만들기 */
+  function slidePath(h, pts, startLane){
+    const path = [{t: pts[0].t, lane: startLane}]; let cur = startLane;
+    for (let k = 1; k < pts.length; k++){
+      let dir = Math.sign(pts[k].pos - pts[k - 1].pos) || (r() < .5 ? -1 : 1);
+      const step = (!easyish && Z[h].length >= 3 && r() < .3) ? 2 : 1;
+      let nl = clampZ(h, cur + dir * step);
+      if (nl === cur) nl = clampZ(h, cur - dir * step);
+      if (nl === cur) continue;
+      path.push({t: pts[k].t, lane: nl}); cur = nl;
+    }
+    return path;
+  }
+  function addSlide(h, path, end, grp){
+    if (path.length < 2) return null;
+    const s = {t: path[0].t, lane: path[0].lane, len: end - path[0].t, slide: true, path, grp, hand: h};
+    occ[h].push({t0: s.t, t1: end, laneAt: t => { let l = path[0].lane; for (const p of path) if (p.t <= t) l = p.lane; return l; }});
+    F[h].lane = path[path.length - 1].lane; F[h].free = end; F[h].rep = 0;
+    out.push(s); return s;
+  }
+  function makeSlide(p){
+    const n = p.pts[0];
+    if (p.twin){
+      const free0 = !occAt(0, n.t) && n.t >= F[0].free + .1, free1 = !occAt(1, n.t) && n.t >= F[1].free + .1;
+      if (free0 && free1){
+        const lp = slidePath(0, p.pts, clampZ(0, Z[0][Math.floor(r() * Z[0].length)]));
+        // 오른손 띠: 쉬움·보통은 거울처럼, 어려움은 같은 방향으로. 두 손은 항상 두 줄 이상 떨어지게
+        const rp = lp.map(q => {
+          let l = easyish ? (L - 1 - q.lane) : clampZ(1, q.lane + Z[1][0] - Z[0][0] + (Z[1].length > 2 ? 1 : 0));
+          l = clampZ(1, l); if (l - q.lane < 2) l = clampZ(1, q.lane + 2);
+          return {t: q.t, lane: l};
+        });
+        if (rp.every((q, k) => q.lane - lp[k].lane >= 2) && rp.slice(1).every((q, k) => q.lane !== rp[k].lane)){
+          const a = addSlide(0, lp, p.end, 'L'), b = addSlide(1, rp, p.end, 'R');
+          if (a && b) return true;
+        }
+      }
+    }
+    // 한 손 띠: 원하는 쪽 손으로, 안 되면 반대쪽
+    const prefer = want(n) < L / 2 ? 0 : 1;
+    for (const h of [prefer, 1 - prefer]){
+      if (occAt(h, n.t) || n.t < F[h].free + .12) continue;
+      const o = occAt(1 - h, n.t);
+      const startLanes = lanesNear(h, want(n)).filter(l => !o || Math.abs(l - o.laneAt(n.t)) >= 2);
+      if (!startLanes.length) continue;
+      const path = slidePath(h, p.pts, startLanes[0]);
+      const s = addSlide(h, path, p.end, null);
+      if (s){
+        // 다른 손은 띠와 떨어진 줄로 남은 노트를 쳐요 (쉬움 제외)
+        if (dk !== 'easy') p.others.forEach(m => placeSingle(m, 1 - h));
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /* 4) 짧은 방울과 길게 누르기 */
+  function placeSingle(n, onlyHand){
+    const w = want(n), prefer = onlyHand != null ? onlyHand : (Z[0].includes(w) && !(L === 3 && w === 1) ? 0 : (L === 3 && w === 1 ? (F[0].free <= F[1].free ? 0 : 1) : 1));
+    const hands = onlyHand != null ? [onlyHand] : [prefer, 1 - prefer];
+    for (const h of hands){
+      for (const l of lanesNear(h, w)){
+        const len = n.len > 0 && ok(h, l, n.t, n.len) ? n.len : 0;
+        if (ok(h, l, n.t, len)){ put(h, l, n.t, len); out.push({t: n.t, lane: l, len}); return true; }
+      }
+    }
+    return false;
+  }
+  function placeChord(n){
+    if (occAt(0, n.t) || occAt(1, n.t)) return placeSingle(n);   // 누르고 있는 게 있으면 동시치기 안 해요
+    const w = want(n), pairs = [];
+    for (const a of Z[0]) for (const b of Z[1]) if (b - a >= 2 && ok(0, a, n.t) && ok(1, b, n.t)) pairs.push([a, b]);
+    if (!pairs.length) return placeSingle(n);
+    pairs.sort((x, y) => {
+      const sx = (easyish ? Math.abs(x[0] + x[1] - (L - 1)) * 1.5 : 0) + Math.abs(x[0] - w) * .3 + Math.abs(x[1] - w) * .3 + r() * .8;
+      const sy = (easyish ? Math.abs(y[0] + y[1] - (L - 1)) * 1.5 : 0) + Math.abs(y[0] - w) * .3 + Math.abs(y[1] - w) * .3 + r() * .8;
+      return sx - sy;
+    });
+    const [a, b] = pairs[0];
+    put(0, a, n.t); put(1, b, n.t);
+    out.push({t: n.t, lane: a, len: 0}, {t: n.t, lane: b, len: 0});
+    return true;
+  }
+  const skip = new Set();
+  plan.forEach(p => { for (let k = p.i + 1; k < p.j; k++) skip.add(k); });
+  for (let i = 0; i < base.length; i++){
+    if (skip.has(i)) continue;
+    const n = base[i], p = planAt.get(i);
+    if (p){ if (makeSlide(p)) continue; }
+    if (n.chord) placeChord(n); else placeSingle(n);
+  }
+
+  /* 5) 마무리: 정렬, 동시치기 짝 잇기, 빛나는 띠 하나 */
+  out.sort((a, b) => a.t - b.t || a.lane - b.lane);
+  for (let k = 0; k + 1 < out.length; k++){
+    const a = out[k], b = out[k + 1];
+    if (Math.abs(a.t - b.t) < .005 && !a.link && !b.link){ a.link = b.lane; b.link = a.lane; }
+  }
+  if (dk !== 'easy'){
+    const sl = out.filter(x => x.slide && x.grp !== 'R');
+    if (sl.length){
+      let best = sl[0], bc = -1;
+      for (const s of sl){ const c = out.filter(x => Math.abs(x.t - s.t) < 6).length; if (c > bc){ bc = c; best = s; } }
+      best.glow = true; out.filter(x => x.slide && x.grp === 'R' && Math.abs(x.t - best.t) < .005).forEach(x => x.glow = true);
+    }
+  }
+  return out.map(x => Object.assign(x, {j: null, tj: null, holding: false},
+    x.slide ? {turns: x.path.slice(1).map(q => ({t: q.t, lane: q.lane, j: null})), ti: 0, curLane: x.lane} : {}));
+}
+// 레벨 (1~10): 새 채보에서 실제로 누르는 횟수와 빽빽함으로
+function pressTimes(ch){ const ts = []; ch.forEach(x => { ts.push(x.t); if (x.slide) x.turns.forEach(q => ts.push(q.t)); }); return ts.sort((a, b) => a - b); }
+
 const levelCache = {};
 function songLevels(S){
   if (levelCache[S.id]) return levelCache[S.id];
   const sg = buildSong(S), dur = Math.max(20, sg.bars[sg.bars.length - 1] || 60), res = {};
   for (const dk of DIFFS){
-    const c = chartFor(sg, dk), n = c.length + c.filter(x => x.chord).length;
-    let peak = 0;
-    for (let i = 0, j = 0; i < c.length; i++){ while (c[i].t - c[j].t > 4) j++; peak = Math.max(peak, i - j + 1); }
-    res[dk] = Math.max(1, Math.min(10, Math.round(n / dur * 1.15 + peak / 4 * .75 - .3)));
+    const ts = pressTimes(makeChart(sg, S, dk, 6));
+    let peak = 0; for (let i = 0, j = 0; i < ts.length; i++){ while (ts[i] - ts[j] > 4) j++; peak = Math.max(peak, i - j + 1); }
+    res[dk] = Math.max(1, Math.min(10, Math.round(ts.length / dur * 1.15 + peak / 4 * .75 - .3)));
   }
   if (res.normal <= res.easy) res.normal = Math.min(10, res.easy + 1);
   if (res.hard <= res.normal) res.hard = Math.min(10, res.normal + 1);
   return levelCache[S.id] = res;
 }
-
-// 정해진 키 개수에 맞게 줄을 나눠요 (높은 음일수록 오른쪽)
 function prepare(src, S, L){
   const busy = new Array(L).fill(-1), out = [];
   const cdf = {}, total = src.length;
@@ -1259,11 +1455,11 @@ function route(node, o = {}){
   const key = `${o.pan || 0}|${o.rev || 0}|${o.dly || 0}|${o.duck ? 1 : 0}`;
   let inp = master.routes[key];
   if (!inp){
-    inp = ctx.createGain(); let n = inp;
-    if (o.pan && ctx.createStereoPanner){ const p = ctx.createStereoPanner(); p.pan.value = o.pan; inp.connect(p); n = p; }
+    inp = ctx.createGain(); inp.shared = true; let n = inp;   // 여러 음이 같이 쓰는 통로 (중간에 떼면 안 돼요)
+    if (o.pan && ctx.createStereoPanner){ const p = ctx.createStereoPanner(); p.shared = true; p.pan.value = o.pan; inp.connect(p); n = p; }
     n.connect(o.duck ? master.duck : master.out);
-    if (o.rev && master.rev){ const s = ctx.createGain(); s.gain.value = o.rev; n.connect(s); s.connect(master.rev); }
-    if (o.dly && master.dly){ const s = ctx.createGain(); s.gain.value = o.dly; n.connect(s); s.connect(master.dly); }
+    if (o.rev && master.rev){ const s = ctx.createGain(); s.shared = true; s.gain.value = o.rev; n.connect(s); s.connect(master.rev); }
+    if (o.dly && master.dly){ const s = ctx.createGain(); s.shared = true; s.gain.value = o.dly; n.connect(s); s.connect(master.dly); }
     master.routes[key] = inp;
   }
   node.connect(inp);
@@ -1526,7 +1722,7 @@ const INST_SAMPLES = {"haegeum": [{"file": "haegeum_63.wav", "midi": 63.109, "le
 const SMP = {}, smpLoading = {};
 function loadInstSamples(names){
   return Promise.all(names.map(name => smpLoading[name] || (smpLoading[name] = Promise.all(INST_SAMPLES[name].map(async s => {
-    const ab = await (await fetch('../sounds/' + s.file)).arrayBuffer();
+    const ab = window.SOUND_DATA && window.SOUND_DATA[s.file] ? Uint8Array.from(atob(window.SOUND_DATA[s.file]), c => c.charCodeAt(0)).buffer : await (await fetch('../sounds/' + s.file)).arrayBuffer();
     const buf = await new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej));
     return Object.assign({buf}, s);
   })).then(list => { SMP[name] = list; }).catch(err => { console.warn(name + ' 소리를 못 불러와서 합성 소리로 해요', err); }))));
@@ -1763,7 +1959,7 @@ function thunk(){
 let state = 'menu', selected = 'candy', cur = SONGS[0], wasRandom = false, diff = 'normal', popSel = 1, cdStart = 0, allowPortrait = false;
 let song = null, notes = [], evIdx = 0, t0 = 0, travel = 1.5, offsetMs = 0, songEnd = 0, lanes = 4, BEAT = .5;
 let score = 0, combo = 0, maxCombo = 0, counts = {p:0, g:0, o:0, m:0, x:0}, total = 1;
-let fx = [], judgeFx = null, nextNote = 0, lastSpark = 0;
+let fx = [], judgeFx = null, nextNote = 0, lastSpark = 0, activeSlides = [], spaceDown = false, dropped = [];
 let pressFlash = new Array(8).fill(0), held = new Array(8).fill(null), shake = new Array(8).fill(0);
 let geom = {centers: [], R: 30, jy: 0};
 const WIN = {p:.05, g:.10, o:.15}, RWIN = {p:.07, g:.12, o:.18};
@@ -1875,31 +2071,66 @@ async function renderSong(S, onProgress){
   const key = renderKey(S);
   if (renderCache.has(key)) return renderCache.get(key);
   const sg = buildSong(S);
-  const dur = (sg.ev.length ? sg.ev[sg.ev.length - 1].t : 0) + 3.5;
+  const evs = sg.ev.slice().sort((x, y) => x.t - y.t);
+  const dur = (evs.length ? evs[evs.length - 1].t : 0) + 3.5;
   const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-  const realCtx = ctx, realMaster = master, realIR = irBuf, savedPW = Object.assign({}, PW);
   const SR = 44100;   // 기기 설정과 상관없이 같은 품질로 만들어요
   const off = new OAC(2, Math.ceil(dur * SR), SR);
-  let job;
-  Object.keys(PW).forEach(k => delete PW[k]);
-  try {
-    ctx = off; OFFLINE = true; voiceEnds = []; irBuf = makeIR(off);
-    master = newBus(S);
-    let bad = 0, lastErr = null;
-    for (const e of sg.ev){ try { play(e, e.t + PAD); } catch(err){ bad++; lastErr = err; } }   // 문제 있는 음은 건너뛰어요
-    if (bad) console.warn(`미리 만들기: ${bad}개 음을 건너뛰었어요`, lastErr);
-    // 2초 분량마다 잠깐 멈춰서 얼마나 만들었는지 알려줘요
-    if (onProgress && off.suspend){
-      for (let tt = 2; tt < dur - .5; tt += 2){
-        try { off.suspend(tt).then(() => { onProgress(tt / dur); off.resume(); }); } catch(e){}
-      }
+  // 곡 전체를 한꺼번에 연결하면, 이미 끝난 음의 부품까지 계속 계산해서 느려져요.
+  // 그래서 곧 나올 음만 조금씩 연결하고, 끝난 음의 부품은 바로 떼어내요.
+  const offState = {master: null, ir: null, pw: {}};
+  let saved = null;
+  const enter = () => {
+    saved = {ctx, master, ir: irBuf, pw: Object.assign({}, PW)};
+    ctx = off; OFFLINE = true; voiceEnds = []; master = offState.master; irBuf = offState.ir;
+    Object.keys(PW).forEach(k => delete PW[k]); Object.assign(PW, offState.pw);
+  };
+  const leave = () => {
+    offState.pw = Object.assign({}, PW);
+    ctx = saved.ctx; master = saved.master; irBuf = saved.ir; OFFLINE = false; voiceEnds = [];
+    Object.keys(PW).forEach(k => delete PW[k]); Object.assign(PW, saved.pw);
+  };
+  let cur = null, ei = 0, bad = 0, lastErr = null;
+  const live = [];
+  ['createOscillator', 'createGain', 'createBiquadFilter', 'createBufferSource', 'createStereoPanner', 'createWaveShaper', 'createDelay', 'createConstantSource'].forEach(name => {
+    const orig = off[name]; if (!orig) return;
+    off[name] = function(...args){ const n = orig.apply(off, args); if (cur) cur.push(n); return n; };   // 공용 통로(shared)는 나중에 걸러내요
+  });
+  const scheduleUntil = tEnd => {
+    while (ei < evs.length && evs[ei].t + PAD < tEnd){
+      const e = evs[ei++]; cur = [];
+      try { play(e, e.t + PAD); } catch(err){ bad++; lastErr = err; }   // 문제 있는 음은 건너뛰어요
+      live.push({end: e.t + PAD + (e.d || 0) + 6, nodes: cur}); cur = null;
     }
+  };
+  const tidy = t => {
+    for (let i = live.length - 1; i >= 0; i--){
+      if (live[i].end >= t) continue;
+      live[i].nodes.forEach(n => { if (n.shared) return; try { n.disconnect(); } catch(_){} });
+      live.splice(i, 1);
+    }
+  };
+  const STEP = 1, AHEAD = 2.5;
+  let job;
+  enter();
+  try {
+    irBuf = offState.ir = makeIR(off);
+    master = offState.master = newBus(S);
+    scheduleUntil(AHEAD);
+    if (off.suspend){
+      for (let tt = STEP; tt < dur; tt += STEP){
+        off.suspend(tt).then(() => {
+          enter();
+          try { scheduleUntil(tt + AHEAD); tidy(tt); } finally { leave(); }
+          if (onProgress) onProgress(tt / dur);
+          off.resume();
+        });
+      }
+    } else scheduleUntil(Infinity);   // 멈추기를 못 하는 브라우저는 예전처럼 한 번에
     job = off.startRendering();
-  } finally {
-    ctx = realCtx; master = realMaster; OFFLINE = false; voiceEnds = []; irBuf = realIR;
-    Object.keys(PW).forEach(k => delete PW[k]); Object.assign(PW, savedPW);
-  }
+  } finally { leave(); }
   const buf = await job;
+  if (bad) console.warn(`미리 만들기: ${bad}개 음을 건너뛰었어요`, lastErr);
   if (renderCache.size >= (IS_MOBILE ? 2 : 4)) renderCache.delete(renderCache.keys().next().value);
   renderCache.set(key, buf);
   return buf;
@@ -2196,6 +2427,7 @@ function renderKeys(){
   });
 }
 function setKey(i, code){
+  if (code === 'Space'){ toast = {text: '스페이스는 띠 노트용이라 줄 키로 쓸 수 없어요', born: performance.now()}; $('#keysHint').textContent = '스페이스는 띠 노트용이라 줄 키로 쓸 수 없어요. 다른 키를 눌러주세요.'; return; }
   const codes = KEYMAP[lanes].slice(), dup = codes.indexOf(code);
   if (dup >= 0 && dup !== i) codes[dup] = codes[i];   // 이미 쓰는 키면 서로 자리를 바꿔요
   codes[i] = code;
@@ -2248,11 +2480,11 @@ function start(again){
   song = cur.audio ? buildAudioSong(cur) : buildSong(cur); BEAT = song.E * 2;
   const synthBuf = cur.audio ? null : renderCache.get(renderKey(cur));
   if (synthBuf) song.ev = [];   // 음악은 이미 만들어져 있으니 실시간으로 만들 것이 없어요
-  notes = cur.audio ? prepareAudio(song.notes, song.audioLanes, lanes) : prepare(chartFor(song, diff), cur, lanes);
-  total = notes.length + notes.filter(n => n.len > 0).length;
+  notes = cur.audio ? prepareAudio(song.notes, song.audioLanes, lanes) : makeChart(song, cur, diff, lanes);
+  total = notes.reduce((a, n) => a + (n.slide ? 2 + n.turns.length : n.len > 0 ? 2 : 1), 0);   // 띠는 시작 + 꺾임마다 + 끝
   evIdx = 0; nextNote = 0;
   score = 0; combo = 0; maxCombo = 0; counts = {p:0, g:0, o:0, m:0, x:0};
-  fx = []; judgeFx = null; pressFlash.fill(0); held.fill(null); shake.fill(0);
+  fx = []; judgeFx = null; pressFlash.fill(0); held.fill(null); shake.fill(0); activeSlides = []; spaceDown = false; dropped = [];
   t0 = ctx.currentTime + travel + 1.2;
   songEnd = cur.audio ? Math.max(cur.buf.duration, ...notes.map(n => n.t + n.len)) + 1 : Math.max(...notes.map(n => n.t + n.len)) + 2.2;
   if (cur.audio) playBuffer(cur.buf, t0);
@@ -2271,6 +2503,8 @@ function pause(){
   if (state !== 'playing') return;
   // 누르고 있던 방울은 멈출 때 정리해요
   held.forEach((n, k) => { if (n){ n.holding = false; n.tj = 'o'; judge(n, 'o', 1, true); held[k] = null; } });
+  activeSlides.slice().forEach(sl => slideEnd(sl, sl.holding ? 'o' : 'm', 1)); spaceDown = false;
+  dropped.forEach(n => { n.dropped = false; n.tj = 'm'; judge(n, 'm', 0, true); }); dropped = [];
   state = 'paused'; ctx.suspend(); show('pause');
 }
 // 계속하기: 3, 2, 1을 센 다음 이어서 시작해요
@@ -2330,7 +2564,7 @@ function judge(n, kind, diff, isTail){
   if (kind === 'm') combo = 0;
   else {
     combo++; maxCombo = Math.max(maxCombo, combo);
-    score += ({p:300, g:200, o:100})[kind] + Math.min(combo, 50) * 4;
+    score += (({p:300, g:200, o:100})[kind] + Math.min(combo, 50) * 4) * (n.glow ? 2 : 1);   // ★ 빛나는 띠는 두 배
   }
   let sub = '';
   if (isTail){
@@ -2372,13 +2606,56 @@ function popFx(kind, x, y, col){
 function headMiss(n, y){
   n.j = 'm';
   judge(n, 'm', 0, false);
-  if (n.len > 0){ n.tj = 'm'; counts.m++; }
+  if (n.slide){ n.turns.forEach(q => q.j = 'm'); n.tj = 'm'; counts.m += n.turns.length + 1; }
+  else if (n.len > 0){ n.tj = 'm'; counts.m++; }
   popFx('m', geom.centers[n.lane], y, laneColor(n.lane));
 }
 
-function hit(lane){
+// 띠 노트: 꺾이는 순간 다음 줄 키를 누르면 판정해요
+function slideTurn(sl, t){
+  const q = sl.turns[sl.ti], d = t - q.t, a = Math.abs(d);
+  const kind = a <= WIN.p ? 'p' : a <= WIN.g ? 'g' : 'o';
+  q.j = kind; sl.ti++; sl.curLane = q.lane;
+  judge(sl, kind, d, false); tick();
+  popFx(kind, geom.centers[q.lane], geom.jy, slideColor(sl));
+}
+function slideEnd(sl, kind, d){
+  sl.dropped = false;
+  for (; sl.ti < sl.turns.length; sl.ti++){ sl.turns[sl.ti].j = 'm'; judge(sl, 'm', 0, false); }
+  sl.holding = false; sl.tj = kind; activeSlides = activeSlides.filter(x => x !== sl);
+  judge(sl, kind, d, true);
+  popFx(kind, geom.centers[sl.curLane], geom.jy, slideColor(sl));
+  if (kind !== 'm') tick();
+}
+function slideRelease(sl){
+  if (!sl.holding) return;
+  const d = jTime() - (sl.t + sl.len);
+  if (d < -RWIN.o){   // 일찍 뗐어요: 띠는 남아 있고 다시 잡으면 이어져요
+    sl.holding = false; sl.dropped = true; combo = 0;
+    judgeFx = {born: performance.now(), text:'다시 눌러요', sub: sl.touch ? '띠를 다시 누르면 이어져요' : '스페이스를 다시 누르면 이어져요', kind:'m'};
+    return;
+  }
+  const a = Math.abs(d); slideEnd(sl, a <= RWIN.p ? 'p' : a <= RWIN.g ? 'g' : 'o', d);
+}
+function regrabSlide(sl, viaTouch){
+  sl.dropped = false; sl.holding = true; sl.sp = true; sl.touch = !!viaTouch;
+  sl.curLane = Math.round(slideLaneAt(sl, jTime()));
+  fx.push({type:'ring', x: geom.centers[sl.curLane], y: geom.jy, col: slideColor(sl), r0: geom.R, r1: geom.R*1.5, w:3, born: performance.now(), dur:220});
+}
+function hit(lane, viaTouch){
   pressFlash[lane] = 1;
   const t = jTime();
+  for (const n of dropped){   // 일찍 뗀 길게 누르기를 다시 잡아요
+    if (n.lane === lane && t < n.t + n.len - .05){
+      n.dropped = false; n.holding = true; held[lane] = n; dropped = dropped.filter(x => x !== n);
+      fx.push({type:'ring', x: geom.centers[lane], y: geom.jy, col: laneColor(lane), r0: geom.R, r1: geom.R*1.5, w:3, born: performance.now(), dur:220});
+      return n;
+    }
+  }
+  for (const sl of activeSlides){
+    const q = sl.turns[sl.ti];
+    if (sl.holding && q && q.lane === lane && Math.abs(t - q.t) <= WIN.o){ slideTurn(sl, t); return sl; }
+  }
   for (let k = nextNote; k < notes.length; k++){
     const n = notes[k];
     if (n.j || n.lane !== lane) continue;
@@ -2388,6 +2665,12 @@ function hit(lane){
       const a = Math.abs(d), kind = a <= WIN.p ? 'p' : a <= WIN.g ? 'g' : 'o';
       n.j = kind; judge(n, kind, d, false); tick();
       const x = geom.centers[lane], col = laneColor(lane);
+      if (n.slide){   // 띠 시작: PC는 스페이스를 같이 눌러야 해요
+        n.holding = true; n.touch = !!viaTouch; n.sp = !!viaTouch || spaceDown; n.spDeadline = t + WIN.o; n.curLane = lane;
+        activeSlides.push(n);
+        fx.push({type:'ring', x, y: geom.jy, col: slideColor(n), r0: geom.R, r1: geom.R*1.5, w:3, born: performance.now(), dur:220});
+        return n;
+      }
       if (n.len > 0){
         n.holding = true; held[lane] = n;
         fx.push({type:'ring', x, y: geom.jy, col, r0: geom.R, r1: geom.R*1.4, w:3, born: performance.now(), dur:220});
@@ -2396,10 +2679,12 @@ function hit(lane){
     }
   }
   // 칠 방울이 없는데 눌렀어요
-  if (notes.length && t < notes[0].t - 1) return;
+  if (notes.length && t < notes[0].t - 1) return null;
+  if (activeSlides.some(sl => sl.holding && sl.curLane === lane)) return null;   // 띠를 따라가며 누른 키는 헛침 아님
   counts.x++; combo = 0; score = Math.max(0, score - 50);
   shake[lane] = 1; thunk();
   judgeFx = {born: performance.now(), text:'헛침', sub:'-50점', kind:'x'};
+  return null;
 }
 
 function release(lane){
@@ -2407,7 +2692,11 @@ function release(lane){
   held[lane] = null; n.holding = false;
   const d = jTime() - (n.t + n.len);
   const x = geom.centers[lane], col = laneColor(lane);
-  if (d < -RWIN.o){ n.tj = 'm'; judge(n, 'm', d, true); popFx('m', x, geom.jy, col); return; }
+  if (d < -RWIN.o){   // 일찍 뗐어요: 사라지지 않고 남아 있어서 다시 누르면 이어져요
+    n.dropped = true; dropped.push(n); combo = 0;
+    judgeFx = {born: performance.now(), text:'다시 눌러요', sub:'끝까지 누르면 이어져요', kind:'m'};
+    return;
+  }
   const a = Math.abs(d), kind = a <= RWIN.p ? 'p' : a <= RWIN.g ? 'g' : 'o';
   n.tj = kind; judge(n, kind, d, true); popFx(kind, x, geom.jy, col); tick();
 }
@@ -2454,12 +2743,39 @@ function frame(){
       }
     });
     if (held.some(Boolean) && now - lastSpark > 70) lastSpark = now;
+    for (const n of dropped.slice()) if (jt - (n.t + n.len) > RWIN.o){ n.dropped = false; n.tj = 'm'; judge(n, 'm', 0, true); dropped = dropped.filter(x => x !== n); }
+    for (const sl of activeSlides.slice()){
+      if (sl.holding && !sl.sp && jt > sl.spDeadline){   // 스페이스를 안 눌렀어요
+        slideEnd(sl, 'm', 0); judgeFx = {born: now, text:'놓침', sub:'띠는 스페이스를 같이 눌러요', kind:'m'}; continue;
+      }
+      while (sl.turns[sl.ti] && jt - sl.turns[sl.ti].t > WIN.o){ sl.turns[sl.ti].j = 'm'; sl.curLane = sl.turns[sl.ti].lane; sl.ti++; judge(sl, 'm', 0, false); }
+      if (jt - (sl.t + sl.len) > RWIN.o) slideEnd(sl, sl.holding ? 'o' : 'm', 1);
+    }
     if (vt > songEnd) finish();
   }
   draw();
 }
 
 /* ---------- 그리기 ---------- */
+// 띠 노트 모양: 꺾이기 직전에 비스듬히 옮겨가요
+function slideGeom(n){
+  if (n.geom) return n.geom;
+  const pts = [[n.t, n.lane]]; let prevT = n.t, prevL = n.lane;
+  for (const q of n.turns){
+    const dl = Math.min(.3, (q.t - prevT) * .6);   // 꺾이기 전부터 부드럽게 휘어서 옮겨가요
+    pts.push([q.t - dl, prevL]);
+    for (let k = 1; k <= 8; k++){ const u = k / 8, s = u * u * (3 - 2 * u); pts.push([q.t - dl + dl * u, prevL + (q.lane - prevL) * s]); }
+    prevT = q.t; prevL = q.lane;
+  }
+  pts.push([n.t + n.len, prevL]);
+  return n.geom = pts;
+}
+function slideLaneAt(n, t){
+  const pts = slideGeom(n);
+  for (let k = 0; k + 1 < pts.length; k++){ const [ta, la] = pts[k], [tb, lb] = pts[k + 1]; if (t >= ta && t <= tb) return tb > ta ? la + (lb - la) * (t - ta) / (tb - ta) : lb; }
+  return pts[pts.length - 1][1];
+}
+function slideColor(n){ return laneColor(n.lane); }   // 띠는 처음 시작한 줄의 색 하나로 끝까지
 function circle(x, y, r){ g.beginPath(); g.arc(x, y, Math.max(0, r), 0, Math.PI * 2); }
 function rrect(x, y, w, h, r){
   r = Math.max(0, Math.min(r, w / 2, h / 2));
@@ -2470,6 +2786,7 @@ function rrect(x, y, w, h, r){
   g.lineTo(x, y + r); g.quadraticCurveTo(x, y, x + r, y); g.closePath();
 }
 function bubble(x, y, r, col, alpha, sx = 1, sy = 1){
+  g.globalAlpha = alpha * .2; g.fillStyle = col; circle(x, y, r * 1.38); g.fill();   // 네온 빛 번짐
   g.globalAlpha = alpha; g.fillStyle = col;
   g.beginPath(); g.ellipse(x, y, Math.max(0, r * sx), Math.max(0, r * sy), 0, 0, Math.PI * 2); g.fill();
   g.globalAlpha = alpha * .35; g.fillStyle = '#ffffff';
@@ -2479,7 +2796,11 @@ function bubble(x, y, r, col, alpha, sx = 1, sy = 1){
 
 function draw(){
   const now = performance.now();
-  g.fillStyle = colors.bg; g.fillRect(0, 0, W, H);
+  const bgG = g.createLinearGradient(0, 0, 0, H); bgG.addColorStop(0, '#080816'); bgG.addColorStop(1, '#120A26');
+  g.fillStyle = bgG; g.fillRect(0, 0, W, H);
+  const glowG = g.createRadialGradient(W / 2, H * 1.05, 10, W / 2, H * 1.05, Math.max(W, H) * .55);
+  glowG.addColorStop(0, 'rgba(120,60,255,.22)'); glowG.addColorStop(1, 'rgba(120,60,255,0)');
+  g.fillStyle = glowG; g.fillRect(0, 0, W, H);
   const cx = W / 2, jy = H * .8;
   const units = lanes + (SPLIT[lanes] ? .5 : 0);
   const baseR = Math.max(22, Math.min(38, Math.min(W, H) * .055));
@@ -2491,12 +2812,16 @@ function draw(){
   const st = (state === 'menu' || !song) ? -99 : vTime();
   const yOf = d => jy - d / travel * (jy + R);
 
-  // 레인
-  g.fillStyle = colors.lane;
+  // 레인: 어두운 유리판 + 바깥쪽 얇은 네온선
+  g.fillStyle = 'rgba(20,20,46,.92)';
   for (let k = 0; k < lanes; k++){ rrect(lx(k) - laneW / 2 + 3, -R * 2, laneW - 6, H + R * 4, R * 1.6); g.fill(); }
+  const ex0 = lx(0) - laneW / 2 + 3, ex1 = lx(lanes - 1) + laneW / 2 - 3;
+  if (SPLIT[lanes]){ g.fillStyle = '#0A0A1C'; const gx0 = lx(SPLIT[lanes] - 1) + laneW / 2 - 3, gx1 = lx(SPLIT[lanes]) - laneW / 2 + 3; g.fillRect(gx0, 0, gx1 - gx0, H); }   // 양손 사이 빈 칸은 어둡게
+  const neonLine = (x0, y0, x1, y1, col, w) => { g.strokeStyle = col; g.globalAlpha = .22; g.lineWidth = w * 4; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); g.globalAlpha = 1; g.lineWidth = w; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); };
+  neonLine(ex0, 0, ex0, H, colors.k2, 1.5); neonLine(ex1, 0, ex1, H, colors.k1, 1.5);
 
-  // 판정선
-  g.globalAlpha = .18; g.fillStyle = colors.ink; g.fillRect(0, jy - 1, W, 2); g.globalAlpha = 1;
+  // 판정선: 하얀 네온
+  neonLine(ex0 - 16, jy, ex1 + 16, jy, '#F0F0FF', 2.5);
 
   // 기준 동그라미
   let pulse = 1;
@@ -2531,8 +2856,8 @@ function draw(){
       g.globalAlpha = pressFlash[k] * .4; g.fillStyle = lc;
       circle(x, jy, R * 1.15 * pulse); g.fill(); g.globalAlpha = 1;
     }
-    g.lineWidth = Math.max(2.5, R * .11); g.strokeStyle = lc;
-    circle(x, jy, R * 1.12 * pulse); g.stroke();
+    g.strokeStyle = lc; g.globalAlpha = .25; g.lineWidth = Math.max(6, R * .35); circle(x, jy, R * 1.12 * pulse); g.stroke(); g.globalAlpha = 1;   // 은은한 빛
+    g.lineWidth = Math.max(2.5, R * .11); circle(x, jy, R * 1.12 * pulse); g.stroke();
     g.fillStyle = colors.soft; g.font = `${Math.round(Math.max(14, Math.min(20, R * .7)))}px Jua, sans-serif`;
     g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText(CAPS[lanes][k], x, jy + R * 1.12 + 20);
@@ -2541,19 +2866,84 @@ function draw(){
 
   // 방울
   if (song && state !== 'menu'){
+    const lp = p => { const i = Math.max(0, Math.min(lanes - 1, Math.floor(p))), f = p - i; return i >= lanes - 1 ? lx(lanes - 1) : lx(i) * (1 - f) + lx(i + 1) * f; };
+    // 띠 노트 (먼저 그려서 방울 아래에 깔리게)
+    for (const n of notes){
+      if (!n.slide) continue;
+      if (n.t - st > travel) break;
+      if (n.tj && !n.holding) continue;
+      if (n.t + n.len - st < -.3) continue;
+      const pts = slideGeom(n), faded = n.j === 'm' || n.dropped, col = slideColor(n), bright = n.glow && !faded;
+      const t0 = (n.holding || n.dropped) ? st : n.t, t1 = Math.min(n.t + n.len, st + travel + .1);
+      const C = [], L = [], Rr = [];
+      for (let k = 0; k + 1 < pts.length; k++){
+        const [ta, la] = pts[k], [tb, lb] = pts[k + 1];
+        if (tb < t0 || ta > t1) continue;
+        const steps = Math.max(1, Math.ceil((Math.min(tb, t1) - Math.max(ta, t0)) / .03));
+        for (let q = (C.length ? 1 : 0); q <= steps; q++){
+          const tt = Math.max(ta, t0) + (Math.min(tb, t1) - Math.max(ta, t0)) * q / steps;
+          const pl = tb > ta ? la + (lb - la) * (tt - ta) / (tb - ta) : lb;
+          C.push([lp(pl), (n.holding || n.dropped) && tt <= st + 1e-3 ? jy : yOf(tt - st)]);
+        }
+      }
+      for (let k = 0; k < C.length; k++){   // 띠 양옆 테두리
+        const a2 = C[Math.max(0, k - 1)], b2 = C[Math.min(C.length - 1, k + 1)];
+        let dx = b2[0] - a2[0], dy = b2[1] - a2[1]; const ln = Math.hypot(dx, dy) || 1; dx /= ln; dy /= ln;
+        const w = R * .55; L.push([C[k][0] + dy * w, C[k][1] - dx * w]); Rr.push([C[k][0] - dy * w, C[k][1] + dx * w]);
+      }
+      if (C.length > 1){
+        const path = arr => { g.beginPath(); arr.forEach(([x, y], q) => q ? g.lineTo(x, y) : g.moveTo(x, y)); };
+        g.lineJoin = 'round'; g.lineCap = 'round';
+        if (bright){ g.globalAlpha = .18; g.strokeStyle = col; g.lineWidth = R * 3.2; path(C); g.stroke(); }   // 보너스 띠: 넓게 번지는 빛
+        g.globalAlpha = faded ? .1 : bright ? .55 : .3; g.strokeStyle = col; g.lineWidth = R * 1.1; path(C); g.stroke();   // 띠 몸통
+        [[faded ? .08 : bright ? .35 : .22, bright ? 12 : 9], [faded ? .25 : 1, bright ? 4 : 3]].forEach(([al, w]) => {   // 네온 테두리
+          g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = w; path(L); g.stroke(); path(Rr); g.stroke();
+        });
+        g.globalAlpha = 1; g.lineJoin = 'miter'; g.lineCap = 'butt';
+      }
+      // 꺾이는 곳: 키를 옮기는 순간
+      for (const q of n.turns){
+        if (q.j || q.t - st > travel || q.t < st - .2) continue;
+        const x = lx(q.lane), y = yOf(q.t - st);
+        g.fillStyle = '#ffffff'; circle(x, y, R * .38); g.fill(); g.strokeStyle = col; g.lineWidth = 3; circle(x, y, R * .38); g.stroke();
+      }
+      // 머리: 누르고 있으면 판정선에 붙어서 따라가요
+      if (n.j !== 'm'){
+        const on = n.holding || n.dropped;
+        const hl = on ? slideLaneAt(n, st) : n.lane, hx = lp(hl), hy = on ? jy : yOf(n.t - st);
+        if (on || n.t - st > -.25){
+          if (bright){ g.globalAlpha = .25; g.fillStyle = col; circle(hx, hy, R * 2); g.fill(); g.globalAlpha = 1; }
+          bubble(hx, hy, R, col, n.dropped ? .45 : 1, n.holding ? 1 + .05 * Math.sin(now / 50) : 1, n.holding ? 1 - .05 * Math.sin(now / 50) : 1);   // 뗐으면 흐리게
+          if (!n.holding && !IS_MOBILE && n.grp !== 'R'){   // PC: 스페이스 같이 누르기 안내
+            g.globalAlpha = .9; g.fillStyle = colors.ink; g.font = `${Math.max(10, Math.round(R * .45))}px "Gowun Dodum", sans-serif`; g.textAlign = 'center';
+            g.fillText('+ 스페이스', hx, hy + R * 1.75); g.globalAlpha = 1;
+          }
+        }
+      }
+    }
+    // 동시치기: 두 방울을 선으로 이어요
+    for (const n of notes){
+      const dt = n.t - st; if (dt > travel) break;
+      if (n.link == null || n.lane > n.link || n.j || dt < -.2) continue;
+      const y = yOf(dt);
+      g.strokeStyle = '#F0F0FF';
+      g.globalAlpha = .22; g.lineWidth = Math.max(6, R * .45); g.beginPath(); g.moveTo(lx(n.lane), y); g.lineTo(lx(n.link), y); g.stroke();
+      g.globalAlpha = .9; g.lineWidth = Math.max(2, R * .16); g.beginPath(); g.moveTo(lx(n.lane), y); g.lineTo(lx(n.link), y); g.stroke(); g.globalAlpha = 1;
+    }
     for (const n of notes){
       const dt = n.t - st;
       if (dt > travel) break;
+      if (n.slide) continue;
       const x = lx(n.lane), col = laneColor(n.lane);
       if (n.len === 0){
         if (n.j || dt < -.3) continue;
         bubble(x, yOf(dt), R, col, 1);
-        if (n.ch){ g.strokeStyle = colors.ink; g.lineWidth = 3; circle(x, yOf(dt), R * 1.2); g.stroke(); }   // 동시치기 표시
         continue;
       }
       const tailY = yOf(dt + n.len);
       let headY, alpha = 1;
       if (n.holding) headY = jy;
+      else if (n.dropped){ headY = jy; alpha = .45; }   // 뗐지만 다시 누를 수 있어요
       else if (!n.j){ if (dt + n.len < -.3) continue; headY = yOf(dt); }
       else if (n.j === 'm'){ headY = yOf(dt); if (tailY > H + R) continue; alpha = .22; }
       else continue;
@@ -2730,6 +3120,12 @@ addEventListener('keydown', e => {
   }
   const li = KEYMAP[lanes].indexOf(e.code);
   if (state === 'playing' && li >= 0){ e.preventDefault(); if (!e.repeat) hit(li); return; }
+  if (state === 'playing' && e.code === 'Space'){   // 띠 노트 잡기
+    e.preventDefault(); if (e.repeat) return;
+    spaceDown = true;
+    activeSlides.forEach(sl => { if (sl.dropped){ if (jTime() < sl.t + sl.len - .05) regrabSlide(sl, false); } else if (!sl.touch) sl.sp = true; });
+    return;
+  }
   if (e.code === 'Space'){
     e.preventDefault(); if (e.repeat) return;
     if (state === 'paused') resume();
@@ -2740,6 +3136,7 @@ addEventListener('keydown', e => {
   if (e.code === 'Escape' || e.code === 'KeyP'){ if (state === 'playing') pause(); else if (state === 'paused') resume(); }
 });
 addEventListener('keyup', e => {
+  if (e.code === 'Space'){ spaceDown = false; if (state === 'playing') activeSlides.filter(sl => !sl.touch).forEach(slideRelease); }
   const li = KEYMAP[lanes].indexOf(e.code);
   if (li >= 0 && state === 'playing') release(li);
   if (li >= 0 && state === 'rec') recRelease(li);
@@ -2753,9 +3150,27 @@ cv.addEventListener('pointerdown', e => {
   geom.centers.forEach((c, k) => { const d = Math.abs(c - x); if (d < bd){ bd = d; best = k; } });
   ptrLane.set(e.pointerId, best);
   try { cv.setPointerCapture(e.pointerId); } catch(_){}
-  if (state === 'rec') recPress(best); else hit(best);
+  if (state === 'rec') recPress(best);
+  else {
+    const t = jTime(), sl = activeSlides.find(x => x.dropped && t < x.t + x.len - .05 && Math.abs(slideLaneAt(x, t) - best) <= 1);
+    if (sl){ regrabSlide(sl, true); ptrSlide.set(e.pointerId, sl); return; }
+    const n = hit(best, true); if (n && n.slide) ptrSlide.set(e.pointerId, n);
+  }
+});
+// 모바일: 띠는 손가락을 댄 채 미끄러뜨려 따라가요
+const ptrSlide = new Map();
+const laneAtX = clientX => { const x = clientX - cv.getBoundingClientRect().left; let best = 0, bd = Infinity; geom.centers.forEach((c, k) => { const d = Math.abs(c - x); if (d < bd){ bd = d; best = k; } }); return best; };
+cv.addEventListener('pointermove', e => {
+  const sl = ptrSlide.get(e.pointerId); if (!sl || !sl.holding || state !== 'playing') return;
+  const l = laneAtX(e.clientX);
+  if (l === sl.curLane) return;
+  const q = sl.turns[sl.ti];
+  if (q && q.lane === l && Math.abs(jTime() - q.t) <= WIN.o) slideTurn(sl, jTime());
+  else sl.curLane = l;
 });
 const up = e => {
+  const sl = ptrSlide.get(e.pointerId);
+  if (sl){ ptrSlide.delete(e.pointerId); ptrLane.delete(e.pointerId); if (state === 'playing') slideRelease(sl); return; }
   if (!ptrLane.has(e.pointerId)) return;
   const l = ptrLane.get(e.pointerId); ptrLane.delete(e.pointerId);
   if (state === 'playing') release(l);
@@ -2868,6 +3283,8 @@ function pump(){
   }
 }
 setInterval(pump, 30);
+// 자동 테스트할 때만 켜져요 (평소에는 아무 일도 안 해요)
+if (window.__BB_TEST__) window.__bb = { get notes(){ return notes; }, get counts(){ return counts; }, get state(){ return state; }, jTime, keys: () => KEYMAP[lanes] };
 })();
 </script>
 </body>
