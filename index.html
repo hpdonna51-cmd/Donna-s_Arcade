@@ -79,13 +79,13 @@ h1 .row + .row{padding-left:clamp(1.5rem,8vw,6rem)}
 .slot .plus{width:3.2rem;height:3.2rem;border-radius:50%;border:2.5px dashed var(--line);display:grid;place-items:center;font-family:"Jua",sans-serif;font-size:1.8rem;line-height:1}
 
 /* 방울 박자 표지: 떨어지는 방울 */
-.bubble-cover{--cover-bg:#141633}
-.bubble-cover .lane{position:absolute;top:0;bottom:0;width:18%;border-radius:999px;background:#1F2250}
+.bubble-cover{--cover-bg:#0A0A1C}
+.bubble-cover .lane{position:absolute;top:0;bottom:0;width:18%;border-radius:999px;background:#16163A}
 .bubble-cover .lane:nth-child(1){left:9%}.bubble-cover .lane:nth-child(2){left:30%}
 .bubble-cover .lane:nth-child(3){left:52%}.bubble-cover .lane:nth-child(4){left:73%}
 .bubble-cover .hit{position:absolute;left:0;right:0;top:76%;height:2px;background:rgba(243,238,255,.18)}
 .bubble-cover .ring{position:absolute;top:76%;width:12%;aspect-ratio:1;border-radius:50%;border:3px solid var(--c);transform:translate(-50%,-50%)}
-.bubble-cover .drop{position:absolute;top:-14%;width:11%;aspect-ratio:1;border-radius:50%;background:var(--c);transform:translateX(-50%);animation:fall var(--dur,2.4s) linear infinite;animation-delay:var(--delay,0s)}
+.bubble-cover .drop{position:absolute;top:-14%;width:11%;aspect-ratio:1;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);transform:translateX(-50%);animation:fall var(--dur,2.4s) linear infinite;animation-delay:var(--delay,0s)}
 .bubble-cover .drop::after{content:"";position:absolute;left:20%;top:18%;width:28%;height:28%;border-radius:50%;background:#fff;opacity:.4}
 @keyframes fall{0%{top:-14%;opacity:1}76%{top:70%;opacity:1;transform:translateX(-50%) scale(1)}84%{top:70%;opacity:0;transform:translateX(-50%) scale(1.6)}100%{top:70%;opacity:0}}
 .bubble-cover .title{position:absolute;left:1rem;bottom:.8rem;font-family:"Jua",sans-serif;font-size:1.4rem;color:#F3EEFF}
@@ -113,7 +113,7 @@ footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);c
   </main>
 
   <footer>
-    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요. <span style="opacity:.6">(버전 43)</span>
+    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요. <span style="opacity:.6">(버전 74)</span>
   </footer>
 </div>
 
@@ -125,7 +125,7 @@ const GAMES = [
     desc: '떨어지는 방울이 동그라미에 겹치는 순간 키를 누르는 리듬게임이에요. 클래식 명곡, 민요, 캐롤을 포함한 28곡이 있고, 내 음악 파일로 직접 곡을 만들 수도 있어요.',
     tags: ['리듬', '클래식', '내 곡 만들기', '랭킹'],
     url: 'games/bangul-bakja.html',
-    accent: 'var(--plum)',
+    accent: '#FF5CAA',
     cover: 'bubble',
     made: '2026년 10월 28일',
   },
@@ -133,7 +133,7 @@ const GAMES = [
 
 const covers = {
   bubble: g => {
-    const cols = ['#B8A1FF', '#6EE7C8', '#FFB38A', '#FFE07A'];
+    const cols = ['#FF5CAA', '#46D6FF', '#FF9650', '#FFDE5A'];   // 게임 속 방울 색
     const lanes = [18, 39, 61, 82];
     const drops = [[0, 0, 2.4], [1, .6, 2.4], [2, 1.2, 2.4], [3, 1.8, 2.4], [2, .3, 2.4], [0, 1.5, 2.4]];
     return `<div class="cover bubble-cover" aria-hidden="true">
