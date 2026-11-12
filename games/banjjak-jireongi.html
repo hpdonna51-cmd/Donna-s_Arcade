@@ -151,9 +151,18 @@ const radiusOf = m => 7 + Math.sqrt(m) * 0.9;
 const segsOf = m => Math.round(10 + m * 0.6);
 const NAMES = ['꿈틀이', '반짝이', '왕지렁이', '사과맛', '별빛', '밤산책', '젤리', '콩콩', '무지개', '느림보', '번개', '솜사탕', '초코칩', '구름', '말랑이', '깜빡이', '보라돌이', '레몬', '톡톡이', '땅콩', '우주인', '호두', '망고', '바람', '달빛', '찹쌀', '설탕', '뿌루통', '민트', '꼬물이', '해달', '물방울'];
 
+/* 기록 저장: 키 이름 앞에 게임 이름을 붙여요 (예전 worm-… 기록은 자동으로 옮겨와요) */
+const STORE_PREFIX = 'banjjak-jireongi:';
+const skey = k => STORE_PREFIX + k.replace(/^worm-/, '');
 const store = {
-  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  get(k, d) {
+    try {
+      let v = localStorage.getItem(skey(k));
+      if (v === null) { v = localStorage.getItem(k); if (v !== null) localStorage.setItem(skey(k), v); }
+      return v === null ? d : JSON.parse(v);
+    } catch (e) { return d; }
+  },
+  set(k, v) { try { localStorage.setItem(skey(k), JSON.stringify(v)); } catch (e) {} },
 };
 
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
