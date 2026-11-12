@@ -162,7 +162,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
         <button id="startBtn" class="primary" type="button">시작하기</button>
       </div>
       <p class="btns" style="margin:-.75rem 0 0"><a class="text-link" href="../index.html">오락실로</a></p>
-      <p class="hint" style="opacity:.6">버전 74 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 81 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -574,6 +574,22 @@ const FE = {
 };
 const feSec = (bars, rh, lh, extra = {}) => Object.assign({bars, tracks:[{inst:'piano', notes: rh, chart:true, rev:.35}, {inst:'piano', notes: lh, v:.6, rev:.35}]}, extra);
 
+// 라 캄파넬라 (리스트, 1851년판, 올림사단조, 6/8박자): 공개된 악보의 주제 가락
+const LC = {
+  intro: 'D#6:6 D#6:6  D#5:3 D#6:3 D#6:3 C#6:3',
+  p1: 'B5:2 B5:2 A#5:2 G#5:2 G5:2 G#5:2  A#5:2 D#5:2 D#5:2 E5:2 D#5:2 C#5:2',
+  p2: 'B4:2 B4:2 A#4:2 G#4:2 G4:2 G#4:2  A#4:2 D#4:2 D#5:2 C#5:6',
+  br: 'D#5:3 D#6:3 D#5:3 D#6:3  D#5:2 D#6:2 D#5:2 D#6:2 D#6:2 C#6:2',   // 종이 울리듯 옥타브를 오가요
+  i: 'G#2:2 D#3+G#3+B3:2 D#3+G#3+B3:2 D#2:2 D#3+G#3+B3:2 D#3+G#3+B3:2',
+  v: 'D#2:2 G3+A#3+C#4:2 G3+A#3+C#4:2 A#1:2 G3+A#3+C#4:2 G3+A#3+C#4:2',
+};
+LC.A = [LC.p1, LC.p2, LC.p1, LC.br, LC.p1, LC.p2].join('  ');
+LC.lA = [LC.i, LC.v, LC.i, LC.v, LC.i, LC.v, LC.v, LC.v, LC.i, LC.v, LC.i, LC.v].join('  ');
+LC.vSus = ['D#5:12', 'C#5:6 A#4:6', 'B4:12', 'C#5:6 A#4:6', 'D#5:12', 'C#5:6 A#4:6', 'A#4:12', 'C#5:12', 'D#5:12', 'C#5:6 A#4:6', 'B4:12', 'A#4:6 C#5:6'].join('  ');
+// 종소리 변주: 가락 음마다 높은 레#(종)을 사이사이에 톡톡 (리스트의 큰 도약처럼). 미리 계산해서 적어둬요
+LC.bells = 'B5:1 D#6:1 B5:1 D#6:1 A#5:1 D#6:1 G#5:1 D#6:1 G5:1 D#6:1 G#5:1 D#6:1 A#5:1 D#6:1 D#5:1 D#6:1 D#5:1 D#6:1 E5:1 D#6:1 D#5:1 D#6:1 C#5:1 D#6:1 B4:1 D#6:1 B4:1 D#6:1 A#4:1 D#6:1 G#4:1 D#6:1 G4:1 D#6:1 G#4:1 D#6:1 A#4:1 D#6:1 D#4:1 D#6:1 D#5:1 D#6:1 C#5:1 D#6:1 C#5:1 D#6:1 C#5:1 D#6:1 B5:1 D#6:1 B5:1 D#6:1 A#5:1 D#6:1 G#5:1 D#6:1 G5:1 D#6:1 G#5:1 D#6:1 A#5:1 D#6:1 D#5:1 D#6:1 D#5:1 D#6:1 E5:1 D#6:1 D#5:1 D#6:1 C#5:1 D#6:1 D#5:1 D#6:1 D#5:1 D#6:1 D#6:1 D#6:1 D#5:1 D#6:1 D#5:1 D#6:1 D#6:1 D#6:1 D#5:1 D#6:1 D#6:1 D#6:1 D#5:1 D#6:1 D#6:1 D#6:1 D#6:1 D#6:1 C#6:1 D#6:1 B5:1 D#6:1 B5:1 D#6:1 A#5:1 D#6:1 G#5:1 D#6:1 G5:1 D#6:1 G#5:1 D#6:1 A#5:1 D#6:1 D#5:1 D#6:1 D#5:1 D#6:1 E5:1 D#6:1 D#5:1 D#6:1 C#5:1 D#6:1 B4:1 D#6:1 B4:1 D#6:1 A#4:1 D#6:1 G#4:1 D#6:1 G4:1 D#6:1 G#4:1 D#6:1 A#4:1 D#6:1 D#4:1 D#6:1 D#5:1 D#6:1 C#5:1 D#6:1 C#5:1 D#6:1 C#5:1 D#6:1';
+LC.bellsOnly = 'R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 R:1 D#6:1 R:1 R:1 D#6:1 R:1 R:1 D#6:1 R:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1 R:1 D#6:1';
+
 // 캐논 (파헬벨): 한 바퀴 = 2마디
 const CN = {
   bass: 'D3:4 A2:4 B2:4 F#2:4 G2:4 D2:4 G2:4 A2:4',
@@ -635,6 +651,21 @@ const CLASSICS = [
       feSec(4, FE.B, FE.lB, {meter:M38}),
       feSec(8, FE.A + ' ' + FE.e1, FE.lA + ' ' + FE.lE, {meter:M38}),
       feSec(8, FE.A + ' ' + FE.eF, FE.lA + ' ' + FE.lF, {meter:M38}),
+    ]},
+  { id:'campanella', name:'라 캄파넬라', desc:'리스트, 종소리처럼 반짝이는 피아노에 바이올린을 더했어요. 6/8박자', lv:4, bpm:100, dots:['d1','d2'], kit:'soft', rev:.45, score:true, meter:M68,
+    sections:[
+      {bars:2, meter:M68, tracks:[{inst:'piano', notes: LC.intro, chart:true, rev:.45}, {inst:'piano', notes:'D#2+D#3:12 D#2+D#3:12', v:.5, rev:.45}, {inst:'violin', notes:'D#6:24', v:.4, pan:.3, rev:.6, legato:1}]},
+      {bars:12, meter:M68, tracks:[{inst:'piano', notes: LC.A, chart:true, rev:.45}, {inst:'piano', notes: LC.lA, v:.55, rev:.45},
+        {inst:'violin', notes: LC.A, v:.42, pan:.3, rev:.5},   // 바이올린이 가락을 같이
+        {inst:'violin', notes: Array.from({length: 6}, () => 'D#6:12 R:12').join(' '), v:.3, pan:-.3, rev:.6}]},
+      {bars:12, meter:M68, mark:'종소리 변주!', tracks:[{inst:'piano', notes: LC.bells, chart:true, rev:.45}, {inst:'piano', notes: LC.lA, v:.55, rev:.45},
+        {inst:'violin', notes: LC.bellsOnly, v:.3, pan:-.3, rev:.5},
+        {inst:'violin', notes: LC.vSus, v:.4, pan:.3, rev:.55, legato:1}]},   // 바이올린은 길게 받쳐줘요
+      {bars:4, meter:M68, dbl:true, tracks:[{inst:'piano', notes: LC.p1 + '  ' + LC.p2, chart:true, rev:.45, v:.75}, {inst:'piano', notes: LC.p1 + '  ' + LC.p2, oct:-12, v:.5, rev:.45},
+        {inst:'violin', notes: LC.p1 + '  ' + LC.p2, v:.85, pan:.15, rev:.5},   // 마무리는 바이올린이 앞에
+        {inst:'piano', notes: [LC.i, LC.v, LC.i, LC.v].join('  '), v:.6, rev:.45}]},
+      {bars:2, meter:M68, tracks:[{inst:'piano', notes:'G#5:6 D#5:6  G#4:12', chart:true, rev:.5}, {inst:'violin', notes:'G#5:6 D#5:6  G#4:12', v:.7, pan:.15, rev:.55, legato:1}, {inst:'piano', notes:'G#1+G#2:12 G#1+D#2+G#2+B2:12', v:.65, rev:.5},
+        {inst:'violin', notes:'R:12 G#5:12', v:.45, pan:-.3, rev:.7, legato:1}]},
     ]},
   { id:'canon', name:'캐논', desc:'파헬벨, 바이올린과 현악 합주. 길게 누르기가 많아요', lv:2, bpm:60, dots:['d2','d4'], kit:'soft', rev:.5, score:true, meter:M44,
     sections:[
@@ -1252,6 +1283,7 @@ function makeChart(sg, S, dk, L){
   const seq = [];
   const occAt = (h, t) => occ[h].find(o => t >= o.t0 - .04 && t <= o.t1 + .08);
   const travel = (h, lane) => lane === F[h].lane ? (IDX ? .12 : .06) : (IDX ? .14 + .05 * Math.abs(lane - F[h].lane) : .08);
+  const trillGate = t => ((Math.sin(t * 9301.7 + hashStr(S.id) % 997) + 1) / 2) > .15;   // 85%는 막고 15%만 허용 (주로 2번 이하)
   function ok(h, lane, t, len = 0){
     if (!Z[h].includes(lane)) return false;
     if (occAt(h, t) || (len && occ[h].some(o => o.t0 < t + len + .08 && o.t1 > t - .04))) return false;
@@ -1259,7 +1291,8 @@ function makeChart(sg, S, dk, L){
     if (lane === F[h].lane && F[h].rep >= 2) return false;                         // 같은 키는 최대 3번
     if (seq.length >= 3 && seq.slice(-3).every(x => x === lane)) return false;     // 어느 손으로 치든 같은 키 4번 연속 금지
     const o = occAt(1 - h, t); if (o && Math.abs(lane - o.laneAt(t)) < 2) return false;   // 누르고 있는 손가락 바로 옆은 피해요
-    const s = seq; if (s.length >= 3 && s[s.length - 1] !== s[s.length - 2] && s[s.length - 3] === s[s.length - 1] && lane === s[s.length - 2]) return false;   // 트릴 최대 3번
+    const s = seq; if (s.length >= 3 && s[s.length - 1] !== s[s.length - 2] && s[s.length - 3] === s[s.length - 1] && lane === s[s.length - 2]) return false;   // 트릴 4번 이상은 절대 안 돼요
+    if (s.length >= 2 && s[s.length - 1] !== s[s.length - 2] && lane === s[s.length - 2] && trillGate(t)) return false;   // 트릴 3번(가 나 가)은 가끔만
     return true;
   }
   function put(h, lane, t, len = 0){
@@ -2020,6 +2053,7 @@ let state = 'menu', selected = 'candy', cur = SONGS[0], wasRandom = false, diff 
 let song = null, notes = [], evIdx = 0, t0 = 0, travel = 1.5, offsetMs = 0, songEnd = 0, lanes = 4, BEAT = .5;
 let score = 0, combo = 0, maxCombo = 0, counts = {p:0, g:0, o:0, m:0, x:0, holdSum:0, holdN:0}, total = 1;
 let fx = [], judgeFx = null, nextNote = 0, lastSpark = 0, activeSlides = [], spaceDown = false, dropped = [];
+const laneDown = new Array(8).fill(false);   // 지금 눌려 있는 줄 키
 let pressFlash = new Array(8).fill(0), held = new Array(8).fill(null), shake = new Array(8).fill(0);
 let geom = {centers: [], R: 30, jy: 0};
 const WIN = {p:.05, g:.10, o:.15}, RWIN = {p:.07, g:.12, o:.18};
@@ -2407,7 +2441,8 @@ let popSong = null, popFrom = 'menu';
 function popOrder(){ return popSong && popSong.audio ? ['one'] : DIFFS; }
 function openPop(fromResult){
   popFrom = fromResult ? 'result' : 'menu';
-  if (fromResult) popSong = cur;   // 결과 화면에서는 방금 한 곡 그대로
+  if (fromResult && wasRandom) popSong = {id: 'random', name: '랜덤', desc: `${SONGS.length}곡 중 다른 곡을 새로 골라줘요`};   // 랜덤으로 했으면 다시하기도 랜덤
+  else if (fromResult) popSong = cur;   // 결과 화면에서는 방금 한 곡 그대로
   else {
     const id = selected;
     popSong = id === 'random' ? {id: 'random', name: '랜덤', desc: `${SONGS.length}곡 중 하나를 골라줘요`} : allSongs().find(s => s.id === id);
@@ -2534,6 +2569,9 @@ function start(again){
   if (!again){
     wasRandom = selected === 'random';
     cur = wasRandom ? SONGS[Math.floor(Math.random() * SONGS.length)] : allSongs().find(s => s.id === selected) || SONGS[0];
+  } else if (state === 'songpop' && popSong && popSong.id === 'random'){   // 결과 화면에서 다시하기: 방금과 다른 곡으로 새로 랜덤
+    const others = SONGS.filter(S => S.id !== cur.id);
+    cur = others[Math.floor(Math.random() * others.length)]; wasRandom = true;
   }
   if (!cur.audio && !renderCache.has(renderKey(cur)) && !renderFailed.has(renderKey(cur))){
     showLoading('곡 준비 중… 처음 한 번만 잠깐 걸려요', true);
@@ -2810,9 +2848,10 @@ function finalizeLong(n, rel){
 const relKind = d => { const a = Math.abs(d); return a <= RWIN.p ? 'p' : a <= RWIN.g ? 'g' : a <= RWIN.o ? 'o' : null; };
 
 // 띠 노트: 꺾이는 순간 다음 줄 키를 누르면 판정해요
+const TWIN = {p:.08, g:.14, o:.22};   // 띠의 흰 점은 일반 방울보다 너그럽게
 function slideTurn(sl, t){
   const q = sl.turns[sl.ti], d = t - q.t, a = Math.abs(d);
-  const kind = a <= WIN.p ? 'p' : a <= WIN.g ? 'g' : 'o';
+  const kind = a <= TWIN.p ? 'p' : a <= TWIN.g ? 'g' : 'o';
   q.j = kind; sl.ti++; sl.curLane = q.lane;
   judge(sl, kind, d, false); tick();
   popFx(kind, geom.centers[q.lane], geom.jy, slideColor(sl));
@@ -2851,7 +2890,7 @@ function hit(lane, viaTouch){
   }
   for (const sl of activeSlides){
     const q = sl.turns[sl.ti];
-    if (sl.holding && q && q.lane === lane && Math.abs(t - q.t) <= WIN.o){ slideTurn(sl, t); return sl; }
+    if (sl.holding && q && q.lane === lane && Math.abs(t - q.t) <= TWIN.o){ slideTurn(sl, t); return sl; }
   }
   for (let k = nextNote; k < notes.length; k++){
     const n = notes[k];
@@ -2879,7 +2918,7 @@ function hit(lane, viaTouch){
   if (notes.length && t < notes[0].t - 1) return null;
   const nearSlide = sl => {   // 띠가 지금 있거나, 방금(0.5초 안) 지나갔거나, 곧 지나갈 줄
     if (sl.curLane === lane || Math.round(slideLaneAt(sl, t)) === lane) return true;
-    for (let k = 0; k < sl.path.length; k++){ const p = sl.path[k], nx = sl.path[k + 1]; if (p.lane === lane && p.t < t + .25 && (nx ? nx.t : sl.t + sl.len) > t - .5) return true; }
+    for (let k = 0; k < sl.path.length; k++){ const p = sl.path[k], nx = sl.path[k + 1]; if (p.lane === lane && p.t < t + .5 && (nx ? nx.t : sl.t + sl.len) > t - .5) return true; }
     return false;
   };
   if (activeSlides.some(sl => (sl.holding || sl.dropped) && nearSlide(sl))) return null;   // 띠를 따라가며 누른 키는 헛침 아님
@@ -2946,7 +2985,9 @@ function frame(){
       if (sl.holding && !sl.sp && jt > sl.spDeadline){   // 스페이스를 안 눌렀어요
         stopHold(sl, sl.t); sl.heldT = 0; sl.holding = false; sl.dropped = true; combo = 0; combo = 0; continue;
       }
-      while (sl.turns[sl.ti] && jt - sl.turns[sl.ti].t > WIN.o){
+      // 미리 옮겨둔 경우: 다음 줄 키를 누른 채이거나(PC) 손가락이 이미 그 줄에 있으면(휴대폰) 흰 점에 닿을 때 완벽
+      { const q = sl.turns[sl.ti]; if (sl.holding && q && jt >= q.t - .01 && (sl.touch ? sl.curLane === q.lane : laneDown[q.lane])) slideTurn(sl, q.t); }
+      while (sl.turns[sl.ti] && jt - sl.turns[sl.ti].t > TWIN.o){
         const last = sl.ti === sl.turns.length - 1;   // 띠의 마지막 흰 점은 놓침으로 안 세요
         sl.turns[sl.ti].j = last ? 'skip' : 'm'; sl.curLane = sl.turns[sl.ti].lane; sl.ti++;
         if (last) total--; else judge(sl, 'm', 0, false);
@@ -2965,9 +3006,8 @@ function slideGeom(n){
   if (n.geom) return n.geom;
   const pts = [[n.t, n.lane]]; let prevT = n.t, prevL = n.lane;
   for (const q of n.turns){
-    const dl = Math.min(.3, (q.t - prevT) * .6);   // 꺾이기 전부터 부드럽게 휘어서 옮겨가요
-    pts.push([q.t - dl, prevL]);
-    for (let k = 1; k <= 8; k++){ const u = k / 8, s = u * u * (3 - 2 * u); pts.push([q.t - dl + dl * u, prevL + (q.lane - prevL) * s]); }
+    const dl = q.t - prevT;   // 앞 점에서 다음 점까지 내내 물결처럼 휘어요 (흰 점에 닿는 순간은 그대로)
+    for (let k = 1; k <= 16; k++){ const u = k / 16, s = u * u * (3 - 2 * u); pts.push([prevT + dl * u, prevL + (q.lane - prevL) * s]); }
     prevT = q.t; prevL = q.lane;
   }
   pts.push([n.t + n.len, prevL]);
@@ -3334,6 +3374,7 @@ addEventListener('keydown', e => {
     e.preventDefault(); selectCard(selIdx + (e.code === 'ArrowRight' ? 1 : -1)); return;
   }
   const li = KEYMAP[lanes].indexOf(e.code);
+  if (li >= 0) laneDown[li] = true;
   if (state === 'playing' && li >= 0){ e.preventDefault(); if (!e.repeat) hit(li); return; }
   if (state === 'playing' && e.code === 'Space'){   // 띠 노트 잡기
     e.preventDefault(); if (e.repeat) return;
@@ -3358,6 +3399,7 @@ $('#chalGo').addEventListener('click', e => { e.currentTarget.blur(); chalGo(); 
 addEventListener('keyup', e => {
   if (e.code === 'Space'){ spaceDown = false; if (state === 'playing') activeSlides.filter(sl => !sl.touch).forEach(slideRelease); }
   const li = KEYMAP[lanes].indexOf(e.code);
+  if (li >= 0) laneDown[li] = false;
   if (li >= 0 && state === 'playing') release(li);
   if (li >= 0 && state === 'rec') recRelease(li);
 });
@@ -3385,7 +3427,7 @@ cv.addEventListener('pointermove', e => {
   const l = laneAtX(e.clientX);
   if (l === sl.curLane) return;
   const q = sl.turns[sl.ti];
-  if (q && q.lane === l && Math.abs(jTime() - q.t) <= WIN.o) slideTurn(sl, jTime());
+  if (q && q.lane === l && Math.abs(jTime() - q.t) <= TWIN.o) slideTurn(sl, jTime());
   else sl.curLane = l;
 });
 const up = e => {
@@ -3525,7 +3567,7 @@ function setInputMode(m){
 addEventListener('keydown', () => setInputMode('key'), true);   // 키를 누르면 키보드 (태블릿에 키보드를 연결해도)
 addEventListener('pointerdown', e => { if (e.pointerType === 'touch') setInputMode('touch'); }, true);   // 손가락으로 터치하면 터치
 // 자동 테스트할 때만 켜져요 (평소에는 아무 일도 안 해요)
-if (window.__BB_TEST__) window.__bb = { get notes(){ return notes; }, get counts(){ return counts; }, get state(){ return state; }, get chal(){ return chal; }, jTime, keys: () => KEYMAP[lanes] };
+if (window.__BB_TEST__) window.__bb = { get notes(){ return notes; }, get counts(){ return counts; }, get state(){ return state; }, get chal(){ return chal; }, finish: () => finish(), charts: (dk, L) => SONGS.map(S => makeChart(buildSong(S), S, dk, L)), jTime, keys: () => KEYMAP[lanes] };
 })();
 </script>
 </body>
