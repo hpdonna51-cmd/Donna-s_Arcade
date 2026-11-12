@@ -96,7 +96,7 @@ h1 .row + .row{padding-left:clamp(1.5rem,8vw,6rem)}
 }
 
 /* 반짝 지렁이 표지 */
-.worm-cover{--cover-bg:#11161B}
+.worm-cover{--cover-bg:#0B0E12}
 .worm-cover svg{position:absolute;inset:0;width:100%;height:100%}
 .worm-cover .title{position:absolute;left:1rem;bottom:.8rem;font-family:"Jua",sans-serif;font-size:1.4rem;color:#F3FFF9}
 
@@ -147,23 +147,58 @@ const GAMES = [
 
 const covers = {
   worm: g => {
-    const dots = Array.from({ length: 34 }, (_, i) => {
-      const x = (i * 37.3) % 120, y = (i * 23.7 + 7) % 90, h = (i * 53) % 360;
-      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1 + (i % 3) * .5).toFixed(1)}" fill="hsl(${h},100%,70%)"/>`;
-    }).join('');
-    const trail = Array.from({ length: 22 }, (_, i) => {
-      const t = i / 21, x = 70 + t * 46, y = 62 - Math.sin(t * 5) * 9 + t * 6;
-      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" fill="#FFF27A"/>`;
-    }).join('');
+    // 반짝 지렁이 표지: 정해진 길을 도는 가벼운 반복 애니메이션 (서로 부딪히지 않는 길 두 개)
+    const ring = (cx, cy, R0, A, k, n, dir, ph) => {
+      const P = [];
+      for (let i = 0; i < n; i++) { const t = dir * i / n * Math.PI * 2 + ph, r = R0 + A * Math.sin(k * t); P.push([cx + Math.cos(t) * r, cy + Math.sin(t) * r * .97]); }
+      const f = v => v.toFixed(2);
+      let d = `M${f(P[0][0])} ${f(P[0][1])}`;
+      for (let i = 0; i < n; i++) {
+        const p0 = P[(i - 1 + n) % n], p1 = P[i], p2 = P[(i + 1) % n], p3 = P[(i + 2) % n];
+        d += `C${f(p1[0] + (p2[0] - p0[0]) / 6)} ${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)} ${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])} ${f(p2[1])}`;
+      }
+      return d + 'Z';
+    };
+    const len = d => {
+      const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); document.body.appendChild(s);
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', d); s.appendChild(p);
+      const L = p.getTotalLength(); s.remove(); return L;
+    };
+    const SPEED = 9, outer = ring(60, 45, 31, 2.6, 6, 48, 1, 0), inner = ring(60, 45, 13, 1.8, 4, 32, -1, .4);
+    const Do = len(outer) / SPEED, Di = len(inner) / SPEED;
+    const stripe = h => i => Math.floor(i / 3) % 2 ? `hsl(${h},80%,70%)` : `hsl(${h},85%,58%)`;
+    const worms = [
+      { p: 'o', D: Do, off: 0, r: 2.5, n: 13, col: stripe(24), edge: 'hsl(24,70%,28%)' },
+      { p: 'o', D: Do, off: Do / 3, r: 2.1, n: 11, col: stripe(265), edge: 'hsl(265,60%,30%)' },
+      { p: 'o', D: Do, off: 2 * Do / 3, r: 2.3, n: 12, col: stripe(150), edge: 'hsl(150,60%,22%)' },
+      { p: 'i', D: Di, off: 0, r: 2.8, n: 15, col: (i, n) => `hsl(${Math.round(i / n * 300)},90%,62%)`, edge: 'rgba(20,20,30,.6)' },
+    ];
+    const mot = (D, b, p, rot) => `<animateMotion dur="${D.toFixed(2)}s" repeatCount="indefinite" begin="${b.toFixed(2)}s"${rot ? ' rotate="auto"' : ''}><mpath href="#wormP${p}"/></animateMotion>`;
+    let body = '';
+    for (const w of worms) {
+      const dl = w.r * .8 / SPEED, bt = i => -w.off + i * dl - w.D * 2;
+      let e = '', f = '';
+      for (let i = w.n - 1; i >= 0; i--) {
+        e += `<circle r="${(w.r + .45).toFixed(2)}" fill="${w.edge}">${mot(w.D, bt(i), w.p)}</circle>`;
+        if (i) f += `<circle r="${w.r}" fill="${w.col(i, w.n)}">${mot(w.D, bt(i), w.p)}</circle>`;
+      }
+      const r = w.r, q = v => (v * r).toFixed(2);
+      f += `<g><circle r="${r}" fill="${w.col(0, w.n)}"/><circle cx="${q(.35)}" cy="${q(.45)}" r="${q(.36)}" fill="#fff"/><circle cx="${q(.35)}" cy="${q(-.45)}" r="${q(.36)}" fill="#fff"/><circle cx="${q(.49)}" cy="${q(.45)}" r="${q(.19)}" fill="#10141A"/><circle cx="${q(.49)}" cy="${q(-.45)}" r="${q(.19)}" fill="#10141A"/>${mot(w.D, bt(0), w.p, 1)}</g>`;
+      body += e + f;
+    }
+    let pel = '', seed = 7, cnt = 0;
+    const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647, hues = [330, 200, 45, 120, 280, 20, 170];
+    for (const [a, b, m] of [[4, 10, 4], [19, 25, 12], [37, 39.5, 10]]) for (let i = 0; i < m; i++) {
+      const t = rnd() * Math.PI * 2, r = a + rnd() * (b - a), s = .7 + rnd() * .6, h = hues[cnt++ % 7];
+      pel += `<g transform="translate(${(60 + Math.cos(t) * r).toFixed(1)} ${(45 + Math.sin(t) * r * .97).toFixed(1)})"><circle r="${(2.2 * s).toFixed(2)}" fill="hsl(${h},100%,62%)" opacity=".22"><animate attributeName="opacity" values=".12;.3;.12" dur="${(2 + s).toFixed(1)}s" repeatCount="indefinite"/></circle><circle r="${(.85 * s).toFixed(2)}" fill="hsl(${h},100%,72%)"/></g>`;
+    }
     return `<div class="cover worm-cover" aria-hidden="true">
       <svg viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice">
-        <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-        <rect width="120" height="90" fill="#11161B"/>
-        <g filter="url(#glow)" opacity=".9">${dots}${trail}</g>
-        <path d="M8 30 C 24 18, 34 44, 50 36 S 66 28, 70 46" fill="none" stroke="#6E3F8F" stroke-width="9.5" stroke-linecap="round"/>
-        <path d="M8 30 C 24 18, 34 44, 50 36 S 66 28, 70 46" fill="none" stroke="#C77DFF" stroke-width="7" stroke-linecap="round"/>
-        <circle cx="68.5" cy="46.5" r="1.6" fill="#fff"/><circle cx="72" cy="44.5" r="1.6" fill="#fff"/>
-        <path d="M84 6 C 92 20, 104 16, 112 30" fill="none" stroke="#FFD25C" stroke-width="6" stroke-linecap="round"/>
+        <defs><pattern id="wormHex" width="10.39" height="18" patternUnits="userSpaceOnUse"><rect width="10.39" height="18" fill="#0B0E12"/><path d="M5.2 .8 9.6 3.3v5.1L5.2 10.9.8 8.4V3.3Z M0 9.8 4.4 12.3v5.1L0 19.9M10.39 9.8 5.99 12.3v5.1l4.4 2.5" fill="#171D24"/></pattern><path id="wormPo" d="${outer}"/><path id="wormPi" d="${inner}"/></defs>
+        <rect width="120" height="90" fill="url(#wormHex)"/>
+        <path d="M0 0H120V90H0Z M60 4A41 40 0 1 0 60.01 4Z" fill="rgba(110,18,36,.45)" fill-rule="evenodd"/>
+        <ellipse cx="60" cy="44" rx="41" ry="40" fill="none" stroke="rgba(255,80,110,.75)" stroke-width=".6"/>
+        ${pel}${body}
       </svg>
       <span class="title">${g.title}</span>
     </div>`;
@@ -201,6 +236,8 @@ grid.innerHTML = GAMES.map(g => `
     <p>새 게임을 만들면 이 선반에 하나씩 채워져요.</p>
   </div>`;
 document.getElementById('count').textContent = `지금까지 만든 게임 ${GAMES.length}개`;
+// 움직임 줄이기를 켠 기기에서는 지렁이 표지를 멈춰 둬요
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('.worm-cover svg').forEach(v => v.pauseAnimations && v.pauseAnimations());
 
 /* 앱 설치 */
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
