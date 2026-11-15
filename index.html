@@ -100,6 +100,11 @@ h1 .row + .row{padding-left:clamp(1.5rem,8vw,6rem)}
 .worm-cover svg{position:absolute;inset:0;width:100%;height:100%}
 .worm-cover .title{position:absolute;left:1rem;bottom:.8rem;font-family:"Jua",sans-serif;font-size:1.4rem;color:#F3FFF9}
 
+/* Alt+Delete 표지: 땅을 둘러싸고 채우기 */
+.altdel-cover{--cover-bg:#1C1D21}
+.altdel-cover svg{position:absolute;inset:0;width:100%;height:100%}
+.altdel-cover .title{position:absolute;left:1rem;bottom:.8rem;font-family:"Jua",sans-serif;font-size:1.4rem;color:#1C1D21;text-shadow:0 0 4px #fff,0 0 4px #fff,0 0 8px #fff}
+
 footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);color:var(--soft);font-size:.9rem}
 </style>
 </head>
@@ -118,7 +123,7 @@ footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);c
   </main>
 
   <footer>
-    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요. <span style="opacity:.6">(버전 75)</span>
+    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요. <span style="opacity:.6">(버전 76)</span>
   </footer>
 </div>
 
@@ -142,6 +147,15 @@ const GAMES = [
     accent: '#FFD23F',
     cover: 'worm',
     made: '2026년 11월 2일',
+  },
+  {
+    title: 'Alt+Delete',
+    desc: '내 땅 밖으로 나가 선을 긋고 돌아오면, 선으로 둘러싼 곳이 한 번에 내 색으로 채워지는 땅따먹기 게임이에요. 성격과 기분이 제각각인 상대들과 하트, 고래 같은 맵 6가지에서 겨뤄요.',
+    tags: ['땅따먹기', '맵 6가지', '닉네임', '기록'],
+    url: 'games/alt-delete.html',
+    accent: '#FF4F7B',
+    cover: 'altdel',
+    made: '2026년 11월 15일',
   },
 ];
 
@@ -203,6 +217,30 @@ const covers = {
       <span class="title">${g.title}</span>
     </div>`;
   },
+  altdel: g => {
+    // Alt+Delete 표지: 내 땅에서 나가 선을 긋고 돌아오면 둘러싼 곳이 채워져요 (4초마다 반복)
+    const loop = 'M52 40C60 26 76 20 90 26C102 31 104 50 94 60C86 68 66 68 54 58';
+    const kt = '0;.62;.64;.97;1';
+    return `<div class="cover altdel-cover" aria-hidden="true">
+      <svg viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice">
+        <defs><pattern id="altdelChk" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#FAFAFB"/><rect width="4" height="4" fill="#ECEDF0"/><rect x="4" y="4" width="4" height="4" fill="#ECEDF0"/></pattern></defs>
+        <rect width="120" height="90" fill="url(#altdelChk)"/>
+        <path d="M84 70c6-5 18-6 26-1s8 16 0 21H82c-6-5-5-14 2-20Z" fill="#3D8BFF"/><path d="M84 71.2c6-5 18-6 26-1s8 16 0 21H82c-6-5-5-14 2-20Z" fill="#2B63B8" opacity=".35"/>
+        <path d="M92 2c8-4 22-2 26 4v16c-8 4-20 4-27-1c-5-6-5-15 1-19Z" fill="#FFB020"/>
+        <path d="${loop}C46 52 46 46 52 40Z" fill="#FF4F7B"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="${kt}" dur="4s" repeatCount="indefinite"/></path>
+        <circle cx="40" cy="48" r="17" fill="#B8304F"/><circle cx="40" cy="47" r="17" fill="#FF4F7B"/>
+        <path d="${loop}" fill="none" stroke="#FFA3BA" stroke-width="3.2" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+          <animate attributeName="stroke-dashoffset" values="100;0;0;100;100" keyTimes="${kt}" dur="4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;1;0;0;1" keyTimes="${kt}" dur="4s" repeatCount="indefinite"/>
+        </path>
+        <g>
+          <circle r="4.4" fill="#B8304F" cy=".9"/><circle r="4.4" fill="#FF4F7B" stroke="#fff" stroke-width=".9"/><circle cx="1.6" r="1.6" fill="#fff"/><circle cx="2.1" r=".8" fill="#1C1D21"/>
+          <animateMotion path="${loop}" rotate="auto" keyPoints="0;1;1;1;0" keyTimes="${kt}" calcMode="linear" dur="4s" repeatCount="indefinite"/>
+        </g>
+      </svg>
+      <span class="title">${g.title}</span>
+    </div>`;
+  },
   bubble: g => {
     const cols = ['#FF5CAA', '#46D6FF', '#FF9650', '#FFDE5A'];   // 게임 속 방울 색
     const lanes = [18, 39, 61, 82];
@@ -237,7 +275,7 @@ grid.innerHTML = GAMES.map(g => `
   </div>`;
 document.getElementById('count').textContent = `지금까지 만든 게임 ${GAMES.length}개`;
 // 움직임 줄이기를 켠 기기에서는 지렁이 표지를 멈춰 둬요
-if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('.worm-cover svg').forEach(v => v.pauseAnimations && v.pauseAnimations());
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('.worm-cover svg, .altdel-cover svg').forEach(v => v.pauseAnimations && v.pauseAnimations());
 
 /* 앱 설치 */
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
