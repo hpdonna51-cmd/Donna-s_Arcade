@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>방울 박자</title>
+<title>Nebble</title>
 <link rel="manifest" href="../manifest.webmanifest">
 <meta name="theme-color" content="#13261F">
 <link rel="icon" href="../icons/favicon.png">
@@ -53,17 +53,43 @@ h1,h2,.grade,.primary,.fc,.song-card .nm{font-family:"Jua","Gowun Dodum",system-
 h1{font-size:clamp(3.2rem,15vw,6rem);line-height:1;margin:0;letter-spacing:-0.01em;text-shadow:0 0 18px color-mix(in srgb,var(--ink) 55%,transparent)}
 h2{font-size:clamp(1.6rem,6vw,2.2rem);margin:0}
 .dots{display:flex;gap:.6rem}
-.dots i{width:14px;height:14px;border-radius:50%;display:block}
+.dots i{width:14px;height:14px;border-radius:50%;display:block;animation:dotHop 2.4s ease-in-out infinite;opacity:.8}
+.dots i.d2{animation-delay:.2s}.dots i.d3{animation-delay:.4s}.dots i.d4{animation-delay:.6s}
+@keyframes dotHop{0%,40%,100%{transform:none;opacity:.8;box-shadow:none}15%{transform:translateY(-7px) scale(1.12);opacity:1;box-shadow:0 0 10px currentColor}28%{transform:translateY(0) scale(1.08,.9);opacity:1}}
+.dots i.d1{color:var(--c1)}.dots i.d2{color:var(--c2)}.dots i.d3{color:var(--c3)}.dots i.d4{color:var(--c4)}
+@media (prefers-reduced-motion:reduce){.dots i{animation:none}}
 .d1{background:var(--c1)}.d2{background:var(--c2)}.d3{background:var(--c3)}.d4{background:var(--c4)}
 .lede{font-size:1.15rem;line-height:1.65;margin:0;max-width:24em}
 .sec-title{align-self:flex-start;font-size:.95rem;color:var(--soft)}
+.song-head{align-self:stretch;display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;position:relative;z-index:3}
+.song-head .sec-title{align-self:center}
+.search{position:relative;flex:0 1 13rem;min-width:9.5rem;margin-left:auto}
+.search svg{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--soft);pointer-events:none}
+.search input{width:100%;font:inherit;font-size:.92rem;color:var(--ink);background:color-mix(in srgb,var(--lane) 80%,transparent);border:1.5px solid color-mix(in srgb,#B06CFF 45%,transparent);border-radius:999px;padding:.38rem 2rem .38rem 2rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.search input:focus-visible{outline:none}
+.search input::placeholder{color:var(--soft);opacity:.8}
+.search input:focus{border-color:#D6B4FF;box-shadow:0 0 0 1px #B06CFF,0 0 14px rgba(176,108,255,.55)}
+.search .clr{position:absolute;right:.35rem;top:50%;transform:translateY(-50%);width:1.6rem;height:1.6rem;border:none;background:none;color:var(--soft);font-size:1.1rem;line-height:1;cursor:pointer;border-radius:50%}
+.search .clr:hover{color:var(--ink)}
+.found{position:absolute;right:0;top:calc(100% + .35rem);width:max(100%,15rem);max-height:17rem;overflow-y:auto;background:#120F26;border:1.5px solid color-mix(in srgb,#B06CFF 55%,transparent);border-radius:16px;padding:.3rem;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 18px rgba(176,108,255,.3);display:flex;flex-direction:column;gap:2px}
+.found button{display:flex;align-items:center;gap:.5rem;font:inherit;text-align:left;color:var(--ink);background:none;border:none;border-radius:11px;padding:.5rem .6rem;cursor:pointer}
+.found button .sd{display:flex;gap:3px}.found button .sd i{width:9px;height:9px;border-radius:50%;display:block}
+.found button .nm{font-family:"Jua","Gowun Dodum",sans-serif;font-size:1.02rem}
+.found button .sub{margin-left:auto;font-size:.78rem;color:var(--soft);white-space:nowrap}
+.found button:hover,.found button.on{background:color-mix(in srgb,#B06CFF 22%,transparent)}
+.found[hidden]{display:none}
+.found .none{padding:.6rem .7rem;font-size:.9rem;color:var(--soft)}
 .carousel{position:relative;width:100vw;max-width:56rem;margin-top:-.6rem}
 .songs{position:relative;display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:.4rem calc(50% - 6.5rem) .8rem;scrollbar-width:none;overscroll-behavior-x:contain}
 .songs::-webkit-scrollbar{display:none}
 .song-card{flex:0 0 13rem;scroll-snap-align:center;font:inherit;text-align:left;background:var(--lane);color:var(--ink);border:2px solid transparent;border-radius:20px;padding:1rem;cursor:pointer;display:flex;flex-direction:column;gap:.35rem;min-height:10rem;opacity:.55;transform:scale(.92);transition:transform .2s,opacity .2s,border-color .2s}
 .song-card[aria-pressed="true"]{border-color:var(--k1);opacity:1;transform:none;box-shadow:0 0 18px color-mix(in srgb,var(--k1) 45%,transparent)}
 .song-card .lv{font-size:.85rem;color:var(--c3);letter-spacing:.12em}
-.nav{position:absolute;top:50%;transform:translateY(-60%);width:2.6rem;height:2.6rem;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:1.5rem;line-height:1;cursor:pointer;z-index:1}
+.nav{position:absolute;top:50%;transform:translateY(-60%);width:2.8rem;height:3.4rem;border:none;background:none;padding:0;cursor:pointer;z-index:1;color:#FF8CC6;filter:drop-shadow(0 0 3px #FF5CAA) drop-shadow(0 0 10px rgba(255,92,170,.7)) drop-shadow(0 0 20px rgba(140,90,255,.45));transition:color .15s,filter .15s,transform .15s}
+.nav svg{width:100%;height:100%;display:block}
+.nav.next{color:#8FE3FF;filter:drop-shadow(0 0 3px #46D6FF) drop-shadow(0 0 10px rgba(70,214,255,.7)) drop-shadow(0 0 20px rgba(140,90,255,.45))}
+.nav:hover{color:#fff;transform:translateY(-60%) scale(1.1)}
+.nav:focus-visible{outline:2px solid #D6B4FF;outline-offset:4px;border-radius:12px}
 .nav.prev{left:.8rem}.nav.next{right:.8rem}
 @media (max-width:520px){.nav{display:none}}
 @media (prefers-reduced-motion:reduce){.song-card{transition:none}}
@@ -111,6 +137,7 @@ select{font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:14px;borde
 .song-card .sd{display:flex;gap:3px}
 .song-card .sd i{width:10px;height:10px;border-radius:50%;display:block}
 .song-card .ds{font-size:.85rem;color:var(--soft);line-height:1.4}
+.song-card .len{font-size:.8rem;color:var(--ink);opacity:.8;font-variant-numeric:tabular-nums}
 .song-card .rec{font-size:.8rem;color:var(--soft);margin-top:auto;padding-top:.2rem}
 .opts{display:grid;gap:1rem;width:100%;background:var(--lane);border-radius:22px;padding:1.1rem 1.2rem;text-align:left}
 .opt-title{font-size:.95rem;color:var(--soft)}
@@ -124,11 +151,23 @@ select{font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:14px;borde
 input[type=range]{width:100%;accent-color:var(--c1);margin-top:.45rem}
 .small{font-size:.85rem;color:var(--soft);margin:.3rem 0 0;line-height:1.5}
 .btns{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+.primary.chal-btn{background:#FFD23F;color:#2A1A00;box-shadow:0 0 22px rgba(255,210,63,.55);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;padding:.55rem 2rem}
+.chal-btn small{font-family:"Gowun Dodum",system-ui,sans-serif;font-size:.72rem;opacity:.75;margin-top:.15rem}
+.chal-btn small:empty{display:none}
+@media (max-width:520px){#startBtn,#chalBtn{font-size:1.2rem;padding:.6rem 1.3rem}}
 .primary{font-size:1.5rem;padding:.75rem 2.6rem;border-radius:999px;border:none;background:var(--k1);color:#fff;cursor:pointer;box-shadow:0 0 22px color-mix(in srgb,var(--k1) 55%,transparent)}
 .secondary{font:inherit;font-size:1.05rem;padding:.75rem 1.6rem;border-radius:999px;border:2px solid color-mix(in srgb,var(--ink) 55%,transparent);background:transparent;color:var(--ink);cursor:pointer}
 button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-offset:3px}
 .hint{font-size:.9rem;color:var(--soft);margin:0;line-height:1.55;max-width:30em}
 .grade{font-size:clamp(6rem,32vw,10rem);line-height:.9;color:var(--c1)}
+.grade[data-g="S"]{color:transparent;background:linear-gradient(120deg,#FF4D6D,#FF9A3C,#FFE04A,#4FF0A0,#5FD8FF,#7A7CFF,#C77CFF,#FF4D6D);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 14px rgba(255,255,255,.35));animation:rainbowS 3s linear infinite}
+@keyframes rainbowS{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.grade[data-g="S"]{animation:none}}
+.grade[data-g="A"]{color:#FFD23F;text-shadow:0 0 18px rgba(255,210,63,.8)}
+.grade[data-g="B"]{color:#FF5CAA;text-shadow:0 0 18px rgba(255,92,170,.8)}
+.grade[data-g="C"]{color:#5FD8FF;text-shadow:0 0 18px rgba(95,216,255,.8)}
+.grade[data-g="D"]{color:#4FF0A0;text-shadow:0 0 18px rgba(79,240,160,.8)}
+.grade[data-g="F"]{color:#9C93C9;text-shadow:0 0 10px rgba(156,147,201,.4)}
 .stats{display:grid;grid-template-columns:auto auto;gap:.45rem 2rem;margin:0;font-size:1.05rem}
 .stats dt{color:var(--soft);text-align:left}
 .stats dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
@@ -140,6 +179,27 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
 .bubbles span::after{content:"";position:absolute;left:22%;top:18%;width:28%;height:28%;border-radius:50%;background:#fff;opacity:.45}
 @keyframes rise{0%{transform:translateY(0) scale(.5);opacity:0}15%{opacity:.85}85%{opacity:.7}100%{transform:translateY(-110vh) scale(1.05);opacity:0}}
 @media (prefers-reduced-motion:reduce){.bubbles{display:none}}
+
+/* Nebble 로고: 통통한 풍선 글씨, 위 핑크 → 아래 하늘 (Fredoka, SIL 오픈 폰트 라이선스) */
+@font-face{font-family:"NebbleLogo";font-weight:700;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+.logo{font-family:"NebbleLogo","Jua",sans-serif;font-weight:700;font-size:clamp(3.6rem,17vw,8.2rem);line-height:1.15;margin:0;white-space:nowrap;display:inline-flex;
+  --sw:.116em;filter:drop-shadow(0 0 10px rgba(170,120,255,.5)) drop-shadow(0 0 24px rgba(170,120,255,.5))}
+.logo .ch{position:relative;display:inline-grid;margin-right:.046em;transform:translateY(var(--y,0)) rotate(var(--r,0deg));animation:wob 3.6s ease-in-out infinite;animation-delay:var(--d,0s)}
+.logo .ch b{grid-area:1/1;text-shadow:none;font-weight:700;padding:.15em .12em;margin:-.15em -.12em}
+.logo .ch b.e{color:transparent;background:linear-gradient(180deg,#E4207F 15%,#8A3BE6 55%,#1690D8 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:var(--sw) transparent}   /* 통통하게 만드는 두꺼운 테두리 */
+.logo .ch b.k{color:#5A1FB5;-webkit-text-stroke:.084em #5A1FB5;paint-order:stroke fill}   /* 글자 모양이 또렷하게 보이는 얇은 선 */
+.logo .ch b.f{color:transparent;background:linear-gradient(180deg,#FFB3DA 15%,#D6B4FF 52%,#8FE3FF 85%);-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:.052em transparent}   /* 몸통: 원래 글자 모양 그대로 (e 구멍이 열려 있게) */
+.logo .ch i{position:absolute;left:.2em;top:.5em;width:.08em;height:.035em;border-radius:999px;background:#fff;opacity:.5;transform:rotate(-28deg);filter:blur(.6px)}   /* 은은한 반사광 */
+.logo .ch:nth-child(1){--y:4px;--r:-5deg;--d:0s}.logo .ch:nth-child(2){--y:-5px;--r:4deg;--d:-.6s}.logo .ch:nth-child(3){--y:3px;--r:-3deg;--d:-1.2s}
+.logo .ch:nth-child(4){--y:-4px;--r:5deg;--d:-1.8s}.logo .ch:nth-child(5){--y:5px;--r:-4deg;--d:-2.4s}.logo .ch:nth-child(6){--y:-2px;--r:6deg;--d:-3s}
+@keyframes wob{50%{transform:translateY(calc(var(--y,0px) - 4px)) rotate(var(--r,0deg))}}
+.logo-wrap{position:relative;display:inline-block}
+.logo-wrap > i{position:absolute;border-radius:50%;background:radial-gradient(circle at 32% 30%,#fff 0 18%,rgba(255,255,255,.25) 19% 45%,rgba(255,255,255,.08) 46%);border:1.5px solid rgba(255,255,255,.55);pointer-events:none;animation:bob 3.2s ease-in-out infinite}
+.logo-wrap > i:nth-of-type(1){width:.9rem;height:.9rem;right:-.6rem;top:.2rem;animation-delay:-.8s}
+.logo-wrap > i:nth-of-type(2){width:.55rem;height:.55rem;right:-1.4rem;top:1.3rem;animation-delay:-1.9s}
+.logo-wrap > i:nth-of-type(3){width:.7rem;height:.7rem;left:-1rem;bottom:.6rem;animation-delay:-2.6s}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.logo-wrap > i,.logo .ch{animation:none}}
 </style>
 </head>
 <body>
@@ -150,19 +210,28 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
     <button id="settingsBtn" class="corner-btn" type="button" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     <div class="panel">
       <div class="dots" aria-hidden="true"><i class="d1"></i><i class="d2"></i><i class="d3"></i><i class="d4"></i></div>
-      <h1>방울 박자</h1>
+      <div class="logo-wrap"><h1 class="logo" aria-label="Nebble"><span class="ch" aria-hidden="true"><b class="e">N</b><b class="k">N</b><b class="f">N</b><i></i></span><span class="ch" aria-hidden="true"><b class="e">e</b><b class="k">e</b><b class="f">e</b><i></i></span><span class="ch" aria-hidden="true"><b class="e">b</b><b class="k">b</b><b class="f">b</b><i></i></span><span class="ch" aria-hidden="true"><b class="e">b</b><b class="k">b</b><b class="f">b</b><i></i></span><span class="ch" aria-hidden="true"><b class="e">l</b><b class="k">l</b><b class="f">l</b><i></i></span><span class="ch" aria-hidden="true"><b class="e">e</b><b class="k">e</b><b class="f">e</b><i></i></span></h1><i></i><i></i><i></i></div>
       <p class="lede" id="lede">방울이 동그라미에 닿을 때 그 줄의 키를 눌러요.</p>
-      <div class="sec-title" id="songsLabel">곡 고르기 (옆으로 넘겨서 골라요)</div>
+      <div class="song-head">
+        <div class="sec-title" id="songsLabel">곡 고르기 (옆으로 넘겨서 골라요)</div>
+        <div class="search" role="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          <input id="songSearch" type="text" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="곡 찾기" aria-label="곡 찾기 (초성도 돼요)" aria-controls="songFound" aria-expanded="false">
+          <button type="button" class="clr" id="songSearchClr" aria-label="지우기" hidden>×</button>
+          <div class="found" id="songFound" role="listbox" hidden></div>
+        </div>
+      </div>
       <div class="carousel">
-        <button type="button" class="nav prev" id="prevSong" aria-label="이전 곡">‹</button>
+        <button type="button" class="nav prev" id="prevSong" aria-label="이전 곡"><svg viewBox="0 0 28 34" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 7 L8 17 L18 27"/></svg></button>
         <div class="songs" id="songs" role="group" aria-labelledby="songsLabel"></div>
-        <button type="button" class="nav next" id="nextSong" aria-label="다음 곡">›</button>
+        <button type="button" class="nav next" id="nextSong" aria-label="다음 곡"><svg viewBox="0 0 28 34" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 7 L20 17 L10 27"/></svg></button>
       </div>
       <div class="btns">
         <button id="startBtn" class="primary" type="button">시작하기</button>
+        <button id="chalBtn" class="primary chal-btn" type="button"><span><span aria-hidden="true">👑</span> 연속 도전</span><small id="chalBest"></small></button>
       </div>
       <p class="btns" style="margin:-.75rem 0 0"><a class="text-link" href="../index.html">오락실로</a></p>
-      <p class="hint" style="opacity:.6">버전 81 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원</p>
+      <p class="hint" style="opacity:.6">버전 113 · 장구·징·교방고·해금 소리: 국립국악원 국악 디지털 음원 · 로고 글꼴: Fredoka (OFL) · 터키 행진곡·겨울·카르멘·짐노페디 악보: Mutopia Project</p>
       <p class="hint">← → 키나 마우스 휠로 곡을 넘길 수 있어요. 스페이스로도 시작할 수 있어요. 휴대폰에서는 각 줄을 터치하면 돼요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
     </div>
   </div>
@@ -176,7 +245,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
       <h2>설정</h2>
       <div class="menu-tiles">
         <button id="keyselBtn" class="tile" type="button">키 개수<small id="keyselNow">4키</small></button>
-        <button id="chalBtn" class="tile" type="button">연속 도전<small id="chalBest"></small></button>
         <button id="rankBtn" class="tile" type="button">역대 랭킹<small>곡별 기록</small></button>
         <button id="makerBtn" class="tile" type="button">내 곡 만들기<small>음악 파일로</small></button>
       </div>
@@ -230,7 +298,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--c1);outline-off
       <h2 id="diffLabel">키 개수</h2>
       <p class="hint">몇 개의 키로 칠지 골라요. 기록은 키 개수마다 따로 저장돼요.</p>
       <div class="seg four" style="width:100%" id="diffSeg" role="group" aria-labelledby="diffLabel">
-            <button type="button" data-lanes="3" aria-pressed="false">3키<span class="keys">Q W E</span></button>
             <button type="button" data-lanes="4" aria-pressed="true">4키<span class="keys">D F · J K</span></button>
             <button type="button" data-lanes="6" aria-pressed="false">6키<span class="keys">Q W E · I O P</span></button>
             <button type="button" data-lanes="8" aria-pressed="false">8키<span class="keys">A S D F · J K L ;</span></button>
@@ -436,17 +503,6 @@ const SONGS = [
       {bars:4, pat:[[0,2,4,5,6,7],[0,2,4,4.5,5,6]], kick:[0,2,4,6], snare:[2,6], hat:'e', bass:true},
       {bars:8, pat:[[0,2,3,4,6,7],[0,1,2,[4,4]],[0,1,1.5,2,4,6],[0,2,3,[5,3]]], kick:[0,3,4], snare:[2,6], hat:'e', bass:true, dbl:true},
       {bars:4, pat:[[0,4],[0,2,[4,4]]], kick:[0,4], snare:[], hat:'q', bass:true},
-    ]},
-  { id:'rain', name:'비 오는 창가', desc:'일렉트릭 피아노와 빗소리의 6/8 로파이', lv:2, bpm:100, dots:['d2'], kit:'soft', seed:21, rain:true,
-    meter:M68, delay:{steps:3, fb:.3, mix:.16}, rev:.35,
-    chords:[[41,45,48,52],[40,43,47,50],[38,41,45,48],[36,40,43,47]],
-    scale:[60,62,64,67,69,72,74,76,79], bassSteps:[0,3],
-    lead:{inst:'epiano'}, bass:{inst:'subbass'}, pad:{inst:'warmpad'},
-    sections:[
-      {bars:2, pat:[[[0,6]]], kick:[], snare:[], hat:false, bass:false},
-      {bars:8, pat:[[0,[3,3]],[0,2,3,5],[[0,3],3,4,5],[0,[3,3]]], kick:[0], snare:[3], hat:'e', bass:true},
-      {bars:16, pat:[[0,1,2,3,5],[[0,2],3,[4,2]],[0,2,3,4,5],[[0,3],[3,3]]], kick:[0,2], snare:[3], hat:'e', bass:true, dbl:true},
-      {bars:4, pat:[[0,3],[[0,6]]], kick:[0], snare:[], hat:'q', bass:true},
     ]},
   { id:'beach', name:'여름 바다', desc:'스틸드럼과 기타의 열대 리듬', lv:2, bpm:104, dots:['d2','d4'], kit:'std', seed:12, meter:M44,
     stab:'guitar', stabSteps:[2,6], rev:.3,
@@ -669,7 +725,7 @@ const CLASSICS = [
     ]},
   { id:'canon', name:'캐논', desc:'파헬벨, 바이올린과 현악 합주. 길게 누르기가 많아요', lv:2, bpm:60, dots:['d2','d4'], kit:'soft', rev:.5, score:true, meter:M44,
     sections:[
-      Object.assign(cnSec(1, null), {meter:M44}),
+      Object.assign(cnSec(1, null, [{inst:'cello', notes: CN.bass, chart:true, v:0}]), {meter:M44}),   // 처음부터 베이스를 같이 쳐요
       Object.assign(cnSec(2, rp(CN.v1, 2), [{inst:'violin', notes: 'R:32 ' + CN.v1h, v:.5, pan:.3, rev:.5}]), {meter:M44}),
       Object.assign(cnSec(1, CN.v2, [{inst:'harpsichord', notes: CN.arp, v:.45, pan:-.3}]), {meter:M44}),
       Object.assign(cnSec(2, rp(CN.v3a + ' ' + CN.v3b, 1) + ' ' + CN.v3a + ' ' + CN.v3b, [{inst:'harpsichord', notes: rp(CN.arp, 2), v:.45, pan:-.3}]), {meter:M44, dbl:true}),
@@ -962,6 +1018,88 @@ const MORE = [
     ]},
 ];
 SONGS.push(...MORE);
+/* ---------- 새로 더한 곡들 2 (악보에서 그대로 옮긴 음: Mutopia 공개 악보) ---------- */
+const TQ = {"pick": {"r": "B4:1 A4:1 G#4:1 A4:1", "l": "R:4"}, "A": {"r": "C5:4 D5:1 C5:1 B4:1 C5:1 E5:4 F5:1 E5:1 D#5:1 E5:1 B5:1 A5:1 G#5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 C6:4 A5:2 C6:2 B5:2 F#5+A5:2 E5+G5:2 F#5+A5:2 B5:2 F#5+A5:2 E5+G5:2 F#5+A5:2 B5:2 F#5+A5:2 E5+G5:2 D#5+F#5:2 E5:4 C5+E5:2 D5+F5:2", "l": "A3:2 C4+E4:1 R:1 C4+E4:1 R:1 C4+E4:1 R:1 A3:2 C4+E4:1 R:1 C4+E4:1 R:1 C4+E4:1 R:1 A3:1 R:1 C4+E4:1 R:1 A3:1 R:1 C4+E4:1 R:1 A3:2 C4+E4:1 R:1 C4+E4:1 R:1 C4+E4:1 R:1 E3:1 R:1 B3+E4:1 R:1 B3+E4:1 R:1 B3+E4:1 R:1 E3:1 R:1 B3+E4:1 R:1 B3+E4:1 R:1 B3+E4:1 R:1 E3:1 R:1 B3+E4:1 R:1 B2:1 R:1 B3:1 R:1 E3:4 R:4"}, "BA": {"r": "E5+G5:2 E5+G5:2 A5:1 G5:1 F5:1 E5:1 B4+D5:2 G4:2 C5+E5:2 D5+F5:2 E5+G5:2 E5+G5:2 A5:1 G5:1 F5:1 E5:1 B4+D5:4 A4+C5:2 B4+D5:2 C5+E5:2 C5+E5:2 F5:1 E5:1 D5:1 C5:1 G#4+B4:2 E4:2 A4+C5:2 B4+D5:2 C5+E5:2 C5+E5:2 F5:1 E5:1 D5:1 C5:1 G#4+B4:4 B4:1 A4:1 G#4:1 A4:1 C5:4 D5:1 C5:1 B4:1 C5:1 E5:4 F5:1 E5:1 D#5:1 E5:1 B5:1 A5:1 G#5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 C6:4 A5:2 B5:2 C6:2 B5:2 A5:2 G#5:2 A5:2 E5:2 F5:2 D5:2 C5:4 B4:3 A4:0.5 B4:0.5 A4:4 A4+A5:2 B4+B5:2", "l": "C3:1 R:1 C4:1 R:1 E3:1 R:1 E4:1 R:1 G3:4 R:4 C3:1 R:1 C4:1 R:1 E3:1 R:1 E4:1 R:1 G3:4 R:4 A2:1 R:1 A3:1 R:1 C3:1 R:1 C4:1 R:1 E3:4 R:4 A2:1 R:1 A3:1 R:1 C3:1 R:1 C4:1 R:1 E3:4 R:4 A3:2 C4+E4:1 R:1 C4+E4:1 R:1 C4+E4:1 R:1 A3:2 C4+E4:1 R:1 C4+E4:1 R:1 C4+E4:1 R:1 A3:1 R:1 C4+E4:1 R:1 A3:1 R:1 C4+E4:1 R:1 F3:2 A3+D#4:1 R:1 A3+D#4:1 R:1 A3+D#4:1 R:1 E3:1 R:1 A3+E4:1 R:1 D3:1 R:1 F3+B3:1 R:1 C3:1 R:1 E3+A3:1 R:1 D3:1 R:1 F3+B3:1 R:1 E3+A3:1 R:1 E3+A3:1 R:1 E3+G#3:1 R:1 E3+G#3:1 R:1 A2+A3:4 R:4"}, "R1": {"r": "C#5+C#6:4 A4+A5:2 B4+B5:2 C#5+C#6:2 B4+B5:2 A4+A5:2 G#4+G#5:2 F#4+F#5:2 G#4+G#5:2 A4+A5:2 B4+B5:2 G#4+G#5:2 E4+E5:2 A4+A5:2 B4+B5:2 C#5+C#6:4 A4+A5:2 B4+B5:2 C#5+C#6:2 B4+B5:2 A4+A5:2 G#4+G#5:2 F#4+F#5:2 B4+B5:2 G#4+G#5:2 E4+E5:2 A4+A5:4 C#6:1 D6:1 C#6:1 B5:1", "l": "A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 D3:1 R:1 D3:1 R:1 D#3:1 R:1 D#3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 D3:1 R:1 D3:1 R:1 E3:1 R:1 E3:1 R:1 A2:4 R:4"}, "run": {"r": "A5:1 B5:1 A5:1 G#5:1 F#5:1 A5:1 G#5:1 F#5:1 F5:1 F#5:1 G#5:1 F5:1 C#5:1 D#5:1 F5:1 C#5:1 F#5:1 F5:1 F#5:1 G#5:1 A5:1 G#5:1 A5:1 B5:1 C#6:1 C6:1 C#6:1 C6:1 C#6:1 D6:1 C#6:1 B5:1 A5:1 B5:1 A5:1 G#5:1 F#5:1 A5:1 G#5:1 F#5:1 E5:1 F#5:1 G#5:1 E5:1 C#5:1 D#5:1 E5:1 C#5:1 D#5:1 E5:1 F#5:1 D#5:1 C5:1 C#5:1 D#5:1 C5:1 C#5:4 E5:1 D5:1 C#5:1 B4:1 A4:1 B4:1 C#5:1 D5:1 E5:1 F#5:1 G#5:1 A5:1 A5:1 G#5:1 F#5:1 E5:1 E5:1 D5:1 C#5:1 B4:1 A4:1 B4:1 C#5:1 D5:1 E5:1 F#5:1 G#5:1 A5:1 A#5:2 B5:2 E5:1 D5:1 C#5:1 B4:1 A4:1 B4:1 C#5:1 D5:1 E5:1 F#5:1 G#5:1 A5:1 A5:1 G#5:1 F#5:1 E5:1 E5:1 D5:1 C#5:1 B4:1 C#5:1 E5:1 A4:1 C#5:1 B4:1 D5:1 G#4:1 B4:1 A4:4 C#6:1 D6:1 C#6:1 B5:1 A5:1 B5:1 A5:1 G#5:1 F#5:1 A5:1 G#5:1 F#5:1 F5:1 F#5:1 G#5:1 F5:1 C#5:1 D#5:1 F5:1 C#5:1 F#5:1 F5:1 F#5:1 G#5:1 A5:1 G#5:1 A5:1 B5:1 C#6:1 C6:1 C#6:1 C6:1 C#6:1 C6:1 C#6:1 A#5:1 D6:1 C#6:1 D6:1 C#6:1 D6:1 C#6:1 D6:1 C#6:1 D6:1 C#6:1 B5:1 A5:1 G#5:1 A5:1 B5:1 G#5:1 A5:1 B5:1 C#6:1 F#5:1 F5:1 F#5:1 G#5:1 F5:1 F#5:4 A4+A5:2 B4+B5:2", "l": "F#3:2 A3+C#4:1 R:1 A3+C#4:1 R:1 A3+C#4:1 R:1 G#3:2 B3+C#4:1 R:1 B3+C#4:1 R:1 B3+C#4:1 R:1 F#3:2 A3+C#4:1 R:1 A3+C#4:1 R:1 A3+C#4:1 R:1 F3:2 G#3+C#4:1 R:1 G#3+C#4:1 R:1 G#3+C#4:1 R:1 F#3:2 A3+C#4:1 R:1 A3+C#4:1 R:1 A3+C#4:1 R:1 G#3:2 C#4+E4:1 R:1 C#4+E4:1 R:1 C#4+E4:1 R:1 G#3:2 D#4+F#4:1 R:1 D#4+F#4:1 R:1 D#4+F#4:1 R:1 C#4+E4:4 R:4 A3:2 C#4+E4:1 R:1 C#4+E4:1 R:1 C#4+E4:1 R:1 B3:1 R:1 D4+E4:1 R:1 G#3:1 R:1 D4+E4:1 R:1 A3:2 C#4+E4:1 R:1 C#4+E4:1 R:1 C#4+E4:1 R:1 E3:2 G#3+D4:1 R:1 G#3+D4:1 R:1 G#3+D4:1 R:1 A3:2 C#4+E4:1 R:1 C#4+E4:1 R:1 C#4+E4:1 R:1 B3:1 R:1 D4+E4:1 R:1 G#3:1 R:1 D4+E4:1 R:1 A3:1 R:1 F#3:1 R:1 D3:1 R:1 E3:1 R:1 A2:1 R:1 A3:1 R:5 F#3:2 A3+C#4:1 R:1 A3+C#4:1 R:1 A3+C#4:1 R:1 G#3:2 B3+C#4:1 R:1 B3+C#4:1 R:1 B3+C#4:1 R:1 F#3:2 A3+C#4:1 R:1 A3+C#4:1 R:1 A3+C#4:1 R:1 C#3:2 G#3+C#4:1 R:1 G3+C#4:1 R:1 F#3+C#4:1 R:1 B2:2 F#3+B3:1 R:1 F#3+B3:1 R:1 F#3+B3:1 R:1 B2:2 G#3+B3:1 R:1 G#3+B3:1 R:1 G#3+B3:1 R:1 C#3:1 R:1 F#3+A3:1 R:1 C#3:1 R:1 G#3+B3:1 R:1 F#3+A3:4 R:4"}, "R2": {"r": "C#5+C#6:4 A4+A5:2 B4+B5:2 C#5+C#6:2 B4+B5:2 A4+A5:2 G#4+G#5:2 F#4+F#5:2 G#4+G#5:2 A4+A5:2 B4+B5:2 G#4+G#5:2 E4+E5:2 A4+A5:2 B4+B5:2 C#5+C#6:4 A4+A5:2 B4+B5:2 C#5+C#6:2 B4+B5:2 A4+A5:2 G#4+G#5:2 F#4+F#5:2 B4+B5:2 G#4+G#5:2 E4+E5:2", "l": "A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 D3:1 R:1 D3:1 R:1 D#3:1 R:1 D#3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 D3:1 R:1 D3:1 R:1 E3:1 R:1 E3:1 R:1"}, "coda": {"r": "C#5+C#6:3 C#6:1 C#5+E5+A5+C#6:8 C#5+E5+A5+C#6:8 D6:1 C#6:1 B5:1 C#6:1 D6:1 C#6:1 B5:1 C#6:1 F#5+A5+D6:7.5 D6:0.5 E5+A5+C#6:1.5 D6:0.5 E5+A5+C#6:1.5 D6:0.5 E5+A5+C#6:1.5 D6:0.5 E5+A5+C#6:2 E5+G#5+B5:6 E6:2 C#5+E5+A5+C#6:8 C#5+E5+A5+C#6:8 D6:1 C#6:1 B5:1 C#6:1 D6:1 C#6:1 B5:1 C#6:1 F#5+A5+D6:7.5 D6:0.5 E5+A5+C#6:7.5 C#6:0.5 E5+G#5+B5:1.5 C#6:0.5 E5+G#5+B5:1.5 C#6:0.5 E5+G#5+B5:1.5 C#6:0.5 E5+G#5+B5:2 A5:4 C#6:3 C#6:1 C#6:8 C#6:8 D6:1 C#6:1 B5:1 C#6:1 D6:1 C#6:1 B5:1 C#6:1 D6:7.5 D6:0.5 C#6:1.5 D6:0.5 C#6:1.5 D6:0.5 C#6:1.5 D6:0.5 C#6:2 B5:6 E6:2 C#5+E5+A5+C#6:8 C#5+E5+A5+C#6:8 D6:1 C#6:1 B5:1 C#6:1 D6:1 C#6:1 B5:1 C#6:1 F#5+A5+D6:7.5 D6:0.5 E5+A5+C#6:7.5 C#6:0.5 E5+G#5+B5:1.5 C#6:0.5 E5+G#5+B5:1.5 C#6:0.5 E5+G#5+B5:1.5 C#6:0.5 E5+G#5+B5:2 A4+C#5+E5+A5:6 C#5+C#6:2 A4+A5:6 E5+E6:2 A4+A5:6 C#5+C#6:2 A4+A5:2 C#5+C#6:2 A4+A5:2 E5+E6:2 A4+A5:4 A4+C#5+E5+A5:4 A4+C#5+E5+A5:4", "l": "A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 F#4:1 D4:1 F#4:1 A3:1 F#4:1 D4:1 F#4:1 A3:1 E4:1 C#4:1 E4:1 A3:1 E4:1 C#4:1 E4:1 E3:1 E4:1 G#3:1 E4:1 E3:1 E4:1 G#3:1 E4:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A3:1 R:1 A2:2 R:2 A2+C#3+E3+A3:2 R:2 A2+C#3+E3+A3:2 R:2"}};
+const TQ_DR = {kit:'std', kick:[0, 4], snare:[], hat:false};   // 터키 군악대 큰북처럼 박마다 둥
+const WN = {"w1": {"top": "F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 C5:0.5 C6:0.5 C6:0.5 G5:0.5 G5:0.5 D#5:0.5 D#5:0.5 C5:0.5 C5:0.5 C6:0.5 C6:0.5 G5:0.5 G5:0.5 D#5:0.5 D#5:0.5 C5:0.5 C5:0.5 C6:0.5 A#5:0.5 G#5:0.5 G5:0.5 F5:0.5 D#5:0.5 D5:0.5 C5:0.5 C6:0.5 A#5:0.5 G#5:0.5 G5:0.5 F5:0.5 D#5:0.5 D5:0.5 C5:0.5 G4:0.5 C5:0.5 D#5:0.5 C5:0.5 G4:0.5 C5:0.5 D#5:0.5 C5:0.5 G4:0.5 C5:0.5 D#5:0.5 C5:0.5 G4:0.5 C5:0.5 D#5:0.5 G4:2 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 D#5:0.5 D#6:0.5 D#6:0.5 C6:0.5 C6:0.5 G5:0.5 G5:0.5 D#5:0.5 D#5:0.5 D#6:0.5 D#6:0.5 C6:0.5 C6:0.5 G5:0.5 G5:0.5 D#5:0.5 D#5:0.5 D#6:0.5 D6:0.5 C6:0.5 B5:0.5 A5:0.5 G5:0.5 F5:0.5 D#5:0.5 D#6:0.5 D6:0.5 C6:0.5 B5:0.5 A5:0.5 G5:0.5 F5:0.5 D#5:0.5 C5:0.5 D#5:0.5 G5:0.5 D#5:0.5 C5:0.5 D#5:0.5 G5:0.5 D#5:0.5 C5:0.5 D#5:0.5 G5:0.5 D#5:0.5 C5:0.5 D#5:0.5 G5:0.5 G4:2 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G5:0.5 G6:0.5 G6:0.5 D#6:0.5 D#6:0.5 C6:0.5 C6:0.5 G5:0.5 G5:0.5 G6:0.5 G6:0.5 D#6:0.5 D#6:0.5 C6:0.5 C6:0.5 G5:0.5 G5:0.5 G6:0.5 F6:0.5 D#6:0.5 D6:0.5 C6:0.5 B5:0.5 A5:0.5 G5:0.5 G6:0.5 F6:0.5 D#6:0.5 D6:0.5 C6:0.5 B5:0.5 A5:0.5 G5:0.5 D#5:0.5 G5:0.5 C6:0.5 G5:0.5 D#5:0.5 G5:0.5 C6:0.5 G5:0.5 D#5:0.5 G5:0.5 C6:0.5 G5:0.5 D#5:0.5 G5:0.5 C6:0.5 C5:2 C5:1 R:1 C5:1 R:1 C5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 E5:1 R:1 E5:1 R:1 E5:1 R:1 E5:1 R:1 F5:1 F4:1 G#4:1 F4:1 G#4:1 F4:1 G#4:1 F4:1 A#4:1 F4:1 A#4:1 F4:1 A#4:1 F4:1 A#4:1 F4:1 C5:1 F4:1 C5:1 F4:1 C5:1 F4:1 C5:1 F4:1 C#5:1 F4:1 C#5:1 F4:1 C#5:1 F4:1 C#5:1 F4:1 C#5:1 F4:1 C#5:1 F4:1 C#5:1 F4:1 C#5:1 F4:1 C5:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 F5:1 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:1 F5:1 F5:1 F5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 D#5:1 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:1 D#5:1 D#5:1 D#5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 C#5:1 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:1 C#5:1 C#5:1 C#5:1 E5:1 A#4:1 E5:1 A#4:1 E5:1 A#4:1 E5:1 A#4:1 F5:0.5 E5:0.5 F5:0.5 G5:0.5 F5:0.5 G5:0.5 E5:0.5 F5:0.5 G5:0.5 F5:0.5 G5:0.5 G#5:0.5 G5:0.5 G#5:0.5 F5:0.5 G5:0.5", "v2": "R:32 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 C5:4 R:20 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:4 R:20 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:4 R:20 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 G4:1 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:1 E5:1 E5:1 E5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:1 F5:1 F5:1 F5:1 D#5:1 A#4:1 D#5:1 A#4:1 D#5:1 A#4:1 D#5:1 A#4:1 D#5:1 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:1 D#5:1 D#5:1 D#5:1 C#5:1 G#4:1 C#5:1 G#4:1 C#5:1 G#4:1 C#5:1 G#4:1 C#5:1 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:1 C#5:1 C#5:1 C#5:1 C5:1 G4:1 C5:1 G4:1 C5:1 G4:1 C5:1 G4:1 G#4:4 R:4", "va": "R:16 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 B4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 B4:1 R:1 B4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:4 R:20 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:4 R:20 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:4 R:52 F#4:1 R:1 F#4:1 R:1 F#4:1 R:1 F#4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 B4:1 R:1 C5:4 R:4 C5:1 G#4:1 C5:1 G#4:1 C5:1 G#4:1 C5:1 G#4:1 G#4:4 R:4 A#4:1 G4:1 A#4:1 G4:1 A#4:1 G4:1 A#4:1 G4:1 G4:4 R:4 G#4:1 F4:1 G#4:1 F4:1 G#4:1 F4:1 G#4:1 F4:1 F4:4 R:4 G4:1 E4:1 G4:1 E4:1 G4:1 E4:1 G4:1 E4:1 C4:4 R:4", "vc": "F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 E3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F#3:1 R:1 F#3:1 R:1 F#3:1 R:1 F#3:1 R:1 F#3:1 R:1 F#3:1 R:1 F#3:1 R:1 F#3:1 R:1 G3:1 R:1 G3:1 R:1 G3:1 R:1 G3:1 R:1 G2:1 R:1 G2:1 R:1 G2:1 R:1 G2:1 R:1 C3:4 R:20 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:4 R:20 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:1 R:1 C3:4 R:44 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 F3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 C#3:1 R:1 C#3:1 R:1 C#3:1 R:1 C#3:1 R:1 C#3:1 R:1 C#3:1 R:1 C#3:1 R:1 C#3:1 R:1 C3:4 R:4 F3:1 F2:1 F3:1 F2:1 F3:1 F2:1 F3:1 F2:1 A#2:4 R:4 D#3:1 D#2:1 D#3:1 D#2:1 D#3:1 D#2:1 D#3:1 D#2:1 G#2:4 R:4 C#3:1 C#2:1 C#3:1 C#2:1 C#3:1 C#2:1 C#3:1 C#2:1 G2:4 R:4 C3:1 C2:1 C3:1 C2:1 C3:1 C2:1 C3:1 C2:1 F3:1 R:1 F3:1 R:1 E3:1 R:1 E3:1 R:1", "v1": "R:48 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 A#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 G#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D#5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 C5:4 R:20 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:4 R:20 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:4 R:28 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 C#5:1 R:1 E5:1 R:1 E5:1 R:1 E5:1 R:1 E5:1 R:1 F5:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 F4:1 E4:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 C#5:1 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:1 C#5:1 C#5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 C5:1 C5:0.5 C5:0.5 C5:0.5 C5:0.5 C5:0.5 C5:0.5 C5:1 C5:1 C5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 A#4:1 A#4:0.5 A#4:0.5 A#4:0.5 A#4:0.5 A#4:0.5 A#4:0.5 A#4:1 A#4:1 A#4:1 A#4:1 E5:1 A#4:1 E5:1 A#4:1 E5:1 A#4:1 E5:1 A#4:1 F5:4 R:4"}, "w2": {"top": "A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 D#6:1 D#6:1 A#5:1 A#5:1 G5:1 G5:1 D#5:1 D#5:2 G5:2 A#5:2 C#6:2 C6:1 F6:1 F6:1 C6:1 C6:1 A5:1 A5:1 F5:1 F5:2 A5:2 C6:2 D#6:2 D6:1 G6:1 G6:1 D6:1 D6:1 B5:1 B5:1 G5:1 G5:2 B5:2 D6:2 F6:2 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D#6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 D6:0.5 C#6:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 G6:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 G6:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 F6:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 F6:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 D#6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C#6:1 C6:1 C6:1 C6:1 A#5:1 A#5:1 A#5:1 A#5:1 C6:1 A#5:1 A#5:1 A#5:1 G#5:1 G#5:1 G#5:1 G#5:1 A#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:1 G5:1 G5:1 G#5:1 G5:1 G5:1 G5:1 F5:1 F5:1 F5:1 F5:1 G5:1 F5:1 F5:1 F5:1 G5:1 G5:1 G5:1 G5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 G5:1 G5:1 G5:1 G5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:1 G5:1 G5:1 G#5:1 G#5:1 G#5:1 G#5:1 A#5:1 A#5:1 A#5:1 A#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:1 G5:1 G5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 F5:1 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:1 F5:1 F5:1 F5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 D#5:1 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:1 D#5:1 D#5:1 D#5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 C#5:1 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:1 C#5:1 C#5:1 C#5:1 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 G#5:1 G#5:0.5 G#5:0.5 G#5:0.5 G#5:0.5 G#5:0.5 G#5:0.5 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 G5:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 F5:1 G#4:0.5 G#4:0.5 G#4:0.5 G#4:0.5 G#4:0.5 G#4:0.5 G#4:1 G#4:1 G#4:1 G#4:1 G4:1 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:1 G4:1 G4:1 G4:1 G4:1 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:1 G4:1 G4:1 G4:1 F4:16", "v2": "G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 A4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F5:1 R:1 F5:1 R:1 F5:1 R:1 F5:1 R:1 D#5:4 R:44 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D5:1 D5:1 D5:1 D5:1 D5:1 D5:1 D5:1 D5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C5:1 C5:1 C5:1 C5:1 C5:1 C5:1 C5:1 C5:1 A#4:1 A#4:1 A#4:1 A#4:1 A#4:1 A#4:1 A#4:1 A#4:1 G#4:1 G#4:1 G#4:1 G#4:1 G#4:1 G#4:1 G#4:1 G#4:1 G4:1 G4:1 G4:1 G4:1 G5:1 G5:1 G5:1 G5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 G5:1 G5:1 G5:1 G5:1 G#5:1 G#5:1 G#5:1 G#5:1 E5:1 E5:1 E5:1 E5:1 F5:1 F5:1 F5:1 F5:1 G5:1 G5:1 G5:1 G5:1 F5:1 F5:1 F5:1 F5:1 E5:1 E5:1 E5:1 E5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:1 E5:1 E5:1 E5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:1 F5:1 F5:1 F5:1 D#5:1 A#4:1 D#5:1 A#4:1 D#5:1 A#4:1 D#5:1 A#4:1 D#5:1 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:0.5 D#5:1 D#5:1 D#5:1 D#5:1 C#5:1 G#4:1 C#5:1 G#4:1 C#5:1 G#4:1 C#5:1 G#4:1 C#5:1 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:1 C#5:1 C#5:1 C#5:1 C5:0.5 E5:0.5 G5:0.5 E5:0.5 C5:0.5 E5:0.5 G5:0.5 E5:0.5 C5:0.5 E5:0.5 G5:0.5 E5:0.5 C5:0.5 E5:0.5 G5:0.5 E5:0.5 F5:1 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:1 F5:1 F5:1 F5:1 F5:1 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:0.5 F5:1 F5:1 F5:1 F5:1 E5:1 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:0.5 E5:1 E5:1 E5:1 E5:1 F5:1 F4:0.5 F4:0.5 F4:0.5 F4:0.5 F4:0.5 F4:0.5 F4:1 F4:1 F4:1 F4:1 F4:1 F4:0.5 F4:0.5 F4:0.5 F4:0.5 F4:0.5 F4:0.5 F4:1 F4:1 F4:1 F4:1 E4:1 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:1 E4:1 E4:1 E4:1 F4:16", "va": "F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 A#3:1 R:1 A#3:1 R:1 A#3:1 R:1 A#3:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 A#3:1 R:1 A#3:1 R:1 A#3:1 R:1 A#3:1 R:1 D4:1 R:1 D4:1 R:1 D4:1 R:1 D4:1 R:1 A#3:4 R:44 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 G4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 D4:1 R:1 D4:1 R:1 D4:1 R:1 D4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 D#4:1 R:1 F4:1 R:1 F4:1 R:1 G4:1 R:1 G4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 G#4:1 R:1 D4:1 R:1 D4:1 R:1 D#4:1 R:1 D#4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 F4:1 R:1 B3:1 R:1 B3:1 R:1 C4:1 R:1 C4:1 R:1 C#4:1 R:1 C#4:1 R:1 C#4:1 R:1 C#4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:1 R:1 C4:4 R:4 C5:1 G#4:1 C5:1 G#4:1 C5:1 G#4:1 C5:1 G#4:1 G#4:4 R:4 A#4:1 G4:1 A#4:1 G4:1 A#4:1 G4:1 A#4:1 G4:1 G4:4 R:4 G#4:1 F4:1 G#4:1 F4:1 G#4:1 F4:1 G#4:1 F4:1 F4:4 R:4 G4:1 E4:1 G4:1 E4:1 G4:1 E4:1 G4:1 E4:1 C4:1 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:1 C4:1 C4:1 C4:1 C#4:1 C#4:0.5 C#4:0.5 C#4:0.5 C#4:0.5 C#4:0.5 C#4:0.5 C#4:1 C#4:1 C#4:1 C#4:1 C4:1 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:1 C4:1 C4:1 C4:1 G#3:1 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:1 C4:1 C4:1 C4:1 C#4:1 C#4:0.5 C#4:0.5 C#4:0.5 C#4:0.5 C#4:0.5 C#4:0.5 C#4:1 C#4:1 C#4:1 C#4:1 C4:1 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:0.5 C4:1 C4:1 C4:1 C4:1 G#3:16", "vc": "D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 D3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 D#3:1 R:1 G#2:1 R:1 G#2:1 R:1 G#2:1 R:1 G#2:1 R:1 F2:1 R:1 F2:1 R:1 F2:1 R:1 F2:1 R:1 A#2:1 R:1 A#2:1 R:1 A#2:1 R:1 A#2:1 R:1 A#2:1 R:1 A#2:1 R:1 A#2:1 R:1 A#2:1 R:1 D#3:4 R:4 G3:4 D#3:4 G#2:4 R:4 A3:4 F3:4 A#2:4 R:4 B3:4 G3:4 C3:4 R:140 C3:4 R:4 F3:1 F2:1 F3:1 F2:1 F3:1 F2:1 F3:1 F2:1 A#2:4 R:4 D#3:1 D#2:1 D#3:1 D#2:1 D#3:1 D#2:1 D#3:1 D#2:1 G#2:4 R:4 C#3:1 C#2:1 C#3:1 C#2:1 C#3:1 C#2:1 C#3:1 C#2:1 G2:4 R:4 C4:1 C3:1 C4:1 C3:1 C4:1 C3:1 C4:1 C3:1 F3:1 F3:0.5 F3:0.5 F3:0.5 F3:0.5 F3:0.5 F3:0.5 F3:1 F3:1 F3:1 F3:1 A#2:1 A#2:0.5 A#2:0.5 A#2:0.5 A#2:0.5 A#2:0.5 A#2:0.5 A#2:1 A#2:1 A#2:1 A#2:1 C3:1 C3:0.5 C3:0.5 C3:0.5 C3:0.5 C3:0.5 C3:0.5 C3:1 C3:1 C3:1 C3:1 F2:1 F3:0.5 F3:0.5 F3:0.5 F3:0.5 F3:0.5 F3:0.5 F3:1 F3:1 F3:1 F3:1 A#2:1 A#2:0.5 A#2:0.5 A#2:0.5 A#2:0.5 A#2:0.5 A#2:0.5 A#2:1 A#2:1 A#2:1 A#2:1 C3:1 C3:0.5 C3:0.5 C3:0.5 C3:0.5 C3:0.5 C3:0.5 C3:1 C3:1 C3:1 C3:1 F2:16", "v1": "A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 A#4:1 R:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C#5:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 C5:1 R:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 D5:1 R:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:4 R:44 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 C6:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 A#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 G5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 F5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 D#5:1 C#5:1 C#5:1 C#5:1 C#5:1 E5:1 E5:1 E5:1 E5:1 F5:1 F5:1 F5:1 F5:1 G5:1 G5:1 G5:1 G5:1 G#5:1 G#5:1 G#5:1 G#5:1 A#5:1 A#5:1 A#5:1 A#5:1 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:1 G5:1 G5:1 F5:1 F5:1 F5:1 F5:1 E5:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 G#5:1 C5:1 C#5:1 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:0.5 C#5:1 C#5:1 C#5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 G5:1 C#5:1 C5:1 C5:0.5 C5:0.5 C5:0.5 C5:0.5 C5:0.5 C5:0.5 C5:1 C5:1 C5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 F5:1 C5:1 A#4:1 A#4:0.5 A#4:0.5 A#4:0.5 A#4:0.5 A#4:0.5 A#4:0.5 A#4:1 A#4:1 A#4:1 A#4:1 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 E5:0.5 G5:0.5 A#5:0.5 G5:0.5 G#5:1 G#5:0.5 G#5:0.5 G#5:0.5 G#5:0.5 G#5:0.5 G#5:0.5 G#5:1 G#5:1 G#5:1 G#5:1 G5:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 G5:1 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:0.5 G5:1 G5:1 G5:1 G5:1 F5:1 G#4:0.5 G#4:0.5 G#4:0.5 G#4:0.5 G#4:0.5 G#4:0.5 G#4:1 G#4:1 G#4:1 G#4:1 G4:1 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:1 G4:1 G4:1 G4:1 G4:1 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:0.5 G4:1 G4:1 G4:1 G4:1 F4:16"}};
+const CM = {"march": {"top": "A5:2 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:2 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:2 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 D6:2 D6:1 D6:1 D6:1 A5:1 G5:1 A5:1 D6:2 D6:1 D6:1 D6:1 E6:1 F#6:1 E6:1 D6:2 D6:1 C#6:1 B5:2 B5:1 A5:1 G#5:8 A5:2 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:2 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:2 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 E6:2 E6:1 E6:1 E6:1 D6:1 C6:1 D6:1 E6:2 E6:1 E6:1 E6:1 D6:1 C6:1 D6:1 E6:2 E5:1 F#5:1 G#5:2 E5:1 C#6:1 B5:4 A5:4", "up": "A4+C#5+E5+A5:1 R:1 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:1 R:1 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:1 R:1 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 D5+F#5+A5+D6:1 R:1 D6:1 D6:1 D6:1 A5:1 G5:1 A5:1 D6:1 R:1 D6:1 D6:1 D6:1 E6:1 F#6:1 E6:1 D6:1 R:1 D6:1 C#6:1 B5:1 R:1 B5:1 A5:1 G#5:8 A4+C#5+E5+A5:1 R:1 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:1 R:1 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:1 R:1 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 E5+G5+C6+E6:1 R:1 C6+E6:1 C6+E6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 E5+G5+C6+E6:1 R:1 C6+E6:1 C6+E6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 E5+E6:1 R:1 E5:1 F#5:1 G#5:1 R:1 E5:1 C#6:1 D5+E5+G#5+B5:4 C#5+E5+A5:1 R:3", "lo": "A2+C#3+E3+A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 G#3:1 R:1 A3+C#4+E4:1 R:1 F#3:1 R:1 A3+B3+D#4:1 R:1 E3:1 R:1 G#3+B3+E4:1 R:1 D3:1 R:1 F#3+A3+D4:1 R:1 A2:1 R:1 E3+G3+A3+D4:1 R:1 D3:1 R:1 F#3+A3+D4:1 R:1 A2:1 R:1 E3+G3+A3+D4:1 R:1 D3:1 R:1 F#3+A3+D4:1 R:1 G#2:1 R:1 F#3+B3+D4:1 R:1 C#3:1 R:1 F3+G#3+C#4:1 R:1 E3:1 R:1 G#3+B3+D4:1 R:1 A2+C#3+E3+A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 G#3:1 R:1 A3+C#4+E4:1 R:1 F#3:1 R:1 A3+B3+D#4:1 R:1 E3:1 R:1 G#3+B3+E4:1 R:1 C3:1 R:1 G3:1 R:1 G2:1 R:1 G3:1 R:1 C3:1 R:1 G3:1 R:1 G2:1 R:1 G3:1 R:1 E2+E3:2 E3+G#3+B3+D4:1 E3+G#3+B3+D4:1 E3+G#3+B3+D4:1 R:1 E3+G#3+B3+D4:1 E3+G#3+B3+D4:1 E3+G#3+B3+D4:1 R:1 E3:1 E3:1 A2+C#3+E3+A3:1 R:3"}, "tor": {"top": "A4:4 A4:4 A4:4 A4:4 A4:4 A4:4 A4:4 A4:4 C5:4 D5:3 C5:1 A4:4 A4:3.5 A#4:0.5 A4:3 G4:1 A4:3 A#4:1 A4:4 F4:4 A#4:4 G4:3 C5:1 A4:4 F4:4 F4:4 D4:3 G4:1 C4:8 G4:8 G4:2 D5:2 C5:2 A#4:1.5 A#4:0.5 A4:2 G4:2 A4:2 A#4:2 A4:8 E4:4 A4:4 A4:4 G#4:3 B4:1 E5:4 E4:4 A4:4 A4:4 G4:2 D5:0.5 E5:1 D5:0.5 C5:2 D5:2 G4:2 A4:2 A#4:6 A4:0.5 A#4:1 A4:0.5 F4:2 D5:2 C5:10 F4:0.5 G4:1 F4:0.5 C4:2 A#4:2 A4:4 E4:4 F4:2 C4:1 D4:1 E4:1 F4:1 G4:1 A4:1 A#4:1 C5:1 D5:1 E5:1 F5:1 G5:1 A5:1 A#5:1 C6:4 D6:3 C6:1 A5:4 A5:3.5 A#5:0.5 A5:3 G5:1 A5:3 A#5:1 A5:4 F5:4 A#5:4 G5:3 C6:1 A5:4 F5:4 F5:4 D5:3 G5:1 C5:4 G4:4 G5:8 G5:2 D6:2 C6:2 A#5:1.5 A#5:0.5 A5:2 G5:2 A5:2 A#5:2 A5:8 E5:4 A5:4 A5:4 G#5:3 B5:1", "up": "F4+A4:1 R:3 F4+A4:1 R:3 F4+A4:1 R:3 F4+A4:1 R:3 F4+A4:1 R:3 F4+A4:1 R:3 F4+A4:1 R:3 F4+A4:1 R:3 F4+A4+C5:4 F4+A4+D5:3 C5:1 F4+A4:4 F4+A4:3.5 A#4:0.5 F4+A4:3 G4:1 F4+A4:3 A#4:1 F4+A4:4 F4:1 R:3 F4+A#4:4 E4+G4:3 C5:1 F4+A4:4 F4:1 R:3 C4+F4:4 G3+B3+D4:3 G4:1 G3+C4:8 G4:8 G4:2 D5:2 C5:2 A#4:1.5 A#4:0.5 A4:2 G4:2 A4:2 A#4:2 A4:8 E4:4 E4+A4:4 E4+A4:4 E4+G#4:3 B4:1 E4+E5:4 E4:1 R:3 E4+A4:1 R:3 E4+A4:1 R:3 F4+G4:1 R:1 D5:0.5 E5:1 D5:0.5 F4+G4+C5:2 D5:2 D4+F4+G4:2 A4:2 D4+F4+A#4:6 A4:0.5 A#4:1 A4:0.5 F4:2 D5:2 C5:10 F4:0.5 G4:1 F4:0.5 C4:2 A#4:2 A4:4 C4+E4:2 R:2 C4+F4:1 R:1 C4:1 D4:1 E4:1 F4:1 G4:1 A4:1 A#4:1 C5:1 D5:1 E5:1 F5:1 G5:1 F5+A5:1 G5+A#5:1 C5+F5+A5+C6:1 R:3 D5+F5+A5+D6:1 R:2 C5+C6:1 A4+C5+F5+A5:1 R:3 A4+C5+F5+A5:1 R:2.5 A#5:0.5 A4+C5+F5+A5:1 R:2 G4+G5:1 A4+C5+F5+A5:1 R:2 A#4+A#5:1 A4+C5+F5+A5:4 C5+F5:2 R:2 A#4+D5+F5+A#5:2 R:2 G4+C5+E5+G5:1 R:2 C5+C6:1 A4+C5+F5+A5:4 C5+F5:2 R:2 F4+A4+C5+F5:1 R:3 D4+F4+B4+D5:1 R:2 G4+G5:1 E4+G4+C5:4 E4+G4:1 R:3 G4+G5:8 G4+G5:2 D5+D6:2 C5+C6:2 A#4+A#5:1.5 A#5:0.5 A4+A5:2 G4+G5:2 A4+A5:2 A#4+A#5:2 A4+A5:8 E4+E5:4 A4+A5:4 A4+A5:4 G#4+G#5:3 B4+B5:1", "lo": "F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+A3+C4:1 R:3 G3+A#3+D4:1 R:3 C3+A#3+C4:1 R:3 F3+A3+C4:1 R:3 E3+A3+C4:1 R:3 D3+A3:1 R:3 G2+F3:1 R:3 C3+E3:1 R:3 C2+C3:1 R:3 A#3+D4:1 R:3 D4:1 R:3 A#3+D4:1 R:3 G3+A#3+D4:1 R:3 F3+A3+D4:1 R:3 A3+D4:1 R:3 F3+A3+D4:1 R:3 D3+F3+A3+D4:1 R:3 E3+A3+C4:1 R:3 C4:1 R:3 B3+D4:1 R:3 E3+B3+D4:1 R:3 A3+C#4:1 R:3 E3+A3+C#4:1 R:3 C#3+E3+A3+C#4:1 R:3 A2+C#3+E3+A3:1 R:3 A#2+D3+F3+G3:1 R:3 D3+F3+G3:1 R:3 A#2+D3+F3+G3:1 R:3 G2+D3+F3+G3:1 R:3 C3+C4:2 R:8 A3:0.5 A#3:1 A3:0.5 C3+F3:1 R:1 A#3+D4:1 R:1 A3+C4:1 R:11 C3+A#3:1 R:3 F3+A3:1 R:1 A3:1 A#3:1 C4:1 D4:1 E4:1 F4:1 G4:1 A4:1 A#4:1 C5:1 D5:1 E5:1 R:2 F3+A3+C4:1 R:3 C3+F3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+F3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+F3+A3+C4:1 R:3 F3+A3+C4:1 R:3 C3+F3+A3+C4:1 R:3 G3+A#3+D4:1 R:3 C3+G3+A#3+C4:1 R:3 F3+A3+C4:1 R:3 E3+F3+A3+C4:1 R:3 D3+F3+A3+C4:1 R:3 G3+B3:1 R:3 C3+E3+G3+C4:1 R:3 C4:1 R:3 A#3+D4:1 R:3 D4:1 R:3 A#3+D4:1 R:3 G3+A#3+D4:1 R:3 F3+A3+D4:1 R:3 A3+D4:1 R:3 F3+A3+D4:1 R:3 D3+F3+A3+D4:1 R:3 E3+A3+C4:1 R:3 C4+E4:1 R:3 B3+D4+E4:1 R:3 E3+B3+D4+E4:1 R:3"}, "fin": {"top": "A5:2 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:2 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:2 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 D6:2 D6:1 D6:1 D6:1 A5:1 G5:1 A5:1 D6:2 D6:1 D6:1 D6:1 E6:1 F#6:1 E6:1 D6:2 D6:1 C#6:1 B5:2 B5:1 A5:1 G#5:8 A5:2 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:2 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:2 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 E6:2 E6:1 E6:1 E6:1 D6:1 C6:1 D6:1 E6:2 E6:1 E6:1 E6:1 D6:1 C6:1 D6:1 E6:1 D6:1 C6:1 D6:1 E6:1 D6:1 C6:1 D6:1 E6:1 D6:1 C6:1 D6:1 E6:1 D6:1 C6:1 D6:1 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:2 E6:2 A6:4 A4:4", "up": "A4+C#5+E5+A5:1 R:1 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:1 R:1 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:1 R:1 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 D5+F#5+A5+D6:1 R:1 D6:1 D6:1 D6:1 A5:1 G5:1 A5:1 D6:1 R:1 D6:1 D6:1 D6:1 E6:1 F#6:1 E6:1 D6:1 R:1 D6:1 C#6:1 B5:1 R:1 B5:1 A5:1 G#5:8 A4+C#5+E5+A5:1 R:1 A5:1 A5:1 A5:1 E5:1 D5:1 E5:1 A5:1 R:1 A5:1 A5:1 A5:1 B5:1 C#6:1 B5:1 A5:1 R:1 A5:1 A5:1 B5:1 A5:1 G#5:1 A5:1 B5:8 E5+G5+C6+E6:1 R:1 C6+E6:1 C6+E6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 E5+G5+C6+E6:1 R:1 C6+E6:1 C6+E6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 C6+E6:1 G5+D6:1 E5+C6:1 G5+D6:1 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:0.5 E6:0.5 E5:2 G#5+B5+D6+E6:2 A5+C#6+E6+A6:1 R:3 A3+A4:2 R:2", "lo": "A2+C#3+E3+A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 G#3:1 R:1 A3+C#4+E4:1 R:1 F#3:1 R:1 A3+B3+D#4:1 R:1 E3:1 R:1 G#3+B3+E4:1 R:1 D3:1 R:1 F#3+A3+D4:1 R:1 A2:1 R:1 E3+G3+A3+D4:1 R:1 D3:1 R:1 F#3+A3+D4:1 R:1 A2:1 R:1 E3+G3+A3+D4:1 R:1 D3:1 R:1 F#3+A3+D4:1 R:1 G#2:1 R:1 F#3+B3+D4:1 R:1 C#3:1 R:1 F3+G#3+C#4:1 R:1 E3:1 R:1 G#3+B3+D4:1 R:1 A2+C#3+E3+A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 E3:1 R:1 B3+D4+E4:1 R:1 A3:1 R:1 C#4+E4:1 R:1 G#3:1 R:1 A3+C#4+E4:1 R:1 F#3:1 R:1 A3+B3+D#4:1 R:1 E3:1 R:1 G#3+B3+E4:1 R:1 C3:1 R:1 G3:1 R:1 G2:1 R:1 G3:1 R:1 C3:1 R:1 G3:1 R:1 G2:1 R:1 G3:1 R:1 C3:1 R:1 G2+G3:1 R:1 C3+G3:1 R:1 G2+G3:1 R:1 C3+G3:1 R:1 G2+G3:1 R:1 C3+G3:1 R:1 G2+G3:1 R:1 E2+E3:2 E3+E4:1 E3+E4:1 E3+E4:1.5 E3+E4:1 E3+E4:1.5 E3+E4:1.5 E3+E4:1 E3+E4:1.5 E3+E4:2 E3+G#3+B3:2 A2+C#3+E3+A3:1 R:3 A1+A2:2 R:2"}};
+const CM_MARCH = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
+const OS = {   // 오 수재너 (포스터, 1848)
+  pick: 'R:4 C4:2 D4:2',
+  v: 'E4:2 G4:2 G4:3 A4:1  G4:2 E4:2 C4:3 D4:1  E4:2 E4:2 D4:2 C4:2  D4:4 C4:2 D4:2  E4:2 G4:2 G4:3 A4:1  G4:2 E4:2 C4:3 D4:1  E4:2 E4:2 D4:2 D4:2',
+  ch: 'F4:4 F4:4  A4:2 A4:4 A4:2  G4:2 G4:2 E4:2 C4:2  D4:4 C4:2 D4:2  E4:2 G4:2 G4:3 A4:1  G4:2 E4:2 C4:3 D4:1  E4:2 E4:2 D4:2 D4:2',
+};
+const OS_V1 = J(OS.v, 'C4:4 C4:2 D4:2'), OS_V2 = J(OS.v, 'C4:8'), OS_CH1 = J(OS.ch, 'C4:8'), OS_CH2 = J(OS.ch, 'C4:4 C4:2 D4:2');
+const COUNTRY = {kit:'std', kick:[0, 4], snare:[2, 6], hat:'8'};
+// 젓가락 행진곡 (유피미아 앨런, 1877): 두 손가락으로 치는 왈츠
+const CHOP = (() => { const r = (c, n) => Array(n).fill(c + ':4').join(' ');
+  return J(r('F4+G4', 6), r('E4+G4', 6), r('D4+B4', 6), r('C4+C5', 4), 'D4+B4:4 E4+A4:4'); })();
+// 길게 누르는 양손 버전: 두 마디마다 첫 화음을 길게
+const CHOP_H = J('F4+G4:12 F4+G4:4 F4+G4:4 F4+G4:4', 'E4+G4:12 E4+G4:4 E4+G4:4 E4+G4:4', 'D4+B4:12 D4+B4:4 D4+B4:4 D4+B4:4', 'C4+C5:12 C4+C5:4 D4+B4:4 E4+A4:4');
+const CHOP_B = 'F2:4 C3+F3:4 C3+F3:4 F2:4 C3+F3:4 C3+F3:4 C2:4 C3+E3:4 C3+E3:4 C2:4 C3+E3:4 C3+E3:4 G2:4 B2+F3:4 B2+F3:4 G2:4 B2+F3:4 B2+F3:4 C2:4 C3+E3:4 C3+E3:4 C2:4 E2:4 C2:4';
+const CHOP_WALTZ = {kit:'soft', kick:[0], snare:[4, 8], hat:false};
+const BEE = {"s1": {"mel": "E6:1 D#6:1 D6:1 C#6:1 D6:1 C#6:1 C6:1 B5:1 C6:1 B5:1 A#5:1 A5:1 G#5:1 G5:1 F#5:1 F5:1 E5:1 D#5:1 D5:1 C#5:1 D5:1 C#5:1 C5:1 B4:1 C5:1 B4:1 A#4:1 A4:1 G#4:1 G4:1 F#4:1 F4:1", "acc": "E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2"}, "s2": {"mel": "E5:1 D#5:1 D5:1 C#5:1 C5:1 F5:1 E5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 C#5:1 D5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 F5:1 E5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 C#5:1 D5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 D5:1 C#5:1 C5:1 B4:1 C5:1 C#5:1 D5:1 D#5:1 E5:1 F5:1 E5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 F5:1 E5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 C#5:1 D5:1 D#5:1", "acc": "E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2"}, "s3": {"mel": "A5:1 G#5:1 G5:1 F#5:1 F5:1 A#5:1 A5:1 G#5:1 A5:1 G#5:1 G5:1 F#5:1 F5:1 F#5:1 G5:1 G#5:1 A5:1 G#5:1 G5:1 F#5:1 F5:1 A#5:1 A5:1 G#5:1 A5:1 G#5:1 G5:1 F#5:1 F5:1 F#5:1 G5:1 G#5:1 A5:1 A#5:1 A5:1 G#5:1 A5:1 A#5:1 A5:1 G#5:1 A5:1 B5:1 C6:1 C#6:1 D6:1 C#6:1 C6:1 B5:1 A5:1 A#5:1 A5:1 G#5:1 A5:1 A#5:1 A5:1 G#5:1 A5:1 B5:1 C6:1 C#6:1 D6:1 C#6:1 C6:1 B5:1 C6:1 B5:1 A#5:1 A5:1 G#5:1 G5:1 F#5:1 F5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 B4:1 A#4:1 A4:1 G#4:1 A4:1 A#4:1 B4:1 C5:1 C#5:1 D5:1 D#5:1", "acc": "A2:2 A3+C4+E4:2 E2:2 A3+C4+E4:2 A2:2 A3+C4+E4:2 E2:2 A3+C4+E4:2 A2:2 A3+C4+E4:2 E2:2 A3+C4+E4:2 A2:2 A3+C4+E4:2 E2:2 A3+C4+E4:2 A2:2 A3+C4+E4:2 E2:2 A3+C4+E4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 A2:2 A3+C4+E4:2 E2:2 A3+C4+E4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2"}, "s4": {"mel": "E5:1 D#5:1 D5:1 C#5:1 C5:1 F5:1 E5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 C#5:1 D5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 F5:1 E5:1 D#5:1 E5:1 D#5:1 D5:1 C#5:1 C5:1 C#5:1 D5:1 D#5:1 E5:1 F5:1 E5:1 D#5:1 E5:1 F5:1 E5:1 D#5:1 E5:1 F#5:1 G#5:1 A5:1 B5:1 C6:1 D6:1 D#6:1", "acc": "E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2 E2:2 E3+G#3+D4:2 B2:2 E3+G#3+D4:2"}};   // 왕벌의 비행: 반음씩 미끄러지는 16분음표
+const GYM = {"A": {"mel": "R:24 R:4 F#5:4 A5:4 G5:4 F#5:4 C#5:4 B4:4 C#5:4 D5:4 A4:12 F#4:24 R:12 R:12 R:4 F#5:4 A5:4 G5:4 F#5:4 C#5:4 B4:4 C#5:4 D5:4 A4:12 C#5:12 F#5:12 E4:36", "acc": "R:4 B3+D4+F#4:12 A3+C#4+F#4:12 B3+D4+F#4+F#5:4 A5:4 G5:4 A3+C#4+F#4+F#5:4 C#5:4 B4:4 B3+D4+F#4+C#5:4 D5:4 A4:4 A3+C#4+F#4:8 F#4:4 B3+D4+F#4:12 A3+C#4+F#4:12 B3+D4+F#4:12 A3+C#4+F#4:12 B3+D4+F#4+F#5:4 A5:4 G5:4 A3+C#4+F#4+F#5:4 C#5:4 B4:4 B3+D4+F#4+C#5:4 D5:4 A4:4 A3+C#4+F#4:8 C#5:4 A3+C#4+F#4:8 F#5:4 B3+D4+F#4:8 E4:36", "bass": "G2:12 D2:12 G2:12 D2:12 G2:12 D2:12 G2:12 D2:12 G2:12 D2:12 G2:12 D2:12 G2:12 D2:12 F#2:12 B1:12 E2:4 G3+B3:8 E2:4 B3+D4+G4:8 D2:4 F3+A3+D4:8", "e": "G2:4 R:8 D2:4 R:8 G2:4 R:8 R:12 R:12 R:12 R:12 D2:4 R:8 G2:4 R:8 D2:4 R:8 G2:4 R:8 R:12 R:12 R:12 R:12 R:12 R:12 E2:4 R:8 D2:4 R:8", "n": "R:4 F#4:4 R:4 R:4 F#4:4 R:4 R:12 R:12 R:12 R:4 F#4:4 R:4 R:4 F#4:4 R:4 R:4 F#4:4 R:4 R:4 F#4:4 R:4 R:4 F#4:4 R:4 R:12 R:12 R:12 R:4 F#4:4 R:4 R:4 F#4:4 R:4 R:4 F#4:4 R:4 R:12 R:12 R:12", "h": "R:8 D4:4 R:8 C#4:4 R:12 R:12 R:12 R:8 C#4:4 R:8 D4:4 R:8 C#4:4 R:8 D4:4 R:8 C#4:4 R:12 R:12 R:12 R:8 C#4:4 R:8 C#4:4 R:8 D4:4 R:12 R:12 R:12"}, "B": {"mel": "G5:12 F#5:12 B4:4 A4:4 B4:4 C#5:4 D5:4 E5:4 C#5:4 D5:4 E5:4 F#4:12 C5:12 D5:24", "acc": "G5:4 B3+E4+G4:8 F#5:4 A3+C#4+F#4:8 B4:4 B3+D4+F#4+A4:4 B4:4 C#5:4 C#4+E4+A4+D5:4 E5:4 C#5:4 A3+C#4+F#4+A4+D5:4 E5:4 F#4:4 A3+D4:4 B3+D4+G4:4 C4+E4+A4+C5:12 D4+F#4+A4+D5:12 R:12", "bass": "E2:12 F#2:12 B1:12 E2:12 E2:12 E2:4 B2:4 E3:4 A2+G3:12 D2+A2+D3:12 R:12", "e": "R:12 R:12 R:12 R:12 R:12 R:12 R:12 R:12 R:12", "n": "R:4 G4:4 R:4 R:4 F#4:4 R:4 R:12 R:12 R:12 R:4 D4:4 R:4 R:12 R:12 R:12", "h": "R:8 E4:4 R:8 C#4:4 R:12 R:12 R:12 R:8 A3:4 R:12 R:12 R:12"}};   // 짐노페디 1번 (사티, 1888): Mutopia 공개 악보 그대로
+const MORE2 = [
+  { id:'gymno', name:'짐노페디 1번', desc:'사티, 느리고 잔잔한 피아노. 쿵-짝 왈츠 위로 멜로디가 흘러요', lv:1, bpm:76, spread:1, fixedLevels:{easy:1, normal:3, hard:4}, dots:['d2','d4'], kit:'soft', rev:.5, score:true, meter:M34,
+    sections:[
+      {bars:19, meter:M34, tracks:[{inst:'piano', notes: GYM.A.mel, chart:true, rev:.5}, {inst:'piano', notes: GYM.A.e, chart:true, v:0}, {inst:'piano', notes: GYM.A.n, chart:true, chartMin:'normal', v:0}, {inst:'piano', notes: GYM.A.h, chart:true, chartMin:'hard', v:0}, {inst:'piano', notes: GYM.A.acc, v:.4, rev:.5}, {inst:'piano', notes: GYM.A.bass, v:.55, rev:.5}]},
+      {bars:9, meter:M34, tracks:[{inst:'piano', notes: GYM.B.mel, chart:true, rev:.5}, {inst:'piano', notes: GYM.B.e, chart:true, v:0}, {inst:'piano', notes: GYM.B.n, chart:true, chartMin:'normal', v:0}, {inst:'piano', notes: GYM.B.h, chart:true, chartMin:'hard', v:0}, {inst:'piano', notes: GYM.B.acc, v:.4, rev:.5}, {inst:'strings', notes: GYM.B.mel, v:.25, pan:.3, legato:1}, {inst:'piano', notes: GYM.B.bass, v:.55, rev:.5}]},
+    ]},
+  { id:'turca', name:'터키 행진곡', desc:'모차르트, 통통 튀는 피아노에 터키 군악대 큰북', lv:4, bpm:126, dots:['d1','d3'], kit:'std', rev:.3, score:true, meter:M24,
+    sections:[
+      {bars:1, meter:M24, tracks:[{inst:'piano', notes:'R:4 ' + TQ.pick.r, chart:true}, {inst:'piano', notes:'R:8', v:.6}]},
+      {bars:8, meter:M24, tracks:[{inst:'piano', notes: TQ.A.r, chart:true}, {inst:'piano', notes: TQ.A.l, v:.6}]},
+      {bars:16, meter:M24, tracks:[{inst:'piano', notes: TQ.BA.r, chart:true}, {inst:'piano', notes: TQ.BA.l, v:.6}]},
+      {bars:8, meter:M24, crash:true, mark:'둥 둥 군악대!', drums: TQ_DR, tracks:[{inst:'piano', notes: TQ.R1.r, chart:true}, {inst:'piano', notes: TQ.R1.l, v:.65}]},
+      {bars:24, meter:M24, dbl:true, tracks:[{inst:'piano', notes: TQ.run.r, chart:true}, {inst:'piano', notes: TQ.run.l, v:.6}]},
+      {bars:8, meter:M24, crash:true, drums: TQ_DR, tracks:[{inst:'piano', notes: TQ.R2.r + ' A4+A5:4 R:4', chart:true}, {inst:'piano', notes: TQ.R2.l + ' A2+A3:4 R:4', v:.65}]},
+      {bars:31, meter:M24, crash:true, drums: TQ_DR, tracks:[{inst:'piano', notes: TQ.coda.r, chart:true}, {inst:'piano', notes: TQ.coda.l, v:.65}]},
+    ]},
+  { id:'winter', name:'사계 중 겨울 1악장', desc:'비발디, 얼어붙은 듯 떨리는 바이올린과 현악 합주', lv:4, bpm:104, spread:1, dots:['d2','d1'], kit:'soft', rev:.4, score:true, meter:M44,
+    sections: ['w1', 'w2'].map((k, i) => ({bars: i ? 24 : 26, meter:M44, dbl: !!i, tracks:[
+      {inst:'violin', notes: WN[k].top, chart:true, v:.85, rev:.4},
+      {inst:'violin', notes: WN[k].v1, v:.32, pan:.25, rev:.4}, {inst:'violin', notes: WN[k].v2, v:.3, pan:-.25, rev:.4},
+      {inst:'violin', notes: WN[k].va, v:.28, pan:-.1, rev:.4}, {inst:'cello', notes: WN[k].vc, v:.8, rev:.35}]})),
+  },
+  { id:'toreador', name:'투우사의 노래 (카르멘)', desc:'비제, 카르멘 서곡의 행진과 투우사의 노래', lv:3, bpm:116, dots:['d1','d4'], kit:'std', rev:.3, score:true, meter:M24,
+    sections:[
+      {bars:16, meter:M24, crash:true, drums: CM_MARCH, tracks:[{inst:'brass', notes: CM.march.top, chart:true}, {inst:'strings', notes: CM.march.up, v:.35, pan:-.2}, {inst:'tuba', notes: CM.march.lo, v:.8}]},
+      {bars:42, meter:M24, bpm:104, mark:'투우사의 노래', tracks:[{inst:'violin', notes: CM.tor.top, chart:true}, {inst:'strings', notes: CM.tor.up, v:.3, pan:-.2, legato:1}, {inst:'cello', notes: CM.tor.lo, v:.75}]},
+      {bars:19, meter:M24, crash:true, drums: CM_MARCH, tracks:[{inst:'brass', notes: CM.fin.top, chart:true}, {inst:'strings', notes: CM.fin.up, v:.35, pan:-.2}, {inst:'tuba', notes: CM.fin.lo, v:.8}]},
+    ]},
+  { id:'susanna', name:'오 수재너', desc:'포스터, 밴조처럼 튕기는 기타와 신나는 컨트리', lv:1, bpm:96, dots:['d4','d3'], kit:'std', rev:.25, score:true, meter:M24,
+    sections:[
+      sec(1, M24, OS.pick, 'C', {lead:'pluck', oct:12, bass:'upright', comp:'guitar'}),
+      sec(8, M24, OS_V1, 'C', {lead:'pluck', oct:12, bass:'upright', comp:'guitar', extra:{drums: COUNTRY}}),
+      sec(8, M24, OS_V2, 'C', {lead:'pluck', oct:12, bass:'upright', comp:'guitar', extra:{drums: COUNTRY}}),
+      sec(8, M24, OS_CH1, 'C', {lead:'pluck', oct:12, bass:'upright', comp:'guitar', dbl:'flute', dblOct:12, extra:{drums: COUNTRY, crash:true}}),
+      sec(8, M24, OS_CH2, 'C', {lead:'pluck', oct:12, bass:'upright', comp:'guitar', dbl:'flute', dblOct:12, extra:{drums: COUNTRY}}),
+      Object.assign(sec(8, M24, OS_V1, 'C', {lead:'guitar', oct:12, bass:'upright', comp:'pluck', dbl:'violin', dblOct:12, extra:{drums: COUNTRY, crash:true}}), {bpm:108}),
+      Object.assign(sec(8, M24, OS_V2, 'C', {lead:'guitar', oct:12, bass:'upright', comp:'pluck', dbl:'violin', dblOct:12, extra:{drums: COUNTRY}}), {bpm:108}),
+      Object.assign(sec(8, M24, OS_CH1, 'C', {lead:'pluck', oct:12, bass:'upright', comp:'guitar', dbl:'violin', dblOct:12, extra:{drums: COUNTRY, crash:true}}), {bpm:108}),
+      Object.assign(sec(8, M24, J(OS.ch, 'C4:8'), 'C', {lead:'pluck', oct:12, bass:'upright', comp:'guitar', dbl:'flute', dblOct:24, extra:{drums: COUNTRY}}), {bpm:108}),
+    ]},
+  { id:'chopsticks', name:'젓가락 행진곡', spread:1, fewSlides:true, twinSong:true, fixedLevels:{easy:5, normal:6, hard:7}, desc:'두 손가락으로 같이 치는 왈츠! 동시치기가 가득, 점점 빨라져요', lv:1, bpm:108, dots:['d2','d4'], kit:'soft', rev:.3, score:true, meter:M34,
+    sections:[
+      {bars:8, meter:M34, tracks:[{inst:'piano', notes: CHOP, chart:true, twin:true}]},
+      {bars:8, meter:M34, drums: CHOP_WALTZ, mark:'길게 누르는 양손!', tracks:[{inst:'piano', notes: CHOP_H, chart:true, twin:true}, {inst:'piano', notes: CHOP_B, v:.6}]},
+      {bars:8, meter:M34, bpm:120, drums: CHOP_WALTZ, tracks:[{inst:'piano', notes: CHOP, oct:12, chart:true, twin:true}, {inst:'glock', notes: CHOP, oct:12, v:.35, pan:.3}, {inst:'piano', notes: CHOP_B, v:.6}]},
+      {bars:8, meter:M34, bpm:120, drums: CHOP_WALTZ, tracks:[{inst:'musicbox', notes: CHOP_H, oct:12, chart:true, twin:true}, {inst:'piano', notes: CHOP_H, v:.5}, {inst:'piano', notes: CHOP_B, v:.6}]},
+      {bars:8, meter:M34, bpm:132, crash:true, drums:{kit:'std', kick:[0], snare:[4, 8], hat:'8'}, tracks:[{inst:'piano', notes: CHOP, oct:12, chart:true, twin:true}, {inst:'piano', notes: CHOP, v:.5}, {inst:'piano', notes: CHOP_B, v:.65}]},
+      {bars:2, meter:M34, bpm:132, crash:true, tracks:[{inst:'piano', notes:'F4+A4+C5+F5:12 R:12', chart:true, twin:true}, {inst:'piano', notes:'F2+F3:12 R:12', v:.7}]},
+    ]},
+  { id:'bumblebee', name:'왕벌의 비행', desc:'림스키코르사코프, 붕붕 반음으로 날아다니는 바이올린', lv:5, bpm:116, dots:['d4','d1'], kit:'soft', rev:.3, score:true, meter:M24, spread:1, burst:{n:3, rest:.3},
+    sections:[
+      {bars:4, meter:M24, tracks:[{inst:'violin', notes: BEE.s1.mel, chart:true}, {inst:'pluck', notes: BEE.s1.acc, v:.45}]},
+      {bars:8, meter:M24, tracks:[{inst:'violin', notes: BEE.s2.mel, chart:true}, {inst:'pluck', notes: BEE.s2.acc, v:.5}, {inst:'cello', notes: BEE.s2.acc.replace(/[A-G]#?3\+[^ ]+/g, 'R'), v:.5}]},
+      {bars:11, meter:M24, mark:'벌이 높이 날아요!', tracks:[{inst:'violin', notes: BEE.s3.mel, chart:true}, {inst:'flute', notes: BEE.s3.mel, oct:12, v:.3, pan:.3}, {inst:'pluck', notes: BEE.s3.acc, v:.5}]},
+      {bars:8, meter:M24, crash:true, tracks:[{inst:'violin', notes: BEE.s2.mel, chart:true}, {inst:'violin', notes: BEE.s2.mel, oct:12, v:.35, pan:.3}, {inst:'pluck', notes: BEE.s2.acc, v:.55}, {inst:'cello', notes: BEE.s2.acc.replace(/[A-G]#?3\+[^ ]+/g, 'R'), v:.6}]},
+      {bars:6, meter:M24, dbl:true, tracks:[{inst:'violin', notes: BEE.s4.mel, chart:true}, {inst:'piano', notes: BEE.s4.mel, oct:-12, v:.35, pan:-.3}, {inst:'pluck', notes: BEE.s4.acc, v:.5}]},
+      {bars:1, meter:M24, crash:true, tracks:[{inst:'violin', notes:'A4+E5+A5:4 R:4', chart:true}, {inst:'cello', notes:'A2:4 R:4', v:.8}, {inst:'pluck', notes:'A3+C4+E4:4 R:4', v:.5}]},
+    ]},
+];
+SONGS.push(...MORE2);
 
 SONGS.sort((a, b) => a.lv - b.lv);
 
@@ -1023,16 +1161,33 @@ function buildScore(S){
       events.forEach(n => {
         const t = tc + n.pos * X, d = n.dur * X, ms = n.ms.map(m => m + tr + (tk.oct || 0));
         ev.push({t, k:'note', lead: !!tk.chart || /bass|cello/.test(tk.inst) && (tk.v == null || tk.v >= .8), inst: tk.inst, ms, d: d * (tk.legato != null ? tk.legato : .95), v: tk.v != null ? tk.v : 1, rev: tk.rev != null ? tk.rev : .3, pan: tk.pan || 0});
-        if (tk.chart) notes.push({t, len: d >= .6 ? d * .9 : 0, pos: Math.max(...ms), step: (n.pos % N16) / 2, dbl: !!s.dbl, beat: beat16.has(n.pos % N16)});
+        if (tk.chart) notes.push({t, len: d >= .6 ? d * .9 : 0, pos: Math.max(...ms), step: (n.pos % N16) / 2, dbl: !!s.dbl, beat: beat16.has(n.pos % N16), two: !!tk.twin && ms.length >= 2, minDk: tk.chartMin});   // chartMin: 이 난이도부터만 나오는 노트   // twin: 두 음을 같이 치는 곳은 동시치기로
       });
     });
     tc += s.bars * N16 * X;
   });
   bars.push(tc);
   ev.sort((a, b) => a.t - b.t); notes.sort((a, b) => a.t - b.t);
-  return {notes, ev, E: 60 / S.bpm / 2, bars, beats, marks, rhythm};
+  if (S.spread){   // 같은 음이 계속 반복되는 곡: 높낮이를 살짝 흔들어서 같은 줄·같은 모양이 되풀이되지 않게
+    let prev = null, prevJ = 0, h = 2166136261;
+    notes.forEach((n, i) => {
+      h = Math.imul(h ^ (i + 7), 16777619) >>> 0;
+      let j = (h % 13) - 6;
+      if (prev != null && n.pos === prev && (j === prevJ || Math.abs(j - prevJ) < 3)) j = prevJ + (j >= 0 ? 4 : -4);
+      if (j > 8) j -= 13; if (j < -8) j += 13;
+      prev = n.pos; prevJ = j; n.pos = n.pos + j * S.spread;
+    });
+  }
+  return {notes, ev, E: 60 / S.bpm / 2, bars, beats, marks, rhythm, burst: S.burst, twin: !!S.twinSong};
 }
 
+const durCache = {};
+function songDur(S){   // 곡 길이 (초)
+  if (!S || S.audio || !S.sections) return null;
+  if (durCache[S.id] == null){ try { const sg = buildSong(S); durCache[S.id] = sg.bars[sg.bars.length - 1] || 0; } catch(e){ durCache[S.id] = 0; } }
+  return durCache[S.id] || null;
+}
+const durText = S => { const d = Math.round(songDur(S) || 0); return !d ? '' : d < 60 ? `${d}초` : `${Math.floor(d / 60)}분` + (d % 60 ? ` ${d % 60}초` : ''); };
 function songMeterText(S){
   const labels = [];
   S.sections.forEach(s => { const l = (s.meter || S.meter || M44).label; if (labels[labels.length - 1] !== l) labels.push(l); });
@@ -1171,9 +1326,17 @@ function chartFor(sg, dk){
   const minGap = {easy: .34, normal: .15, hard: .06}[dk];
   const keep = n => dk === 'hard' || (dk === 'normal' ? (Number.isInteger(n.step) || n.len > 0) : (n.beat || n.len >= .5));
   const out = [];
-  let lastT = -9;
+  let lastT = -9, run = 0;
+  const burst = dk === 'hard' && sg.burst;   // 아주 빠른 곡: 빠른 음은 몇 개씩 끊어서 (숨 쉴 틈)
   for (const n of src){
+    if (n.minDk && DIFFS.indexOf(dk) < DIFFS.indexOf(n.minDk)) continue;
     if (!keep(n) || n.t - lastT < minGap - 1e-3) continue;
+    if (burst){
+      const fast = n.t - lastT < .2;
+      if (fast && run >= burst.n - 1) continue;
+      if (!fast && n.t - lastT < burst.rest && run >= burst.n - 1) continue;
+      run = fast ? run + 1 : 0;
+    }
     let len = n.len;
     if (dk === 'easy' && len && len < .5) len = 0;
     out.push(Object.assign({}, n, {len, chord: false})); lastT = n.t;
@@ -1190,9 +1353,18 @@ function chartFor(sg, dk){
     }
     out.push(...extra); out.sort((a, b) => a.t - b.t);
   }
+  if (sg.twin){   // 젓가락 행진곡: 쉬움은 마디 셋째 박을 쉬고, 어려움은 셋째 박 뒤에 반 박 두 개를 더해요
+    if (dk === 'easy') for (let k = out.length - 1; k >= 0; k--) if (!out[k].len && out[k].step === 4) out.splice(k, 1);
+    if (dk === 'hard'){
+      const add = [];
+      out.forEach((n, k) => { const nx = out[k + 1]; if (!n.len && n.step === 4 && nx && nx.t - n.t >= .4) add.push(Object.assign({}, n, {t: (n.t + nx.t) / 2, step: 5, beat: false})); });
+      out.push(...add); out.sort((a, b) => a.t - b.t);
+    }
+  }
   // 동시치기
   out.forEach(n => {
-    if (n.len) return;
+    if (n.two){ n.chord = true; return; }   // 젓가락 행진곡처럼 두 손가락으로 같이 치는 곡 (길게 누르는 것도 양손으로)
+    if (n.len) return;   // 젓가락 행진곡처럼 두 손가락으로 같이 치는 곡
     if (dk === 'normal') n.chord = n.dbl && n.step === 0;
     else if (dk === 'hard') n.chord = (n.dbl && n.beat) || (n.step === 0 && Math.round(n.t * 10) % 3 === 0);
   });
@@ -1226,7 +1398,8 @@ function makeChart(sg, S, dk, L){
   const base = chartFor(sg, dk).sort((a, b) => a.t - b.t);
   if (!base.length) return [];
   const r = rng(hashStr(S.id + '|' + dk + '|' + L));
-  const Z = zonesOf(L), span = sg.bars[sg.bars.length - 1] || base[base.length - 1].t + 2;
+  const ALL = Array.from({length: L}, (_, i) => i);
+  const Z = S.twinSong ? [ALL, ALL] : zonesOf(L), span = sg.bars[sg.bars.length - 1] || base[base.length - 1].t + 2;
   const est = estCache[S.id] || (estCache[S.id] = estimateLevels(S));
   const IDX = dk !== 'hard' || est.hard <= 8;          // 검지 두 개로 칠 수 있게
   const easyish = dk !== 'hard';                       // 쉬움·보통은 대칭 위주
@@ -1237,7 +1410,7 @@ function makeChart(sg, S, dk, L){
   const clampZ = (h, l) => Math.max(Z[h][0], Math.min(Z[h][Z[h].length - 1], l));
 
   /* 1) 띠 노트 자리 고르기: 곡이 진행될수록 조금씩 많아지고, 노트가 가장 적은 구간 하나는 비워둬요 */
-  const ratio = {easy: .14, normal: .3, hard: .38}[dk];
+  const ratio = (S.twinSong ? 0 : S.fewSlides ? .25 : 1) * {easy: .14, normal: .3, hard: .38}[dk];
   let quiet = [-1, -1];
   if (span > 30){
     let best = 1e9;
@@ -1282,17 +1455,49 @@ function makeChart(sg, S, dk, L){
   const occ = [[], []];   // 손마다 길게 누르는/띠 구간 {t0, t1, laneAt}
   const seq = [];
   const occAt = (h, t) => occ[h].find(o => t >= o.t0 - .04 && t <= o.t1 + .08);
-  const travel = (h, lane) => lane === F[h].lane ? (IDX ? .12 : .06) : (IDX ? .14 + .05 * Math.abs(lane - F[h].lane) : .08);
-  const trillGate = t => ((Math.sin(t * 9301.7 + hashStr(S.id) % 997) + 1) / 2) > .15;   // 85%는 막고 15%만 허용 (주로 2번 이하)
+  const travel = (h, lane) => lane === F[h].lane ? (IDX ? .24 : .2) : (IDX ? .14 + .05 * Math.abs(lane - F[h].lane) : .12);   // 같은 줄 연타는 0.2초 이상, 한 손은 0.12초 이상
+  const trillGate = t => ((Math.sin(t * 9301.7 + hashStr(S.id) % 997) + 1) / 2) > .05;   // 95%는 막고 5%만 허용 (거의 2번 이하)
+  function recentPresses(t){   // t 직전 1.2초 동안 누른 것 (방울, 롱노트, 띠 시작, 흰 점)
+    const rec = [];
+    for (const x of out){
+      if (x.t < t - .005 && x.t > t - 1.2) rec.push([x.t, x.lane]);
+      if (x.slide) for (const q of x.path) if (q.t < t - .005 && q.t > t - 1.2 && q.t > x.t) rec.push([q.t, q.lane]);
+    }
+    return rec.sort((a, b) => a[0] - b[0]);
+  }
+  // 띠가 직전 방울들과 이어져서 트릴이 되는지 (가 나 → 띠 가 → 나)
+  function slideTrills(path){
+    for (const q of path){   // 띠의 시작과 흰 점도 같은 줄을 0.2초 안에 다시 누르지 않게
+      const rec = recentPresses(q.t);
+      if (rec.some(x => x[1] === q.lane && q.t - x[0] < .2)) return true;
+    }
+    const lanes = recentPresses(path[0].t).slice(-2).map(x => x[1]).concat(path.slice(0, 3).map(q => q.lane));
+    for (let i = 3; i < lanes.length; i++) if (lanes[i] === lanes[i - 2] && lanes[i - 1] === lanes[i - 3] && lanes[i] !== lanes[i - 1]) return true;
+    for (let i = 2; i < lanes.length; i++) if (lanes[i] === lanes[i - 2] && lanes[i] !== lanes[i - 1] && trillGate(path[0].t + i)) return true;
+    return false;
+  }
   function ok(h, lane, t, len = 0){
     if (!Z[h].includes(lane)) return false;
     if (occAt(h, t) || (len && occ[h].some(o => o.t0 < t + len + .08 && o.t1 > t - .04))) return false;
     if (t < F[h].free + travel(h, lane)) return false;
     if (lane === F[h].lane && F[h].rep >= 2) return false;                         // 같은 키는 최대 3번
     if (seq.length >= 3 && seq.slice(-3).every(x => x === lane)) return false;     // 어느 손으로 치든 같은 키 4번 연속 금지
+    {   // 띠의 흰 점까지 포함해서: 같은 줄은 1초에 최대 3번, 0.2초 이상 간격 / 한 손은 1초에 최대 6번
+      const rec = recentPresses(t).filter(x => x[0] > t - 1);
+      const same = rec.filter(x => x[1] === lane);
+      if (same.length >= 2 || (same.length && t - same[same.length - 1][0] < .2)) return false;
+      if (rec.filter(x => Z[h].includes(x[1])).length >= 6) return false;
+    }
     const o = occAt(1 - h, t); if (o && Math.abs(lane - o.laneAt(t)) < 2) return false;   // 누르고 있는 손가락 바로 옆은 피해요
+    if (S.twinSong) return true;   // 두 개씩만 치는 곡은 한 줄짜리 트릴 검사 대신 위의 손 빠르기 검사만
     const s = seq; if (s.length >= 3 && s[s.length - 1] !== s[s.length - 2] && s[s.length - 3] === s[s.length - 1] && lane === s[s.length - 2]) return false;   // 트릴 4번 이상은 절대 안 돼요
     if (s.length >= 2 && s[s.length - 1] !== s[s.length - 2] && lane === s[s.length - 2] && trillGate(t)) return false;   // 트릴 3번(가 나 가)은 가끔만
+    {   // 띠의 흰 점까지 포함해서, 이 시각 직전에 누른 순서로 한 번 더 검사해요
+      const rec = recentPresses(t);
+      const L3 = rec.slice(-3).map(x => x[1]), n = L3.length;
+      if (n >= 3 && L3[2] !== L3[1] && L3[0] === L3[2] && lane === L3[1]) return false;   // 가 나 가 나 (4번)는 절대 안 돼요
+      if (n >= 2 && L3[n - 1] !== L3[n - 2] && lane === L3[n - 2] && t - rec[rec.length - 2][0] < .7 && trillGate(t + .5)) return false;   // 빠른 가 나 가는 가끔만
+    }
     return true;
   }
   function put(h, lane, t, len = 0){
@@ -1301,18 +1506,23 @@ function makeChart(sg, S, dk, L){
     seq.push(lane); if (seq.length > 6) seq.shift();
   }
   const out = [];
-  const lanesNear = (h, w) => Z[h].slice().sort((a, b) => Math.abs(a - w) - Math.abs(b - w) + (r() - .5) * .9);
+  const lanesNear = (h, w, t) => {
+    const used = {}; if (t != null) recentPresses(t).filter(x => x[0] > t - 1.5).forEach(x => used[x[1]] = (used[x[1]] || 0) + 1);
+    const sc = {}; Z[h].forEach(l => sc[l] = Math.abs(l - w) * (S.spread ? .6 : 1) + (used[l] || 0) * (S.spread ? 1.4 : .9) + (r() - .5) * (S.spread ? 2 : .9));   // 최근에 많이 친 줄은 피해서 골고루
+    return Z[h].slice().sort((a, b) => sc[a] - sc[b]);
+  };
 
   /* 3) 띠 노트 만들기 */
   function slidePath(h, pts, startLane){
-    const path = [{t: pts[0].t, lane: startLane}]; let cur = startLane;
+    const path = [{t: pts[0].t, lane: startLane}]; let cur = startLane, prev = -1;
     for (let k = 1; k < pts.length; k++){
       let dir = Math.sign(pts[k].pos - pts[k - 1].pos) || (r() < .5 ? -1 : 1);
       const step = (!easyish && Z[h].length >= 3 && r() < .3) ? 2 : 1;
-      let nl = clampZ(h, cur + dir * step);
-      if (nl === cur) nl = clampZ(h, cur - dir * step);
-      if (nl === cur) continue;
-      path.push({t: pts[k].t, lane: nl}); cur = nl;
+      // 바로 전 줄로 되돌아가지 않아요 (띠가 두 줄을 왔다 갔다 하는 트릴 방지)
+      const cand = [cur + dir * step, cur - dir * step, cur + dir * (3 - step), cur - dir * (3 - step)].map(l => clampZ(h, l)).filter(l => l !== cur && l !== prev);
+      if (!cand.length) break;   // 갈 수 있는 새 줄이 없으면 더 꺾지 않고 쭉 이어가요
+      prev = cur; cur = cand[0];
+      path.push({t: pts[k].t, lane: cur});
     }
     return path;
   }
@@ -1321,6 +1531,7 @@ function makeChart(sg, S, dk, L){
     const s = {t: path[0].t, lane: path[0].lane, len: end - path[0].t, slide: true, path, grp, hand: h};
     occ[h].push({t0: s.t, t1: end, laneAt: t => { let l = path[0].lane; for (const p of path) if (p.t <= t) l = p.lane; return l; }});
     F[h].lane = path[path.length - 1].lane; F[h].free = end; F[h].rep = 0;
+    path.forEach(q => seq.push(q.lane)); while (seq.length > 6) seq.shift();
     out.push(s); return s;
   }
   function makeSlide(p){
@@ -1346,9 +1557,11 @@ function makeChart(sg, S, dk, L){
     for (const h of [prefer, 1 - prefer]){
       if (occAt(h, n.t) || n.t < F[h].free + .12) continue;
       const o = occAt(1 - h, n.t);
-      const startLanes = lanesNear(h, want(n)).filter(l => !o || Math.abs(l - o.laneAt(n.t)) >= 2);
+      const startLanes = lanesNear(h, want(n), n.t).filter(l => !o || Math.abs(l - o.laneAt(n.t)) >= 2);
       if (!startLanes.length) continue;
-      const path = slidePath(h, p.pts, startLanes[0]);
+      let path = null;
+      for (const st of startLanes){ const cand = slidePath(h, p.pts, st); if (cand.length >= 2 && !slideTrills(cand)){ path = cand; break; } }
+      if (!path) continue;   // 어느 줄로 시작해도 트릴이 되면 이 손에는 띠를 안 놓아요
       const s = addSlide(h, path, p.end, null);
       if (s){
         // 다른 손은 띠와 떨어진 줄로 남은 노트를 쳐요 (쉬움 제외)
@@ -1362,26 +1575,89 @@ function makeChart(sg, S, dk, L){
   /* 4) 짧은 방울과 길게 누르기 */
   function placeSingle(n, onlyHand){
     const w = want(n), prefer = onlyHand != null ? onlyHand : (Z[0].includes(w) && !(L === 3 && w === 1) ? 0 : (L === 3 && w === 1 ? (F[0].free <= F[1].free ? 0 : 1) : 1));
-    const hands = onlyHand != null ? [onlyHand] : [prefer, 1 - prefer];
+    let hands = onlyHand != null ? [onlyHand] : [prefer, 1 - prefer];
+    if (S.spread && onlyHand == null && r() < .3) hands = hands.reverse();   // 반복이 많은 곡은 손도 가끔 바꿔요
     for (const h of hands){
-      for (const l of lanesNear(h, w)){
+      for (const l of lanesNear(h, w, n.t)){
         const len = n.len > 0 && ok(h, l, n.t, n.len) ? n.len : 0;
         if (ok(h, l, n.t, len)){ put(h, l, n.t, len); out.push({t: n.t, lane: l, len}); return true; }
       }
     }
     return false;
   }
+  const lastPairs = [];
+  /* 동시치기 곡 (젓가락 행진곡): 두 손이 계단처럼 같이 내려가기·올라가기, 벌어지기·모이기, 한 손만 걷기 같은 모양을
+     몇 번씩 이어가다가 다른 모양으로 바꿔요. 4키는 가운데 두 줄(양손 검지)도 같이 칠 수 있어요. */
+  const TW = {prev: null, d: null, left: 0};
+  const TW_D = [[-1, -1], [1, 1], [-1, 1], [1, -1], [-1, 0], [1, 0], [0, -1], [0, 1], [-2, -2], [2, 2], [-2, 2], [2, -2], [-2, 0], [2, 0], [0, -2], [0, 2], [-1, -2], [1, 2], [2, 1], [-2, -1]];
+  const twGap = 1;   // 이 곡은 바로 옆 줄도 같이 쳐요
+  const twValid = (a, b) => Z[0].includes(a) && Z[1].includes(b) && b - a >= twGap;
+  // 양손 띠: 같은 방향으로 계단처럼, 또는 거울처럼 벌어졌다 모였다. 꺾일 때마다 새 줄로 (되돌아가는 트릴 없음)
+  function twinSlide(n){
+    const turns = n.len >= 1.2 && Z[0].length >= 3 ? 2 : 1, end = n.t + n.len;   // 4키는 손마다 두 줄이라 한 번만 꺾어요
+    const starts = [];
+    for (const a of Z[0]) for (const b of Z[1]) if (twValid(a, b) && ok(0, a, n.t, n.len) && ok(1, b, n.t, n.len)) starts.push([a, b, r()]);
+    starts.sort((x, y) => x[2] - y[2]);
+    const steps = Z[0].length >= 3 ? [1, 2] : [1];
+    for (const [a, b] of starts.slice(0, 6)){
+      for (let tryN = 0; tryN < 6; tryN++){
+        const mirror = r() < .5, lp = [{t: n.t, lane: a}], rp = [{t: n.t, lane: b}];
+        let good = true, dir = r() < .5 ? -1 : 1;
+        for (let k = 1; k <= turns; k++){
+          const t = n.t + n.len * k / (turns + 1);
+          const pl = lp[lp.length - 1].lane, pr = rp[rp.length - 1].lane, ppl = lp.length > 1 ? lp[lp.length - 2].lane : -9, ppr = rp.length > 1 ? rp[rp.length - 2].lane : -9;
+          let found = null;
+          for (const st of steps.slice().sort(() => r() - .5)) for (const dd of [dir, -dir]){
+            const nl = pl + dd * st, nr = pr + (mirror ? -dd : dd) * st;
+            if (found || !twValid(nl, nr) || nl === ppl || nr === ppr) continue;
+            found = [nl, nr, dd];
+          }
+          if (!found){ good = false; break; }
+          lp.push({t, lane: found[0]}); rp.push({t, lane: found[1]}); dir = found[2];
+        }
+        if (!good) continue;
+        const A = addSlide(0, lp, end, 'L'), B = addSlide(1, rp, end, 'R');
+        if (A && B){ TW.prev = [lp[lp.length - 1].lane, rp[rp.length - 1].lane]; TW.d = null; TW.left = 0; return true; }
+      }
+    }
+    return false;
+  }
+  function placeTwin(n){
+    if (occAt(0, n.t) || occAt(1, n.t)) return false;
+    if (n.len >= .6 && twinSlide(n)) return true;   // 길게 누르는 두 개는 양손이 같이 움직이는 띠로
+    const tries = [];
+    if (TW.prev && TW.d && TW.left > 0) tries.push(TW.d);
+    TW_D.filter(d => d !== TW.d).map(d => [d, r()]).sort((x, y) => x[1] - y[1]).forEach(x => tries.push(x[0]));
+    const fresh = [];
+    for (const a of Z[0]) for (const b of Z[1]) if (twValid(a, b)) fresh.push([a, b]);
+    for (const d of tries.concat(fresh.map(f => ({fresh: f})))){
+      const [a, b] = d.fresh ? d.fresh : TW.prev ? [TW.prev[0] + d[0], TW.prev[1] + d[1]] : [-1, -1];
+      if (!twValid(a, b) || (TW.prev && a === TW.prev[0] && b === TW.prev[1])) continue;
+      const len = n.len > 0 && ok(0, a, n.t, n.len) && ok(1, b, n.t, n.len) ? n.len : 0;
+      if (!ok(0, a, n.t, len) || !ok(1, b, n.t, len)) continue;
+      if (d.fresh){ TW.d = null; TW.left = 0; }
+      else if (d === TW.d) TW.left--;
+      else { TW.d = d; TW.left = 1 + Math.floor(r() * 3); }   // 같은 모양을 2~4번 이어가요
+      TW.prev = [a, b];
+      put(0, a, n.t, len); put(1, b, n.t, len);
+      out.push({t: n.t, lane: a, len}, {t: n.t, lane: b, len});
+      return true;
+    }
+    return false;
+  }
   function placeChord(n){
+    if (S.twinSong && n.two && placeTwin(n)) return true;
     if (occAt(0, n.t) || occAt(1, n.t)) return placeSingle(n);   // 누르고 있는 게 있으면 동시치기 안 해요
     const w = want(n), pairs = [];
     for (const a of Z[0]) for (const b of Z[1]) if (b - a >= 2 && ok(0, a, n.t) && ok(1, b, n.t)) pairs.push([a, b]);
     if (!pairs.length) return placeSingle(n);
-    pairs.sort((x, y) => {
-      const sx = (easyish ? Math.abs(x[0] + x[1] - (L - 1)) * 1.5 : 0) + Math.abs(x[0] - w) * .3 + Math.abs(x[1] - w) * .3 + r() * .8;
-      const sy = (easyish ? Math.abs(y[0] + y[1] - (L - 1)) * 1.5 : 0) + Math.abs(y[0] - w) * .3 + Math.abs(y[1] - w) * .3 + r() * .8;
-      return sx - sy;
-    });
+    const pscore = x => S.spread
+      ? Math.abs(x[0] - w) * .2 + Math.abs(x[1] - w) * .2 + r() * 2.2 + (lastPairs.filter(q => q[0] === x[0] && q[1] === x[1]).length) * 1.6   // 반복이 많은 곡: 방금 친 짝은 피하고 골고루
+      : (easyish ? Math.abs(x[0] + x[1] - (L - 1)) * 1.5 : 0) + Math.abs(x[0] - w) * .3 + Math.abs(x[1] - w) * .3 + r() * .8;
+    const sc = new Map(pairs.map(x => [x, pscore(x)]));
+    pairs.sort((x, y) => sc.get(x) - sc.get(y));
     const [a, b] = pairs[0];
+    lastPairs.push([a, b]); if (lastPairs.length > 3) lastPairs.shift();
     put(0, a, n.t); put(1, b, n.t);
     out.push({t: n.t, lane: a, len: 0}, {t: n.t, lane: b, len: 0});
     return true;
@@ -1392,6 +1668,7 @@ function makeChart(sg, S, dk, L){
     if (skip.has(i)) continue;
     const n = base[i], p = planAt.get(i);
     if (p){ if (makeSlide(p)) continue; }
+    if (S.twinSong){ if (n.chord) placeTwin(n); continue; }   // 젓가락 행진곡: 무조건 두 개만 (못 놓으면 빼요)
     if (n.chord) placeChord(n); else placeSingle(n);
   }
 
@@ -1417,6 +1694,7 @@ function pressTimes(ch){ const ts = []; ch.forEach(x => { ts.push(x.t); if (x.sl
 
 const levelCache = {};
 function songLevels(S){
+  if (S.fixedLevels) return S.fixedLevels;   // 직접 정한 레벨
   if (levelCache[S.id]) return levelCache[S.id];
   const sg = buildSong(S), dur = Math.max(20, sg.bars[sg.bars.length - 1] || 60), res = {};
   for (const dk of DIFFS){
@@ -2243,8 +2521,10 @@ async function renderSong(S, onProgress){
   renderCache.set(key, buf);
   return buf;
 }
-function playBuffer(buf, at){
+let audioBuf = null, audioBase = 0;   // 지금 틀고 있는 음악과, 그 음악의 0초가 곡의 몇 초인지
+function playBuffer(buf, at, base = 0){
   if (audioSrc){ try { audioSrc.stop(); } catch(e){} }
+  audioBuf = buf; audioBase = base;
   audioSrc = ctx.createBufferSource(); audioSrc.buffer = buf; audioSrc.connect(master.out); audioSrc.start(at);
 }
 function buildAudioSong(S){
@@ -2387,11 +2667,65 @@ function markSelected(i){
   cs.forEach((x, k) => x.setAttribute('aria-pressed', k === selIdx ? 'true' : 'false'));
 }
 function selectCard(i){ markSelected(i); centerOn(selIdx, true); }
+let cardItems = [];
+const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+const normQ = t => String(t || '').toLowerCase().replace(/[\s()\[\]·.,'"!?~-]/g, '');
+const choOf = t => [...t].map(ch => { const c = ch.charCodeAt(0) - 0xAC00; return c >= 0 && c < 11172 ? CHO[Math.floor(c / 588)] : ch; }).join('');
+function searchSongs(q){
+  q = normQ(q); if (!q) return [];
+  const onlyCho = /^[ㄱ-ㅎ]+$/.test(q), out = [];
+  cardItems.forEach((s, i) => {
+    const nm = normQ(s.name);
+    let sc = -1;
+    if (nm.startsWith(q)) sc = 0;
+    else if (nm.includes(q)) sc = 1;
+    else if (onlyCho && choOf(nm).includes(q)) sc = choOf(nm).startsWith(q) ? 2 : 3;
+    else if (q.length >= 2 && normQ(s.desc).includes(q)) sc = 4;
+    if (sc >= 0) out.push({s, i, sc});
+  });
+  return out.sort((a, b) => a.sc - b.sc || a.i - b.i);
+}
+let foundSel = 0, foundList = [];
+function renderFound(){
+  const inp = $('#songSearch'), box = $('#songFound'), q = inp.value;
+  $('#songSearchClr').hidden = !q;
+  if (!normQ(q)){ box.hidden = true; inp.setAttribute('aria-expanded', 'false'); return; }
+  foundList = searchSongs(q); foundSel = Math.min(foundSel, Math.max(0, foundList.length - 1));
+  box.innerHTML = foundList.length ? foundList.map((f, k) => {
+    const s = f.s, sub = s.id === 'random' ? '' : s.custom ? '내 곡' : s.hosted ? '올린 곡' : (() => { const L = songLevels(s); return DIFFS.map(dk => `<span class="${DCLS[dk]}">${L[dk]}</span>`).join(' · '); })();
+    return `<button type="button" role="option" data-k="${k}" class="${k === foundSel ? 'on' : ''}" aria-selected="${k === foundSel}"><span class="sd">${(s.dots || []).map(d => `<i class="${d}"></i>`).join('')}</span><span class="nm">${esc(s.name)}</span>${sub ? `<span class="sub">${sub}</span>` : ''}</button>`;
+  }).join('') : '<div class="none">찾는 곡이 없어요</div>';
+  box.hidden = false; inp.setAttribute('aria-expanded', 'true');
+  const on = box.querySelector('.on'); if (on) on.scrollIntoView({block: 'nearest'});
+}
+function pickFound(k){
+  const f = foundList[k]; if (!f) return;
+  const inp = $('#songSearch');
+  inp.value = ''; foundList = []; foundSel = 0; renderFound(); inp.blur();
+  selectCard(f.i);
+}
+function setupSearch(){
+  const inp = $('#songSearch'), box = $('#songFound');
+  inp.addEventListener('input', () => { foundSel = 0; renderFound(); });
+  inp.addEventListener('focus', renderFound);
+  inp.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.isComposing) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); if (foundList.length){ foundSel = (foundSel + (e.key === 'ArrowDown' ? 1 : foundList.length - 1)) % foundList.length; renderFound(); } }
+    else if (e.key === 'Enter'){ e.preventDefault(); pickFound(foundSel); }
+    else if (e.key === 'Escape'){ e.preventDefault(); if (inp.value){ inp.value = ''; renderFound(); } else inp.blur(); }
+  });
+  box.addEventListener('pointerdown', e => e.preventDefault());   // 고르기 전에 입력칸이 닫히지 않게
+  box.addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (b) pickFound(+b.dataset.k); });
+  $('#songSearchClr').addEventListener('click', () => { inp.value = ''; renderFound(); inp.focus(); });
+  inp.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== inp){ box.hidden = true; inp.setAttribute('aria-expanded', 'false'); } }, 120));
+}
 function renderCards(){
   try { updateLede(); } catch(_){}
   try { chalBestText(); $('#keyselNow').textContent = `${lanes}키`; } catch(_){}
   const box = $('#songs'); box.innerHTML = '';
   const items = [{id:'random', name:'랜덤', desc:`${SONGS.length}곡 중 하나를 골라줘요`, dots:['d1','d2','d3','d4']}].concat(allSongs());
+  cardItems = items;
   items.forEach((s, i) => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'song-card'; b.dataset.id = s.id;
@@ -2407,7 +2741,8 @@ function renderCards(){
     else if (s.hosted) lv = `<span class="lv">올린 곡</span>`;
     else { const L = songLevels(s); lv = `<span class="lvs">${DIFFS.map(dk => `<span class="${DCLS[dk]}">${DNAME[dk]} ${L[dk]}</span>`).join('')}</span>`; }
     const meta = s.bpm ? `${s.desc}. ${songMeterText(s)}, ${songBpmText(s)}` : s.desc;
-    b.innerHTML = `<span class="nm"><span class="sd">${s.dots.map(d => `<i class="${d}"></i>`).join('')}</span>${esc(s.name)}</span>${lv}<span class="ds">${meta}</span><span class="rec">${rec}</span>`;
+    const dt = s.id === 'random' ? '' : durText(s);
+    b.innerHTML = `<span class="nm"><span class="sd">${s.dots.map(d => `<i class="${d}"></i>`).join('')}</span>${esc(s.name)}</span>${lv}<span class="ds">${meta}</span>${dt ? `<span class="len">⏱ ${dt}</span>` : ''}<span class="rec">${rec}</span>`;
     b.addEventListener('click', () => { b.blur(); if (selIdx === i) openPop(); else selectCard(i); });
     box.appendChild(b);
   });
@@ -2416,6 +2751,7 @@ function renderCards(){
   requestAnimationFrame(() => centerOn(idx, false));
 }
 function setupCarousel(){
+  setupSearch();
   const box = $('#songs');
   box.addEventListener('scroll', () => {
     clearTimeout(scrollTimer);
@@ -2454,7 +2790,7 @@ function openPop(fromResult){
 function renderPop(){
   const S = popSong;
   $('#popName').textContent = S.name;
-  $('#popDesc').textContent = S.bpm ? `${S.desc}. ${songMeterText(S)}, ${songBpmText(S)}` : S.desc;
+  $('#popDesc').textContent = (S.bpm ? `${S.desc}. ${songMeterText(S)}, ${songBpmText(S)}` : S.desc) + (durText(S) ? ` · 길이 ${durText(S)}` : '');
   $('#popKeys').textContent = `${lanes}키로 해요: ${CAPS[lanes].join(' ')} (키 개수는 처음 화면에서 바꿀 수 있어요)`;
   const box = $('#popDiffs');
   if (S.audio){
@@ -2492,7 +2828,7 @@ let rankFrom = 'menu';
 function setupRankFilters(){
   $('#rankSong').innerHTML = `<option value="all">전체 곡</option>` + allSongs().map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
   $('#rankDiff').innerHTML = `<option value="all">전체</option>` + DIFFS.map(dk => `<option value="${dk}">${DNAME[dk]}</option>`).join('');
-  $('#rankKeys').innerHTML = `<option value="all">전체</option>` + [3,4,6,8].map(L => `<option value="${L}">${L}키</option>`).join('');
+  $('#rankKeys').innerHTML = `<option value="all">전체</option>` + [4,6,8].map(L => `<option value="${L}">${L}키</option>`).join('');
 }
 function openRank(from){
   rankFrom = from;
@@ -2602,8 +2938,9 @@ function start(again){
   fx = []; judgeFx = null; pressFlash.fill(0); held.fill(null); shake.fill(0); activeSlides = []; spaceDown = false; dropped = [];
   t0 = ctx.currentTime + travel + 1.2;
   songEnd = cur.audio ? Math.max(cur.buf.duration, ...notes.map(n => n.t + n.len)) + 1 : Math.max(...notes.map(n => n.t + n.len)) + 2.2;
-  if (cur.audio) playBuffer(cur.buf, t0);
-  else if (synthBuf) playBuffer(synthBuf, t0 - PAD);
+  if (cur.audio) playBuffer(cur.buf, t0, 0);
+  else if (synthBuf) playBuffer(synthBuf, t0 - PAD, -PAD);
+  else audioBuf = null;
   let info = cur.name;   // 오른쪽 위: 곡 이름과 난이도
   if (!cur.audio) info += ` · ${DNAME[diff]} ${songLevels(cur)[diff]}`;
   if (chal) info = `스테이지 ${chal.stage} · ` + info;
@@ -2629,7 +2966,25 @@ function pause(){
 // 계속하기: 3, 2, 1을 센 다음 이어서 시작해요
 function resume(){
   if (state !== 'paused') return;
+  rewind(2);   // 멈춘 곳 2초 전부터: 다음 방울이 위에서 내려오게
   state = 'countdown'; cdStart = performance.now(); show(null);
+}
+function rewind(sec){
+  const now = ctx.currentTime, st = now - t0;
+  if (st <= 0) return;
+  const back = Math.min(sec, st + .5);
+  t0 += back;
+  const nst = now - t0;
+  if (audioBuf){
+    const off = nst - audioBase;
+    if (audioSrc){ try { audioSrc.stop(); } catch(e){} }
+    audioSrc = ctx.createBufferSource(); audioSrc.buffer = audioBuf; audioSrc.connect(master.out);
+    if (off >= 0) audioSrc.start(now, off); else audioSrc.start(now - off, 0);
+  } else if (song && song.ev.length){   // 실시간으로 만드는 경우: 새 소리 길로 바꾸고 그 시점부터 다시
+    const old = master; master = newBus(cur);
+    if (old){ old.out.gain.setTargetAtTime(0, now, .02); setTimeout(() => { try { old.out.disconnect(); } catch(e){} }, 600); }
+    evIdx = 0; while (evIdx < song.ev.length && song.ev[evIdx].t < nst) evIdx++;
+  }
 }
 function toMenu(){
   chal = null;
@@ -2639,10 +2994,10 @@ function toMenu(){
   state = 'menu'; renderCards(); show('menu');
 }
 /* ---------- 연속 도전 ----------
-   스테이지 1은 레벨 1 곡, 스테이지 10은 레벨 10 곡. 곡마다 앞부분 약 45초.
+   스테이지 1은 레벨 1 곡, 스테이지 10은 레벨 10 곡. 곡마다 앞부분 약 30초.
    전구 3개: 놓칠 때마다 하나씩 꺼지고, 다 꺼지면 끝. */
 let chal = null;
-const CHAL_LEN = 45, CHAL_LAST = 10, CHAL_LIVES = 5;   // 전구 5개
+const CHAL_LEN = 30, CHAL_LAST = 10, CHAL_LIVES = 5;   // 전구 5개
 const chalBestAll = () => { try { return JSON.parse(localStorage.getItem('bangul-chal') || '{}'); } catch(_){ return {}; } };
 function chalBestText(){ const b = chalBestAll()[lanes]; $('#chalBest').textContent = b ? (b.stage >= CHAL_LAST && b.win ? `${lanes}키 완주! ${b.score.toLocaleString('ko-KR')}점` : `${lanes}키 최고 스테이지 ${b.stage}`) : `${lanes}키 기록 없음`; }
 function chalPick(level){
@@ -2734,10 +3089,10 @@ function finish(){
   if (chal){ chalClear(); return; }
   state = 'result'; stopAudio();
   const acc = (counts.p + counts.g * .7 + counts.o * .4 + counts.holdSum) / (total + counts.holdN + counts.x * .5) * 100;   // 롱노트는 누른 비율로
-  const grade = acc >= 95 ? 'S' : acc >= 85 ? 'A' : acc >= 70 ? 'B' : acc >= 50 ? 'C' : 'D';
-  const msg = {S:'완벽한 박자감이에요!', A:'거의 다 맞췄어요!', B:'좋아요, 조금만 더!', C:'박자에 조금씩 익숙해지고 있어요', D:'다시 한 번 도전해봐요'}[grade];
+  const grade = acc >= 95 ? 'S' : acc >= 85 ? 'A' : acc >= 70 ? 'B' : acc >= 50 ? 'C' : acc >= 30 ? 'D' : 'F';
+  const msg = {S:'완벽한 박자감이에요!', A:'거의 다 맞췄어요!', B:'좋아요, 조금만 더!', C:'박자에 조금씩 익숙해지고 있어요', D:'다시 한 번 도전해봐요', F:'방울이 다 도망갔어요!'}[grade];
   const fc = counts.m === 0 && counts.x === 0, allP = fc && counts.g === 0 && counts.o === 0;
-  $('#grade').textContent = grade;
+  $('#grade').textContent = grade; $('#grade').dataset.g = grade;   // 등급마다 색
   $('#resultMsg').textContent = msg;
   $('#rSong').textContent = `${cur.name}${wasRandom ? ' (랜덤)' : ''}, ${cur.audio ? '' : DNAME[diff] + ', '}${lanes}키`;
   $('#rScore').textContent = score.toLocaleString('ko-KR');
@@ -3258,7 +3613,7 @@ function draw(){
   if (chal){   // 연속 도전: 전구
     const bn = chal.banner, ba = bn ? (now - bn.born) / 1000 : 9;
     if (bn && ba < 3.2){   // 스테이지 클리어 안내
-      g.globalAlpha = Math.min(1, ba * 4, (3.2 - ba) * 2);
+      g.globalAlpha = Math.min(1, ba * 4, (3.2 - ba) * 2); g.textAlign = 'center';   // 가운데 정렬 (점수가 왼쪽 정렬로 남아 있어서 밀렸어요)
       g.fillStyle = '#7FD0FF'; g.font = `${Math.round(Math.min(W, H) * .085)}px Jua, sans-serif`; g.fillText(bn.text, cx, H * .2);
       g.fillStyle = colors.ink; g.font = `${Math.round(Math.min(W, H) * .032)}px "Gowun Dodum", sans-serif`; g.fillText(bn.sub, cx, H * .2 + Math.min(W, H) * .065);
       g.globalAlpha = 1; g.fillStyle = colors.soft; g.font = '15px "Gowun Dodum", sans-serif';
@@ -3304,22 +3659,7 @@ function draw(){
     }
   }
 
-  // 박자가 바뀌기 전에 알려줘요
-  if (song && state === 'playing'){
-    for (const mk of song.marks){
-      const d = mk.t - st;
-      if (d > 2.6 || d < -.7) continue;
-      const a = d < 0 ? 1 + d / .7 : Math.min(1, (2.6 - d) / .4);
-      g.globalAlpha = Math.max(0, a); g.textAlign = 'center';
-      g.fillStyle = colors.c3; g.font = `${Math.round(Math.min(30, W * .07))}px Jua, sans-serif`;
-      g.fillText(mk.text, cx, H * .2);
-      if (d > 0){
-        g.fillStyle = colors.soft; g.font = '15px "Gowun Dodum", sans-serif';
-        g.fillText('가로선이 내려오는 마디부터', cx, H * .2 + 24);
-      }
-      g.globalAlpha = 1;
-    }
-  }
+  // 박자·빠르기가 바뀌는 안내 글자는 띄우지 않아요 (판정 글자만)
 
   // 판정 글자
   if (judgeFx){
@@ -3516,7 +3856,7 @@ const sv = load('bangul-speed');
 if (sv){ const b = document.querySelector(`#speedSeg button[data-speed="${sv}"]`); if (b) b.click(); }
 renderKeyLabels();
 const dv = load('bangul-keys');
-{ const b = document.querySelector(`#diffSeg button[data-lanes="${KEYMAP[dv] ? dv : 4}"]`); if (b) b.click(); }
+{ const b = document.querySelector(`#diffSeg button[data-lanes="${KEYMAP[dv] && dv != 3 ? dv : 4}"]`); if (b) b.click(); }   // 3키는 없앴어요: 예전에 3키였으면 4키로
 const dsv = load('bangul-diff'); if (DIFFS.includes(dsv)) diff = dsv;
 let reloadPending = false;
 if ('serviceWorker' in navigator){
@@ -3567,7 +3907,7 @@ function setInputMode(m){
 addEventListener('keydown', () => setInputMode('key'), true);   // 키를 누르면 키보드 (태블릿에 키보드를 연결해도)
 addEventListener('pointerdown', e => { if (e.pointerType === 'touch') setInputMode('touch'); }, true);   // 손가락으로 터치하면 터치
 // 자동 테스트할 때만 켜져요 (평소에는 아무 일도 안 해요)
-if (window.__BB_TEST__) window.__bb = { get notes(){ return notes; }, get counts(){ return counts; }, get state(){ return state; }, get chal(){ return chal; }, finish: () => finish(), charts: (dk, L) => SONGS.map(S => makeChart(buildSong(S), S, dk, L)), jTime, keys: () => KEYMAP[lanes] };
+if (window.__BB_TEST__) window.__bb = { get notes(){ return notes; }, get counts(){ return counts; }, get state(){ return state; }, get chal(){ return chal; }, finish: () => finish(), charts: (dk, L) => SONGS.map(S => makeChart(buildSong(S), S, dk, L)), levels: () => SONGS.map(S => songLevels(S).hard), songName: i => SONGS[i].name, jTime, keys: () => KEYMAP[lanes] };
 })();
 </script>
 </body>

@@ -78,7 +78,7 @@ h1 .row + .row{padding-left:clamp(1.5rem,8vw,6rem)}
 .slot p{margin:0;max-width:16em}
 .slot .plus{width:3.2rem;height:3.2rem;border-radius:50%;border:2.5px dashed var(--line);display:grid;place-items:center;font-family:"Jua",sans-serif;font-size:1.8rem;line-height:1}
 
-/* 방울 박자 표지: 떨어지는 방울 */
+/* Nebble 표지: 떨어지는 방울 */
 .bubble-cover{--cover-bg:#0A0A1C}
 .bubble-cover .lane{position:absolute;top:0;bottom:0;width:18%;border-radius:999px;background:#16163A}
 .bubble-cover .lane:nth-child(1){left:9%}.bubble-cover .lane:nth-child(2){left:30%}
@@ -123,7 +123,7 @@ footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);c
   </main>
 
   <footer>
-    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요. <span style="opacity:.6">(버전 76)</span>
+    앱으로 설치하면 인터넷이 없어도 플레이할 수 있어요. 게임 기록은 이 기기에 저장돼요. <span style="opacity:.6">(버전 77)</span>
   </footer>
 </div>
 
@@ -131,10 +131,10 @@ footer{margin-top:3.5rem;padding-top:1.5rem;border-top:1.5px solid var(--line);c
 /* 게임 목록: 새 게임을 만들면 여기에 하나씩 추가돼요 */
 const GAMES = [
   {
-    title: '방울 박자',
-    desc: '떨어지는 방울이 동그라미에 겹치는 순간 키를 누르는 리듬게임이에요. 클래식 명곡, 민요, 캐롤을 포함한 28곡이 있고, 내 음악 파일로 직접 곡을 만들 수도 있어요.',
-    tags: ['리듬', '클래식', '내 곡 만들기', '랭킹'],
-    url: 'games/bangul-bakja.html',
+    title: 'Nebble',
+    desc: '떨어지는 방울이 동그라미에 닿는 순간 키를 누르는 리듬게임이에요. 클래식 명곡, 민요, 캐롤을 포함한 35곡이 있고, 길게 누른 채 움직이는 띠 노트와 레벨 1부터 10까지 이어지는 연속 도전도 있어요.',
+    tags: ['리듬', '클래식', '연속 도전', '내 곡 만들기'],
+    url: 'games/nebble.html',
     accent: '#FF5CAA',
     cover: 'bubble',
     made: '2026년 10월 28일',

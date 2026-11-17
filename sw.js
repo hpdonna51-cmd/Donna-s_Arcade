@@ -1,9 +1,9 @@
 // 다나의 오락실 오프라인 지원
 // 게임을 새로 추가하거나 고치면 아래 버전 숫자를 하나 올려주세요 (v36 → v37)
-const CACHE = 'dana-arcade-v76';
+const CACHE = 'dana-arcade-v77';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
-  './games/bangul-bakja.html',
+  './games/nebble.html',
   './games/banjjak-jireongi.html',
   './games/alt-delete.html',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png',
