@@ -170,7 +170,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--me);outline-offset:
     <div class="btns"><button id="startBtn" class="primary" type="button">시작하기</button><button id="friendBtn" class="secondary" type="button">친구랑 하기</button></div>
     <p class="btns" style="margin:-.6rem 0 0"><a class="text-link" href="../index.html">오락실로</a></p>
     <p class="hint">방향키나 WASD, 또는 마우스로 방향을 바꿔요. 휴대폰에서는 화면을 손가락으로 쓸어서 조종해요. 숫자 1, 2, 3으로 난이도를 고르고 스페이스로 시작해요. 땅이 끊기면 내가 있는 덩어리(선을 그리는 중이면 출발한 덩어리)만 남아요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
-    <p class="hint" style="opacity:.6">버전 4 <button class="small-toggle" id="soundBtn" type="button"></button></p>
+    <p class="hint" style="opacity:.6">버전 5 <button class="small-toggle" id="soundBtn" type="button"></button></p>
   </div>
 </div>
 
@@ -1788,6 +1788,8 @@ function netInput(){
 }
 function onNet(m){
   if (!m || typeof m !== 'object') return;
+  heard = performance.now();
+  if (m.t === 'ping') return;
   if (role === 'host'){
     if (m.t === 'hello'){
       netInfo = {name:String(m.name || '친구').slice(0, 8), color:String(m.color || '')};
@@ -1831,9 +1833,37 @@ function guestEvent(m){
   else if ((m.k === 'win' || m.k === 'last' || m.k === 'teamwin') && mode === 'play') endGame(m.k, null);
 }
 function netOpenPanel(){ $('netChoose').hidden = false; $('netHost').hidden = true; $('netGuest').hidden = true; $('codeIn').value = ''; showOv('netOv'); }
+// 연결 서비스(방 코드 찾기용)와 끊기면 다시 붙어요. 휴대폰에서 다른 앱(카톡 등)에 다녀오면 자주 끊겨요
+function keepPeer(pr){
+  pr.on('disconnected', () => { if (peer === pr && !pr.destroyed) setTimeout(() => { if (peer === pr && !pr.destroyed && pr.disconnected) try { pr.reconnect(); } catch(e){} }, 500); });
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && peer && peer.reconnect && !peer.destroyed && peer.disconnected) try { peer.reconnect(); } catch(e){}
+});
+// 실제 연결 길(WebRTC)이 막히거나 끊기면 알려줘요
+function watchIce(conn, onFail){
+  const pc = conn.peerConnection; if (!pc) return;
+  let t = 0;
+  pc.addEventListener('iceconnectionstatechange', () => {
+    const st = pc.iceConnectionState;
+    clearTimeout(t);
+    if (st === 'failed') onFail();
+    else if (st === 'disconnected') t = setTimeout(() => { if (pc.iceConnectionState === 'disconnected') onFail(); }, 6000);
+  });
+}
+// 서로 1초마다 신호를 보내고, 8초 넘게 소식이 없으면 끊긴 걸로 봐요
+let heard = 0, beatT = 0;
+function startBeat(){
+  heard = performance.now(); clearInterval(beatT);
+  beatT = setInterval(() => {
+    if (!link){ clearInterval(beatT); return; }
+    netSend({t:'ping'});
+    if (performance.now() - heard > 8000){ clearInterval(beatT); try { link.close(); } catch(e){} netClosed(); }
+  }, 1000);
+}
 function attach(conn){
   // PeerJS 연결이나 시험용 채널을 같은 모양으로 감싸요
-  link = conn;
+  link = conn; startBeat();
 }
 async function hostRoom(){
   leaveNet(); role = 'host';
@@ -1849,15 +1879,23 @@ async function hostRoom(){
   }
   try { await loadPeer(); } catch(e){ $('netHostMsg').textContent = '연결 도구를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'; return; }
   if (role !== 'host') return;
-  peer = new window.Peer('alt-delete-' + code.toLowerCase(), {debug:0});
-  peer.on('open', () => { $('roomCode').textContent = code; $('netHostMsg').textContent = '친구에게 이 코드를 알려주세요. 친구가 들어오면 시작할 수 있어요.'; });
+  const pr = peer = new window.Peer('alt-delete-' + code.toLowerCase(), {debug:0});
+  keepPeer(pr);
+  let opened = false;
+  setTimeout(() => { if (peer === pr && !opened) $('netHostMsg').textContent = '연결 서비스가 느려요. 조금만 더 기다리거나, 뒤로 갔다가 다시 방 만들기를 눌러 주세요.'; }, 10000);
+  peer.on('open', () => { if (opened) return; opened = true; $('roomCode').textContent = code; $('netHostMsg').textContent = '친구에게 이 코드를 알려주세요. 친구가 들어오면 시작할 수 있어요.'; });
   peer.on('error', e => {
-    if (e.type === 'unavailable-id'){ hostRoom(); return; }                 // 코드가 겹치면 새로 만들어요
+    if (peer !== pr) return;
+    if (e.type === 'unavailable-id' && !opened){ hostRoom(); return; }      // 코드가 겹치면 새로 만들어요
+    if (e.type === 'network' || e.type === 'server-error' || e.type === 'socket-error' || e.type === 'socket-closed' || e.type === 'disconnected') return;  // 다시 붙는 중
+    if (link) return;                                                       // 이미 친구와 이어져 있으면 괜찮아요
     $('netHostMsg').textContent = '연결 서비스에 문제가 생겼어요. 잠시 뒤 다시 시도해 주세요.';
   });
   peer.on('connection', conn => {
     if (link){ conn.on('open', () => conn.close()); return; }               // 지금은 친구 한 명까지만
+    watchIce(conn, () => { if (link){ try { link.close(); } catch(e){} netClosed(); } });
     conn.on('open', () => {
+      if (link){ try { conn.close(); } catch(e){} return; }
       attach({send:o => { try { conn.send(o); } catch(e){} }, close:() => { try { conn.close(); } catch(e){} }});
       conn.on('data', onNet);
       conn.on('close', netClosed);
@@ -1870,7 +1908,6 @@ async function joinRoom(){
   leaveNet(); role = 'guest'; savedDiff = diff; savedMap = mapId;
   $('netChoose').hidden = true; $('netGuest').hidden = false; $('netGuestMsg').textContent = '연결하는 중이에요.';
   clearTimeout(joinTimer);
-  joinTimer = setTimeout(() => { if (role === 'guest' && !players.some(p => p === me)) $('netGuestMsg').textContent = '방을 찾지 못했어요. 코드를 다시 확인해 주세요.'; }, 12000);
   const hello = {t:'hello', name:myName || '친구', color:myColor};
   if (LOCALNET){
     const bc = new BroadcastChannel('alt-delete-' + code);
@@ -1881,19 +1918,45 @@ async function joinRoom(){
   }
   try { await loadPeer(); } catch(e){ $('netGuestMsg').textContent = '연결 도구를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'; return; }
   if (role !== 'guest') return;
-  peer = new window.Peer({debug:0});
-  peer.on('open', () => {
-    const conn = peer.connect('alt-delete-' + code.toLowerCase(), {reliable:true, serialization:'binary'});
-    conn.on('open', () => {
-      attach({send:o => { try { conn.send(o); } catch(e){} }, close:() => { try { conn.close(); } catch(e){} }});
-      conn.on('data', onNet); conn.on('close', netClosed);
+  const pr = peer = new window.Peer({debug:0});
+  keepPeer(pr);
+  let tries = 0, conn = null, opened = false;
+  const msg = t => { if (peer === pr && role === 'guest' && !link) $('netGuestMsg').textContent = t; };
+  // 연결이 안 되면 두 번 더 자동으로 다시 해봐요
+  const tryConnect = () => {
+    if (peer !== pr || link) return;
+    tries++;
+    if (conn){ try { conn.close(); } catch(e){} }
+    msg(tries === 1 ? '방장에게 연결하는 중이에요.' : `다시 연결해 보는 중이에요 (${tries}/3).`);
+    const c = conn = pr.connect('alt-delete-' + code.toLowerCase(), {reliable:true, serialization:'binary'});
+    const fail = () => {
+      if (conn !== c || link) return;
+      clearTimeout(joinTimer);
+      if (tries < 3) tryConnect();
+      else msg('연결 길이 막혔어요. 둘 다 같은 와이파이에 연결하거나, 한 명은 와이파이 대신 데이터로 바꿔서 다시 해보세요.');
+    };
+    watchIce(c, () => { if (link && conn === c){ try { link.close(); } catch(e){} netClosed(); } else fail(); });
+    clearTimeout(joinTimer); joinTimer = setTimeout(fail, 12000);
+    c.on('open', () => {
+      if (conn !== c) return;
+      clearTimeout(joinTimer);
+      attach({send:o => { try { c.send(o); } catch(e){} }, close:() => { try { c.close(); } catch(e){} }});
+      c.on('data', onNet); c.on('close', () => { if (link && conn === c) netClosed(); });
       netSend(hello);
     });
+  };
+  setTimeout(() => { if (peer === pr && !opened) msg('연결 서비스가 느려요. 조금만 더 기다려 주세요.'); }, 10000);
+  pr.on('open', () => { if (opened) return; opened = true; tryConnect(); });
+  pr.on('error', e => {
+    if (peer !== pr || role !== 'guest' || link) return;
+    if (e.type === 'peer-unavailable'){ clearTimeout(joinTimer); conn = null; msg('그 코드의 방이 없어요. 코드를 확인하고, 방장 화면에 코드가 아직 떠 있는지 봐 주세요.'); return; }
+    if (e.type === 'network' || e.type === 'server-error' || e.type === 'socket-error' || e.type === 'socket-closed' || e.type === 'disconnected') return;
+    msg('연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.');
   });
-  peer.on('error', e => { if (role === 'guest') $('netGuestMsg').textContent = e.type === 'peer-unavailable' ? '그 코드의 방이 없어요. 코드를 다시 확인해 주세요.' : '연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.'; });
 }
 // 연결이 끊겼을 때
 function netClosed(){
+  clearInterval(beatT);
   if (!role) return;
   const was = role;
   link = null;
@@ -1914,7 +1977,7 @@ function restoreLocal(){
   savedMap = savedDiff = null;
 }
 function leaveNet(){
-  clearTimeout(joinTimer);
+  clearTimeout(joinTimer); clearInterval(beatT);
   if (link){ netSend({t:'bye'}); try { link.close(); } catch(e){} }
   if (peer){ try { peer.destroy(); } catch(e){} }
   const wasGuest = role === 'guest';
