@@ -76,7 +76,22 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--me);outline-offset:
 .newbest{margin:0;color:var(--me);font-family:"Jua",sans-serif;font-size:1.2rem}
 .why{margin:-.4rem 0 0;color:var(--soft);font-size:1.05rem}
 .netbox[hidden]{display:none}
+.roster[hidden]{display:none}
+.roster{width:100%;max-width:22rem;border:2px solid var(--line);border-radius:16px;padding:.7rem .8rem .5rem;background:var(--panel)}
+.roster-head{display:flex;justify-content:space-between;align-items:baseline;font-size:.88rem;color:var(--soft);margin-bottom:.35rem}
+.roster-head b{font-family:"Jua",sans-serif;font-weight:400;color:var(--ink);font-size:1rem}
+.roster ol{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
+.roster li{display:flex;align-items:center;gap:.6rem;padding:.38rem .2rem;border-top:1px solid var(--line);font-size:1rem;text-align:left}
+.roster li:first-child{border-top:0}
+.roster .dot{width:.95rem;height:.95rem;border-radius:50%;flex:none;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.roster .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.roster .tag{font-size:.75rem;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:.05rem .5rem;flex:none}
+.roster .tag.host{color:#FFD23F;border-color:color-mix(in srgb,#FFD23F 45%,transparent)}
+.roster li.empty{color:color-mix(in srgb,var(--soft) 60%,transparent);font-size:.9rem}
+.roster li.empty .dot{background:transparent;border:1.5px dashed var(--line);box-shadow:none}
 .netbox{width:100%;display:flex;flex-direction:column;align-items:center;gap:.8rem}
+.net-nick{max-width:22rem;text-align:center}
+.net-nick.need{border-color:#FF4F7B}
 .joinrow{display:flex;gap:.5rem;width:100%;max-width:22rem}
 .joinrow .nick{flex:1;min-width:0;text-align:center;letter-spacing:.3em;text-transform:uppercase;font-family:"Jua",sans-serif;font-size:1.3rem}
 .roomcode{font-family:"Jua",sans-serif;font-size:clamp(3rem,16vw,4.6rem);letter-spacing:.18em;line-height:1;padding:.3rem 1rem .4rem;border-radius:18px;background:var(--panel);border:2px solid var(--line);font-variant-numeric:tabular-nums}
@@ -170,7 +185,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--me);outline-offset:
     <div class="btns"><button id="startBtn" class="primary" type="button">시작하기</button><button id="friendBtn" class="secondary" type="button">친구랑 하기</button></div>
     <p class="btns" style="margin:-.6rem 0 0"><a class="text-link" href="../index.html">오락실로</a></p>
     <p class="hint">방향키나 WASD, 또는 마우스로 방향을 바꿔요. 휴대폰에서는 화면을 손가락으로 쓸어서 조종해요. 숫자 1, 2, 3으로 난이도를 고르고 스페이스로 시작해요. 땅이 끊기면 내가 있는 덩어리(선을 그리는 중이면 출발한 덩어리)만 남아요. 게임 중 Esc를 누르면 잠깐 멈춰요.</p>
-    <p class="hint" style="opacity:.6">버전 6 <button class="small-toggle" id="soundBtn" type="button"></button></p>
+    <p class="hint" style="opacity:.6">버전 9 <button class="small-toggle" id="soundBtn" type="button"></button></p>
   </div>
 </div>
 
@@ -178,8 +193,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--me);outline-offset:
   <div class="panel">
     <h2>친구랑 하기</h2>
     <div class="netbox" id="netChoose">
+      <label class="hint" for="netNick" id="netNickLbl">상대에게 보일 내 닉네임</label>
+      <input id="netNick" class="nick net-nick" type="text" maxlength="8" placeholder="닉네임 (최대 8자)" autocomplete="off" spellcheck="false" enterkeyhint="done">
       <button id="hostBtn" class="primary" type="button">방 만들기</button>
-      <p class="hint">방을 만들면 나오는 코드를 친구에게 알려주세요.</p>
+      <p class="hint">방을 만들면 나오는 코드를 친구들에게 알려주세요. 방장 포함 7명까지 같이 할 수 있어요.</p>
       <div class="joinrow">
         <label class="sr" for="codeIn">방 코드</label>
         <input id="codeIn" class="nick code-in" type="text" maxlength="4" placeholder="방 코드 4자리" autocomplete="off" spellcheck="false" autocapitalize="characters" enterkeyhint="go">
@@ -194,6 +211,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--me);outline-offset:
     </div>
     <div class="netbox" id="netGuest" hidden>
       <p class="lede" id="netGuestMsg">연결하는 중이에요.</p>
+    </div>
+    <div class="roster" id="netRoster" hidden>
+      <div class="roster-head"><span>방에 있는 사람</span><b id="rosterCount"></b></div>
+      <ol id="rosterList"></ol>
     </div>
     <p class="hint">맵과 난이도는 방을 만든 사람이 고른 걸로 해요. 방을 만든 사람의 화면이 꺼지거나 다른 탭으로 넘어가면 게임이 멈춰요.</p>
     <button id="netBack" class="secondary" type="button">돌아가기</button>
@@ -1186,7 +1207,7 @@ function kill(v, k, cause){
   v.trail = [];
   if (k && k !== v){ k.kills++; nudge(k, .1, .15); }
   if (v.isBot) v.respawn = mode === 'demo' ? 2.6 : Infinity;   // 게임 중에는 다시 나오지 않아요
-  if (role === 'host' && link) netSend({t:'ev', k:'kill', v:v.id, by:k ? k.id : 0, cause});
+  if (hostLive()) netSend({t:'ev', k:'kill', v:v.id, by:k ? k.id : 0, cause});
   if (mode === 'play' || (role === 'host' && mode === 'over')){
     if (v === me && mode === 'play'){ endGame(cause, k); }
     else if (k === me && mode === 'play'){ showKill(v.name); sfx('kill'); }
@@ -1226,7 +1247,7 @@ function step(dt){
     } else if (p.trail.length){
       const g = capture(p);
       if (p === me && mode === 'play' && g > 0) showPop(g);
-      else if (role === 'host' && p === guest && g > 0 && link) netSend({t:'ev', k:'gain', g});
+      else if (p.gid && g > 0 && hostLive()) netSend({t:'ev', k:'gain', g, to:p.id});
     }
   }
   // 부딪힘 확인
@@ -1265,9 +1286,11 @@ function step(dt){
     if (pct >= 99.5) endGame('win', null);
     else if (!players.some(p => p !== me && !ally(p, me) && p.alive)) endGame(teamMode ? 'teamwin' : 'last', null);
   }
-  if (role === 'host' && guest && guest.alive && guest.go && !guest.done && link){
-    if (counts[guest.lid] / NP * 100 >= 99.5){ guest.done = true; netSend({t:'ev', k:'win'}); }
-    else if (!players.some(p => p !== guest && !ally(p, guest) && p.alive)){ guest.done = true; netSend({t:'ev', k:teamMode ? 'teamwin' : 'last'}); }
+  if (hostLive()) for (const gg of guests){
+    const q = gg.p;
+    if (!q || !q.alive || !q.go || q.done) continue;
+    if (counts[q.lid] / NP * 100 >= 99.5){ q.done = true; netSend({t:'ev', k:'win', to:q.id}); }
+    else if (!players.some(p => p !== q && !ally(p, q) && p.alive)){ q.done = true; netSend({t:'ev', k:teamMode ? 'teamwin' : 'last', to:q.id}); }
   }
 }
 
@@ -1294,7 +1317,8 @@ function camTarget(){
   if (mode !== 'demo' && me){
     if (me.alive) return me;
     if (teamMode){ const mate = players.find(p => p.alive && p.lid === me.lid); if (mate) return mate; }   // 내가 죽으면 팀원을 따라가요
-    return role === 'host' && guest && guest.alive ? guest : null;
+    if (role === 'host'){ const g = guests.find(q => q.p && q.p.alive); if (g) return g.p; }
+    return null;
   }
   // 시작 화면: 한 상대를 정해서 그 상대가 죽을 때까지 따라가요
   if (!demoFollow || !demoFollow.alive || !players.includes(demoFollow)){
@@ -1462,7 +1486,7 @@ function resetWorld(){
   owner.fill(0); counts.fill(0); counts[0] = N;
   timg.data.fill(0);
   tctx.clearRect(0, 0, GK, GK); sctx.clearRect(0, 0, GK, GK);
-  dx0 = dy0 = G; dx1 = dy1 = -1; ndx0 = ndy0 = G; ndx1 = ndy1 = -1; particles = []; players = []; me = null; gameTime = 0; guest = null;
+  dx0 = dy0 = G; dx1 = dy1 = -1; ndx0 = ndy0 = G; ndx1 = ndy1 = -1; particles = []; players = []; me = null; gameTime = 0; for (const g of guests) g.p = null;
   LANDBOX = [];
 }
 function shuffled(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -1483,7 +1507,8 @@ function startGame(){
   if (gameMode === 'team'){ teamMode = true; if (G !== TEAM_G || mapId !== 'square'){ setGrid(TEAM_G); buildMap('square'); } }
   else soloWorld();
   mode = 'play'; cfg = DIFF[diff]; resetWorld();
-  const withFriend = role === 'host' && link;
+  const withFriend = hostLive();
+  const humans = withFriend ? guests.slice() : [];
   const mix = TRAIT_MIX[diff], traitPool = [];
   for (const t in mix) for (let n = 0; n < mix[t]; n++) traitPool.push(t);
   while (traitPool.length < cfg.bots) traitPool.push('steady');
@@ -1495,9 +1520,9 @@ function startGame(){
     const tc = [myColor, PALETTE[(mi + 5) % 20], PALETTE[(mi + 10) % 20], PALETTE[(mi + 15) % 20]];
     let id = 1, k = 0;
     me = makePlayer(id++, myName || '나', tc[0], false, null, 1); players.push(me);
-    if (withFriend){ guest = makePlayer(id++, netInfo.name || '친구', tc[0], false, null, 1); players.push(guest); }
+    for (const g of humans){ g.p = makePlayer(id++, g.name, tc[0], false, null, 1); g.p.gid = g.gid; players.push(g.p); }
     for (let t = 0; t < 4; t++){
-      const n = S - (t === 0 ? (withFriend ? 2 : 1) : 0);
+      const n = Math.max(0, S - (t === 0 ? 1 + humans.length : 0));
       for (let q = 0; q < n; q++) players.push(makePlayer(id++, names[k++], tc[t], true, withTrait(cfg, pickTrait()), t + 1));
     }
     // 팀마다 맵 네 귀퉁이 쪽 한 곳에서 같이 시작해요
@@ -1511,13 +1536,17 @@ function startGame(){
     }
   } else {
     me = makePlayer(1, myName || '나', myColor, false, null); players.push(me);
-    let gColor = netInfo.color;
-    if (withFriend){
-      if (!PALETTE.includes(gColor) || gColor === myColor) gColor = PALETTE.find(c => c !== myColor && Math.abs(PALETTE.indexOf(c) - PALETTE.indexOf(myColor)) > 4) || PALETTE[0];
-      guest = makePlayer(2, netInfo.name || '친구', gColor, false, null); players.push(guest);
+    // 친구마다 고른 색을 쓰고, 겹치면 남은 색 중 하나를 줘요
+    const used = new Set([myColor]);
+    let pid = 2;
+    for (const g of humans){
+      let c = g.color;
+      if (!PALETTE.includes(c) || used.has(c)){ const free = PALETTE.filter(q => !used.has(q)); c = free.find(q => Math.abs(PALETTE.indexOf(q) - PALETTE.indexOf(myColor)) > 4) || free[0]; }
+      used.add(c);
+      g.p = makePlayer(pid++, g.name, c, false, null); g.p.gid = g.gid; players.push(g.p);
     }
-    const off = withFriend ? 3 : 2;
-    const cols = shuffled(PALETTE.filter(c => c !== myColor && c !== gColor));
+    const off = pid;
+    const cols = shuffled(PALETTE.filter(c => !used.has(c)));
     const tl = shuffled(traitPool);
     for (let i = 0; i < cfg.bots; i++) players.push(makePlayer(i + off, names[i], cols[i], true, withTrait(cfg, tl[i])));
     const s0 = findSpawn(); spawnAt(me, s0[0], s0[1]);
@@ -1528,8 +1557,10 @@ function startGame(){
   toast(matchMedia('(pointer: coarse)').matches ? '화면을 쓸어서 방향을 정하면 출발해요' : '방향키나 마우스로 방향을 정하면 출발해요');
   showOv(null); setHud(true); updateHud();
   if (withFriend){
-    netSend({t:'init', map:mapId, g:G, team:teamMode ? 1 : 0, diff, you:guest.id, ps:players.map(p => [p.id, p.name, p.color, p.isBot ? 1 : 0, p.lid]), own:rleRect(0, 0, G - 1, G - 1)});
+    const yous = {}; for (const g of humans) yous[g.gid] = g.p.id;
+    netSend({t:'init', map:mapId, g:G, team:teamMode ? 1 : 0, diff, yous, ps:players.map(p => [p.id, p.name, p.color, p.isBot ? 1 : 0, p.lid]), own:rleRect(0, 0, G - 1, G - 1)});
     ndx0 = ndy0 = G; ndx1 = ndy1 = -1; netTick = 0;
+    hostLobbyMsg();
     netSend({t:'st', ps:packPlayers()});
   }
 }
@@ -1567,11 +1598,11 @@ function endGame(cause, k){
   if (better){ all[bestKey()] = {pct:+myMax.toFixed(2), kills:me.kills, time:s}; save('alt-delete-best', JSON.stringify(all)); }
   $('newBest').hidden = !(better && myMax > 0.2);
   $('againBtn').hidden = role === 'guest';
-  $('againBtn').textContent = role === 'host' && link ? '같이 새 판 시작' : '다시 하기';
+  $('againBtn').textContent = hostLive() ? '같이 새 판 시작' : '다시 하기';
   $('homeBtn').textContent = role ? '방에서 나가기' : '처음 화면으로';
   $('overNote').hidden = !role;
   $('overHint').hidden = role === 'guest';
-  $('overNote').textContent = role === 'guest' ? '방장이 새 판을 시작하면 함께 시작해요.' : role === 'host' && link && guest && guest.alive ? `${guest.name}은(는) 아직 하는 중이에요. 게임은 계속 돌아가요.` : '';
+  $('overNote').textContent = role === 'guest' ? '방장이 새 판을 시작하면 함께 시작해요.' : (() => { const a = role === 'host' ? guests.filter(g => g.p && g.p.alive) : []; return a.length ? `${nameList(a)}${a.length > 1 ? '는' : (/[가-힣]$/.test(a[0].name) && (a[0].name.charCodeAt(a[0].name.length - 1) - 0xAC00) % 28 ? '은' : '는')} 아직 하는 중이에요. 게임은 계속 돌아가요.` : ''; })();
   setHud(false);
   clearTimeout(overTimer);
   overTimer = setTimeout(() => { if (mode === 'over') showOv('overOv'); }, cause === 'win' || cause === 'last' || cause === 'teamwin' ? 700 : 1000);
@@ -1624,6 +1655,11 @@ $('soundBtn').addEventListener('click', () => { soundOn = !soundOn; save('alt-de
 $('startBtn').addEventListener('click', startGame);
 $('nickIn').value = myName;
 $('nickIn').addEventListener('input', e => { myName = e.target.value.trim().slice(0, 8); save('alt-delete-name', myName); });
+$('netNick').addEventListener('input', e => {
+  myName = e.target.value.trim().slice(0, 8); save('alt-delete-name', myName); $('nickIn').value = e.target.value;
+  if (myName){ e.target.classList.remove('need'); $('netNickLbl').textContent = '상대에게 보일 내 닉네임'; }
+});
+$('netNick').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') e.target.blur(); });
 $('nickIn').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter'){ e.preventDefault(); e.target.blur(); } });
 $('againBtn').addEventListener('click', startGame);
 $('homeBtn').addEventListener('click', toMenu);
@@ -1694,13 +1730,23 @@ function steerMe(){
 /* ───────── 친구랑 하기 ─────────
    방장 기기가 게임 전체를 계산하고, 친구 기기는 조작만 보내고 화면을 받아 그려요.
    주고받는 건 Firebase 실시간 데이터베이스를 거쳐요. */
-let role = null, link = null, guest = null, peer = null, netTick = 0;
-let netInfo = {name:'', color:''}, ndx0 = G, ndy0 = G, ndx1 = -1, ndy1 = -1;
+let role = null, link = null, guests = [], peer = null, netTick = 0;
+let ndx0 = G, ndy0 = G, ndx1 = -1, ndy1 = -1;
 let guestLive = false, savedDiff = null, savedMap = null, inT = 0, lastSentA = 99, lastSentGo = false, joinTimer = 0;
 const LOCALNET = location.hash === '#localnet';   // 시험용: 같은 컴퓨터의 두 탭끼리
+// 받침에 맞춰 이/가 붙이기
+const josa = (w, a, b) => { const c = String(w).charCodeAt(String(w).length - 1); return w + (c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? a : b); };
+let hostNameNet = '';
+// 친구랑 하기는 닉네임이 꼭 있어야 해요
+function needNick(){
+  if (myName) return false;
+  const n = $('netNick'); n.classList.add('need'); $('netNickLbl').textContent = '닉네임을 먼저 적어 주세요'; n.focus();
+  return true;
+}
 const CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const genCode = () => Array.from({length:4}, () => CODE_CH[(Math.random() * CODE_CH.length) | 0]).join('');
 function netSend(o){ if (link) link.send(o); }
+const hostLive = () => role === 'host' && !!link && guests.length > 0;
 // 땅 칸을 줄마다 [주인, 길이] 묶음으로 줄여서 보내요
 function rleRect(x0, y0, x1, y1){
   const out = [x0, y0, x1, y1];
@@ -1777,29 +1823,9 @@ function netInput(){
     netSend({t:'in', a:me.ta, go:me.go});
   }
 }
-function onNet(m){
-  if (!m || typeof m !== 'object') return;
-  heard = performance.now();
-  if (m.t === 'ping') return;
-  if (role === 'host'){
-    if (m.t === 'hello'){
-      netInfo = {name:String(m.name || '친구').slice(0, 8), color:String(m.color || '')};
-      $('netHostMsg').textContent = `${netInfo.name}이(가) 들어왔어요. 준비되면 시작하세요.`;
-      $('netStart').disabled = false;
-      netSend({t:'lobby', host:myName || '방장'});
-    } else if (m.t === 'in' && guest && guest.alive){
-      if (typeof m.a === 'number' && isFinite(m.a)) guest.ta = m.a;
-      if (m.go && !guest.go){ guest.go = true; guest.a = guest.ta; }
-    } else if (m.t === 'bye') netClosed();
-  } else if (role === 'guest'){
-    if (m.t === 'lobby'){ clearTimeout(joinTimer); $('netGuestMsg').textContent = `${String(m.host).slice(0, 8)}의 방에 들어왔어요. 방장이 시작하길 기다리는 중이에요.`; }
-    else if (m.t === 'init') guestStart(m);
-    else if (m.t === 'st' && guestLive && players.length){ if (m.own) applyRle(m.own); unpackPlayers(m.ps); }
-    else if (m.t === 'ev' && guestLive) guestEvent(m);
-    else if (m.t === 'bye') netClosed();
-  }
-}
 function guestStart(m){
+  const myId = m.yous ? m.yous[myGid] : m.you;
+  if (!myId || !m.ps.some(q => q[0] === myId)) return;               // 이번 판에 내가 없으면 다음 판을 기다려요
   guestLive = true;
   audio();
   teamMode = !!m.team;
@@ -1807,7 +1833,7 @@ function guestStart(m){
   if (DIFF[m.diff]) diff = m.diff;
   mode = 'play'; resetWorld();
   for (const [id, name, color, bot, lid] of m.ps){ const p = makePlayer(id, String(name).slice(0, 8), color, !!bot, null, lid || id); p.alive = false; players.push(p); }
-  me = players.find(p => p.id === m.you);
+  me = players.find(p => p.id === myId);
   applyRle(m.own);
   myTime = 0; myMax = 0; myBestRank = 99; joy = null; keys.clear(); inputMode = 'none'; me.go = false; lastSentA = 99; lastSentGo = false;
   toast(matchMedia('(pointer: coarse)').matches ? '화면을 쓸어서 방향을 정하면 출발해요' : '방향키나 마우스로 방향을 정하면 출발해요');
@@ -1821,11 +1847,13 @@ function guestEvent(m){
     if (mode !== 'play') return;
     if (v === me) endGame(m.cause, k && k !== me ? k : null);
     else if (k === me){ showKill(v ? v.name : ''); sfx('kill'); }
-  } else if (m.k === 'gain' && mode === 'play') showPop(m.g);
-  else if ((m.k === 'win' || m.k === 'last' || m.k === 'teamwin') && mode === 'play') endGame(m.k, null);
+  } else if (m.k === 'gain' && mode === 'play' && (m.to == null || m.to === me.id)) showPop(m.g);
+  else if ((m.k === 'win' || m.k === 'last' || m.k === 'teamwin') && mode === 'play' && (m.to == null || m.to === me.id)) endGame(m.k, null);
 }
-function netOpenPanel(){ $('netChoose').hidden = false; $('netHost').hidden = true; $('netGuest').hidden = true; $('codeIn').value = ''; showOv('netOv'); }
+function netOpenPanel(){ renderRoster(null); $('netNick').value = myName; $('netNick').classList.remove('need'); $('netNickLbl').textContent = '상대에게 보일 내 닉네임'; $('netChoose').hidden = false; $('netHost').hidden = true; $('netGuest').hidden = true; $('codeIn').value = ''; showOv('netOv'); }
 // 친구랑 하기는 Firebase 실시간 데이터베이스를 거쳐서 주고받아요 (어느 인터넷에서든 잘 이어져요)
+// 방 구조: host(방장) / members(들어온 친구들) / down(방장 → 모두) / up(친구들 → 방장)
+const NET_MAX = 7;                                   // 방장 포함 최대 인원
 const FB_CFG = {databaseURL:'https://arcade-590e9-default-rtdb.asia-southeast1.firebasedatabase.app', projectId:'arcade-590e9'};
 const FB_V = '10.12.2';
 let fbDb = null, fbLoading = null;
@@ -1848,50 +1876,115 @@ function b64(buf){ const u = new Uint8Array(buf); let s = ''; for (let i = 0; i 
 function unb64(s){ const t = atob(s), u = new Uint8Array(t.length); for (let i = 0; i < t.length; i++) u[i] = t.charCodeAt(i); return u.buffer; }
 const encMsg = o => JSON.stringify(o, (k, v) => v instanceof ArrayBuffer ? {$b:b64(v)} : v);
 const decMsg = s => JSON.parse(s, (k, v) => v && typeof v === 'object' && typeof v.$b === 'string' ? unb64(v.$b) : v);
-// 한쪽 방향 우편함: 내 칸에 쌓고, 상대 칸에서 읽은 건 바로 지워요
-function fbChannel(room, mine, theirs, onMsg){
-  const outRef = room.child(mine), inRef = room.child(theirs);
+function readBox(ref, onMsg, eat){
   const onAdd = snap => {
-    const v = snap.val(); snap.ref.remove();
+    const v = snap.val(); if (eat) snap.ref.remove();
     if (!v || typeof v.d !== 'string') return;
     let m; try { m = decMsg(v.d); } catch(e){ return; }
     onMsg(m);
   };
-  inRef.on('child_added', onAdd);
-  return {
-    send:o => { try { outRef.push({d:encMsg(o)}); } catch(e){} },
-    close:() => { inRef.off('child_added', onAdd); }
-  };
+  ref.on('child_added', onAdd);
+  return () => ref.off('child_added', onAdd);
 }
-// 서로 1초마다 신호를 보내고, 8초 넘게 소식이 없으면 끊긴 걸로 봐요
+// 신호: 1초마다 주고받고, 8초 넘게 소식이 없으면 끊긴 걸로 봐요
 let heard = 0, beatT = 0;
 function startBeat(){
   heard = performance.now(); clearInterval(beatT);
   beatT = setInterval(() => {
     if (!link){ clearInterval(beatT); return; }
     netSend({t:'ping'});
-    if (performance.now() - heard > 8000){ clearInterval(beatT); netClosed(); }
+    const now = performance.now();
+    if (role === 'host'){ for (const g of guests.slice()) if (now - g.heard > 8000) dropGuest(g.gid); }
+    else if (now - heard > 8000){ clearInterval(beatT); netClosed(); }
   }, 1000);
 }
-function attach(conn){
-  link = conn; startBeat();
-}
+function attach(conn){ link = conn; startBeat(); }
 const NET_FAIL = '연결 도구를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.';
+const nameList = arr => arr.map(g => g.name).join(', ');
+// 방에 있는 사람 목록 칸
+function renderRoster(list){
+  const box = $('netRoster');
+  if (!list){ box.hidden = true; return; }
+  box.hidden = false;
+  $('rosterCount').textContent = `${list.length}/${NET_MAX}명`;
+  const ol = $('rosterList'); ol.textContent = '';
+  for (const r of list){
+    const li = document.createElement('li');
+    const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = PALETTE.includes(r.c) ? r.c : '#A3A7B1';
+    const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = r.n;
+    li.append(dot, nm);
+    if (r.h){ const t = document.createElement('span'); t.className = 'tag host'; t.textContent = '방장'; li.append(t); }
+    if (r.me){ const t = document.createElement('span'); t.className = 'tag'; t.textContent = '나'; li.append(t); }
+    if (r.w){ const t = document.createElement('span'); t.className = 'tag'; t.textContent = '다음 판부터'; li.append(t); }
+    ol.append(li);
+  }
+  for (let i = list.length; i < NET_MAX; i++){
+    const li = document.createElement('li'); li.className = 'empty';
+    const dot = document.createElement('span'); dot.className = 'dot';
+    const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = '빈 자리';
+    li.append(dot, nm); ol.append(li);
+  }
+}
+function hostRoster(){
+  const team = gameMode === 'team', playing = mode === 'play' || mode === 'over';
+  return [{n:myName, c:myColor, h:1}].concat(guests.map(g => ({n:g.name, g:g.gid, c:team ? myColor : g.color, w:playing && !(g.p && players.includes(g.p)) ? 1 : 0})));
+}
+function hostLobbyMsg(){
+  if (role !== 'host') return;
+  const n = guests.length + 1;
+  $('netHostMsg').textContent = guests.length ? `${n}명이 모였어요. 준비되면 시작하세요.` : `친구에게 이 코드를 알려주세요. 최대 ${NET_MAX}명까지 같이 할 수 있어요.`;
+  $('netStart').disabled = !guests.length;
+  const ros = hostRoster();
+  renderRoster(ros.map((r, i) => i ? r : Object.assign({}, r, {me:1})));
+  netSend({t:'lobby', host:myName, names:guests.map(g => g.name), playing:mode === 'play' || mode === 'over', ros});
+}
+// 방장: 친구 메시지 처리
+function hostOnNet(m){
+  if (!m || typeof m !== 'object') return;
+  const g = guests.find(q => q.gid === m.from);
+  if (m.t === 'hello'){
+    if (g || typeof m.from !== 'string') { if (g) g.heard = performance.now(); return; }
+    if (guests.length + 1 >= NET_MAX) return;
+    const used = new Set([myColor, ...guests.map(q => q.color)]);
+    let c = String(m.color || '');
+    if (!PALETTE.includes(c) || used.has(c)){ const free = PALETTE.filter(q => !used.has(q)); c = free.find(q => Math.abs(PALETTE.indexOf(q) - PALETTE.indexOf(myColor)) > 4) || free[0]; }
+    guests.push({gid:m.from, name:String(m.name || '친구').slice(0, 8), color:c, p:null, heard:performance.now()});
+    const ng = guests[guests.length - 1];
+    if (mode === 'play' || mode === 'over') toast(`${josa(ng.name, '이', '가')} 들어왔어요. 다음 판부터 같이 해요`);
+    hostLobbyMsg(); return;
+  }
+  if (!g) return;
+  g.heard = performance.now();
+  if (m.t === 'in' && g.p && g.p.alive){
+    if (typeof m.a === 'number' && isFinite(m.a)) g.p.ta = m.a;
+    if (m.go && !g.p.go){ g.p.go = true; g.p.a = g.p.ta; }
+  } else if (m.t === 'bye') dropGuest(g.gid);
+}
+function dropGuest(gid){
+  const i = guests.findIndex(q => q.gid === gid); if (i < 0) return;
+  const g = guests[i]; guests.splice(i, 1);
+  if (g.p && g.p.alive && players.includes(g.p)) kill(g.p, null, 'left');
+  if (peer && peer.kick) peer.kick(gid);
+  toast(`${josa(g.name, '이', '가')} 나갔어요`);
+  hostLobbyMsg();
+}
 async function hostRoom(){
-  leaveNet(); role = 'host';
+  if (needNick()) return;
+  leaveNet(); role = 'host'; guests = [];
   $('netChoose').hidden = true; $('netHost').hidden = false; $('netStart').disabled = true;
   $('roomCode').textContent = '····'; $('netHostMsg').textContent = '연결 준비 중이에요.';
   if (LOCALNET){
     const code = genCode();
     const bc = new BroadcastChannel('alt-delete-' + code);
-    bc.onmessage = e => { if (!link && e.data && e.data.t === 'hello') attach({send:o => bc.postMessage(o), close:() => bc.close()}); onNet(e.data); };
+    bc.onmessage = e => hostOnNet(e.data);
     peer = {destroy:() => bc.close()};
-    $('roomCode').textContent = code; $('netHostMsg').textContent = '친구에게 이 코드를 알려주세요.';
+    attach({send:o => bc.postMessage(o), close:() => bc.close()});
+    $('roomCode').textContent = code; hostLobbyMsg();
     return;
   }
   let db; try { db = await loadFb(); } catch(e){ if (role === 'host') $('netHostMsg').textContent = NET_FAIL; return; }
   if (role !== 'host') return;
-  const me0 = {name:myName || '방장'};
+  const me0 = {name:myName};
   let code = '', room = null;
   try {
     for (let i = 0; i < 6 && !room; i++){
@@ -1904,14 +1997,22 @@ async function hostRoom(){
   if (!room){ $('netHostMsg').textContent = '방을 만들지 못했어요. 잠시 뒤 다시 시도해 주세요.'; return; }
   if (role !== 'host'){ room.remove(); return; }
   room.onDisconnect().remove();                                            // 방장이 나가면 방이 저절로 지워져요
-  let hadGuest = false, closed = false;
-  const ch = fbChannel(room, 'h2g', 'g2h', m => {
+  let closed = false;
+  const down = room.child('down'), sent = [];
+  const stopUp = readBox(room.child('up'), m => { if (!closed) hostOnNet(m); }, true);
+  // 나간 친구 알아채기 (창을 닫으면 members에서 저절로 빠져요)
+  const onMembers = s => {
     if (closed) return;
-    if (!link && m && m.t === 'hello'){ hadGuest = true; attach(ch); }
-    if (link) onNet(m);
-  });
-  const onGuest = s => { if (!closed && hadGuest && !s.exists() && link) netClosed(); };
-  room.child('guest').on('value', onGuest);
+    const v = s.val() || {};
+    for (const g of guests.slice()) if (!v[g.gid]) dropGuest(g.gid);
+  };
+  room.child('members').on('value', onMembers);
+  // 다 읽힌 오래된 메시지는 방장이 치워요
+  const sweep = setInterval(() => {
+    const now = Date.now(), del = {};
+    while (sent.length && now - sent[0][1] > 4000) del[sent.shift()[0]] = null;
+    if (Object.keys(del).length) down.update(del);
+  }, 1000);
   // 잠깐 인터넷이 끊겼다 돌아오면 방을 다시 세워요 (휴대폰에서 다른 앱에 다녀올 때)
   const conRef = db.ref('.info/connected');
   let first = true;
@@ -1923,53 +2024,90 @@ async function hostRoom(){
     }
   };
   conRef.on('value', onCon);
-  peer = {destroy:() => {
-    closed = true; ch.close(); room.child('guest').off('value', onGuest); conRef.off('value', onCon);
-    try { room.onDisconnect().cancel(); } catch(e){}
-    room.remove();
-  }};
+  peer = {
+    kick:gid => room.child('members/' + gid).remove(),
+    destroy:() => {
+      closed = true; stopUp(); clearInterval(sweep); room.child('members').off('value', onMembers); conRef.off('value', onCon);
+      try { room.onDisconnect().cancel(); } catch(e){}
+      room.remove();
+    }
+  };
+  attach({send:o => { try { const r = down.push({d:encMsg(o)}); sent.push([r.key, Date.now()]); } catch(e){} }, close:() => {}});
   $('roomCode').textContent = code;
-  $('netHostMsg').textContent = '친구에게 이 코드를 알려주세요. 친구가 들어오면 시작할 수 있어요.';
+  hostLobbyMsg();
 }
+// 친구: 방장 메시지 처리
+let myGid = '';
+function guestOnNet(m){
+  if (!m || typeof m !== 'object') return;
+  heard = performance.now();
+  if (m.t === 'ping') return;
+  if (m.t === 'lobby'){
+    clearTimeout(joinTimer); hostNameNet = String(m.host || '방장').slice(0, 8);
+    if (mode === 'play' && guestLive) return;
+    if (Array.isArray(m.ros)) renderRoster(m.ros.slice(0, NET_MAX).map(r => ({n:String(r.n || '').slice(0, 8), c:String(r.c || ''), h:r.h ? 1 : 0, w:r.w ? 1 : 0, me:r.g === myGid ? 1 : 0})));
+    const others = [];
+    $('netGuestMsg').textContent = m.playing && !guestLive
+      ? `${hostNameNet}의 방에 들어왔어요. 지금 판이 끝나면 다음 판부터 같이 해요.`
+      : `${hostNameNet}의 방에 들어왔어요${others.length ? ` (${others.join(', ')}도 함께)` : ''}. ${josa(hostNameNet, '이', '가')} 시작하길 기다리는 중이에요.`;
+  }
+  else if (m.t === 'init') guestStart(m);
+  else if (m.t === 'st' && guestLive && players.length){ if (m.own) applyRle(m.own); unpackPlayers(m.ps); }
+  else if (m.t === 'ev' && guestLive) guestEvent(m);
+  else if (m.t === 'bye') netClosed();
+}
+function onNet(m){ if (role === 'host') hostOnNet(m); else if (role === 'guest') guestOnNet(m); }
 async function joinRoom(){
   const code = $('codeIn').value.trim().toUpperCase();
+  if (needNick()) return;
   if (code.length !== 4){ $('codeIn').focus(); return; }
+  hostNameNet = '';
   leaveNet(); role = 'guest'; guestLive = false; savedDiff = diff; savedMap = mapId;
+  myGid = 'g' + Math.random().toString(36).slice(2, 10);
   $('netChoose').hidden = true; $('netGuest').hidden = false; $('netGuestMsg').textContent = '연결하는 중이에요.';
-  const hello = {t:'hello', name:myName || '친구', color:myColor};
+  const hello = {t:'hello', name:myName, color:myColor};
   if (LOCALNET){
     const bc = new BroadcastChannel('alt-delete-' + code);
-    bc.onmessage = e => onNet(e.data);
-    attach({send:o => bc.postMessage(o), close:() => bc.close()});
+    bc.onmessage = e => guestOnNet(e.data);
+    attach({send:o => { o.from = myGid; bc.postMessage(o); }, close:() => bc.close()});
     peer = {destroy:() => bc.close()};
     netSend(hello); return;
   }
-  const msg = t => { if (role === 'guest' && !players.some(p => p === me)) $('netGuestMsg').textContent = t; };
+  const msg = t => { if (role === 'guest' && !guestLive) $('netGuestMsg').textContent = t; };
   let db; try { db = await loadFb(); } catch(e){ msg(NET_FAIL); return; }
   if (role !== 'guest') return;
   const room = db.ref('alt-delete/rooms/' + code);
   clearTimeout(joinTimer);
   joinTimer = setTimeout(() => msg('연결이 느려요. 조금만 더 기다리거나, 돌아갔다가 다시 들어와 주세요.'), 10000);
+  const meRef = room.child('members/' + myGid);
   try {
     const hs = await room.child('host').once('value');
     if (role !== 'guest') return;
     if (!hs.exists()){ clearTimeout(joinTimer); msg('그 코드의 방이 없어요. 코드를 확인하고, 방장 화면에 코드가 아직 떠 있는지 봐 주세요.'); role = null; return; }
-    const tx = await room.child('guest').transaction(cur => cur ? undefined : {name:hello.name, at:FB_TS()});
+    const tx = await room.child('members').transaction(cur => {
+      cur = cur || {};
+      if (Object.keys(cur).length + 1 >= NET_MAX) return;                   // 꽉 찼어요
+      return Object.assign({}, cur, {[myGid]:{name:hello.name, at:FB_TS()}});
+    });
     if (role !== 'guest') return;
-    if (!tx.committed){ clearTimeout(joinTimer); msg('이미 다른 친구가 들어가 있는 방이에요.'); role = null; return; }
+    if (!tx.committed){ clearTimeout(joinTimer); msg(`방이 꽉 찼어요. 한 방에 ${NET_MAX}명까지 같이 할 수 있어요.`); role = null; return; }
   } catch(e){ clearTimeout(joinTimer); msg('연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.'); role = null; return; }
-  room.child('guest').onDisconnect().remove();
-  room.child('g2h').onDisconnect().remove();
+  meRef.onDisconnect().remove();
   let closed = false;
-  const ch = fbChannel(room, 'g2h', 'h2g', m => { if (!closed) onNet(m); });
+  const up = room.child('up');
+  const stopDown = readBox(room.child('down'), m => { if (!closed) guestOnNet(m); }, false);
   const onHost = s => { if (!closed && !s.exists() && link) netClosed(); };
   room.child('host').on('value', onHost);
+  // 방장이 나를 내보냈거나(인원 정리) 내 자리가 사라지면 나가요
+  let had = false;
+  const onMe = s => { if (closed) return; if (s.exists()) had = true; else if (had && link) netClosed(); };
+  meRef.on('value', onMe);
   peer = {destroy:() => {
-    closed = true; ch.close(); room.child('host').off('value', onHost);
-    try { room.child('guest').onDisconnect().cancel(); room.child('g2h').onDisconnect().cancel(); } catch(e){}
-    room.child('guest').remove(); room.child('g2h').remove();
+    closed = true; stopDown(); room.child('host').off('value', onHost); meRef.off('value', onMe);
+    try { meRef.onDisconnect().cancel(); } catch(e){}
+    meRef.remove();
   }};
-  attach(ch);
+  attach({send:o => { o.from = myGid; try { up.push({d:encMsg(o)}); } catch(e){} }, close:() => {}});
   netSend(hello);
 }
 // 연결이 끊겼을 때
@@ -1979,14 +2117,13 @@ function netClosed(){
   if (!role) return;
   const was = role;
   link = null;
+  if (peer){ try { peer.destroy(); } catch(e){} peer = null; }
+  role = null;
   if (was === 'host'){
-    if (guest && guest.alive) kill(guest, null, 'left');
-    guest = null; role = null; if (peer){ try { peer.destroy(); } catch(e){} peer = null; }
-    if (mode === 'menu' || !$('netOv').classList.contains('hidden')){ netOpenPanel(); }
-    toast('친구가 나갔어요');
+    for (const g of guests) if (g.p && g.p.alive && players.includes(g.p)) kill(g.p, null, 'left');
+    guests = [];
   } else {
-    role = null; if (peer){ try { peer.destroy(); } catch(e){} peer = null; }
-    restoreLocal(); startDemo(); showOv('menu'); toast('방장이 나가서 방이 닫혔어요');
+    restoreLocal(); startDemo(); showOv('menu'); toast(`${josa(hostNameNet || '방장', '이', '가')} 나가서 방이 닫혔어요`);
   }
 }
 function restoreLocal(){
@@ -1996,12 +2133,13 @@ function restoreLocal(){
   savedMap = savedDiff = null;
 }
 function leaveNet(){
+  renderRoster(null);
   guestLive = false;
   clearTimeout(joinTimer); clearInterval(beatT);
   if (link){ netSend({t:'bye'}); try { link.close(); } catch(e){} }
   if (peer){ try { peer.destroy(); } catch(e){} }
   const wasGuest = role === 'guest';
-  link = null; peer = null; role = null; guest = null;
+  link = null; peer = null; role = null; guests = [];
   if (wasGuest) restoreLocal();
 }
 $('friendBtn').addEventListener('click', () => { audio(); netOpenPanel(); });
@@ -2009,7 +2147,7 @@ $('hostBtn').addEventListener('click', hostRoom);
 $('joinBtn').addEventListener('click', joinRoom);
 $('codeIn').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter'){ e.preventDefault(); joinRoom(); } });
 $('codeIn').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
-$('netStart').addEventListener('click', () => { if (role === 'host' && link) startGame(); });
+$('netStart').addEventListener('click', () => { if (role === 'host' && guests.length) startGame(); });
 $('netBack').addEventListener('click', () => { leaveNet(); showOv('menu'); });
 addEventListener('pagehide', () => { if (link) netSend({t:'bye'}); });
 
@@ -2028,7 +2166,7 @@ function frame(now){
     let n = 0;
     while (acc >= STEP && n < 6){ if (mode === 'play') steerMe(); step(STEP); acc -= STEP; n++; }
     if (n === 6) acc = 0;
-    if (role === 'host' && link && (mode === 'play' || mode === 'over') && players.length){ netTick += dt; if (netTick >= .05){ netTick = 0; netState(); } }
+    if (hostLive() && (mode === 'play' || mode === 'over') && players.length){ netTick += dt; if (netTick >= .05){ netTick = 0; netState(); } }
   }
   const t = camTarget();
   if (t){ const f = 1 - Math.pow(mode === 'demo' ? .25 : .0005, dt); cam.x += (t.x - cam.x) * f; cam.y += (t.y - cam.y) * f; }
